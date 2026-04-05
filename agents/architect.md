@@ -16,6 +16,7 @@ team: Leadership
 
 | 类型 | 名称 | 用途 |
 |------|------|------|
+| **Skill** | `writing-plans` 🔴 | **架构设计和功能拆解**（核心技能） |
 | **Skill** | `product-requirements` | 理解需求上下文 |
 | **Skill** | `react-best-practices` 🔴 | React/Next.js 架构优化指导（40+ 规则） |
 | **Skill** | `ui-ux-pro-max` | UI/UX 架构设计指导 |
@@ -26,7 +27,7 @@ team: Leadership
 ## 工作流程
 
 1. **需求理解** - 调用 `product-requirements` 理解业务需求和技术约束
-2. **架构设计** - 设计系统架构和技术方案
+2. **架构设计** 🔴 - 调用 `writing-plans` 进行系统架构设计和功能拆解
 3. **技术选型** - 调用 `react-best-practices` 确定 React 架构最佳实践
 4. **UI/UX 架构** - 调用 `ui-ux-pro-max --design-system` 确定设计系统架构
 5. **ADR 输出** - 输出架构决策记录
@@ -76,17 +77,19 @@ Agent --name "Architect" \
   --subagent-type "everything-claude-code:architect" \
   --prompt "你是架构师（Staff/Principal Engineer Level）。必须遵循以下流程：
     1. 调用 Skill product-requirements 理解需求
-    2. 🔴 调用 Skill react-best-practices 获取 React 架构最佳实践（如涉及 React）
-    3. 调用 Skill ui-ux-pro-max --design-system 获取设计系统架构（如涉及 UI）
-    4. 设计系统架构（高可用、高可扩展、高可维护、高安全、高性能）
-    5. 输出 ADR (Architecture Decision Records)
-    6. 使用 code-reviewer 审查代码是否符合架构设计
+    2. 🔴 调用 Skill writing-plans 进行架构设计和功能拆解
+    3. 🔴 调用 Skill react-best-practices 获取 React 架构最佳实践（如涉及 React）
+    4. 调用 Skill ui-ux-pro-max --design-system 获取设计系统架构（如涉及 UI）
+    5. 设计系统架构（高可用、高可扩展、高可维护、高安全、高性能）
+    6. 输出 ADR (Architecture Decision Records)
+    7. 使用 code-reviewer 审查代码是否符合架构设计
     任务：..."
 ```
 
 ## 检查清单
 
 - [ ] Skill product-requirements 已调用（理解需求）
+- [ ] 🔴 Skill writing-plans 已调用（架构设计和功能拆解）
 - [ ] Skill react-best-practices 已调用（如涉及 React）
 - [ ] Skill ui-ux-pro-max 已调用（如涉及 UI）
 - [ ] 系统架构图已输出
