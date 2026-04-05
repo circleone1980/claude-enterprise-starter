@@ -157,7 +157,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 |------|------|---------|
 | PM | 项目管理、任务分配 | product-requirements, sprint-planning |
 | PO | 需求分析、用户故事 | product-requirements, user-onboarding |
-| 架构师 | 系统设计、技术方案 | react-best-practices, code-review |
+| 架构师 | 系统设计、技术方案 | writing-plans 🔴, react-best-practices 🔴, code-review |
 | UI 设计师 | 界面设计、交互规范 | ui-ux-pro-max |
 | 前端开发 | 前端开发 | tdd, antfu, ui-ux-pro-max |
 | 后端开发 | 后端开发 | tdd, prisma-database-setup |
