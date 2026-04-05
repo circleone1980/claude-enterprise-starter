@@ -60,7 +60,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 |------|------------------|-----------------|
 | PM | Project management, task distribution | product-requirements, sprint-planning |
 | PO | Requirements analysis, user stories | product-requirements, user-onboarding |
-| Architect | System design, technical solutions | react-best-practices, code-review |
+| Architect | System design, technical solutions | writing-plans 🔴, react-best-practices 🔴, code-review |
 | UI Designer | Interface design, interaction | ui-ux-pro-max |
 | Frontend | Frontend development | tdd, antfu, ui-ux-pro-max |
 | Backend | Backend development | tdd, prisma-database-setup |

@@ -174,6 +174,7 @@ Agent --name "产品体验师" \
 
 | 技能 | 路径 |
 |------|------|
+| writing-plans | `skills/writing-plans/SKILL.md` |
 | product-requirements | `skills/product-requirements/SKILL.md` |
 | sprint-planning | `skills/sprint-planning/SKILL.md` |
 | tdd | `skills/tdd/SKILL.md` |
@@ -182,6 +183,8 @@ Agent --name "产品体验师" \
 | ui-ux-pro-max | `skills/ui-ux-pro-max/SKILL.md` |
 | user-onboarding | `skills/user-onboarding/SKILL.md` |
 | react-best-practices | `skills/react-best-practices/SKILL.md` |
+| antfu | `skills/antfu/SKILL.md` |
+| prisma-database-setup | `.claude/skills/prisma-database-setup/SKILL.md` |
 
 ---
 
