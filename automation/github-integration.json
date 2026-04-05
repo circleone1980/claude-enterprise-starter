@@ -1,0 +1,33 @@
+{
+  "name": "github-integration",
+  "version": "1.0.0",
+  "enabled": true,
+  "config": {
+    "autoCreate": {
+      "enabled": true,
+      "private": false,
+      "addGitignore": true,
+      "addReadme": true
+    },
+    "autoPush": {
+      "enabled": true,
+      "interval": 1800000,
+      "branch": "main",
+      "commitMessageTemplate": "auto: ${phase} - ${description}",
+      "onPhaseComplete": true
+    },
+    "branchProtection": {
+      "enabled": false,
+      "requireReviews": false,
+      "requireStatusChecks": false
+    }
+  },
+  "commitPatterns": {
+    "feature": "feat(${scope}): ${description}",
+    "fix": "fix(${scope}): ${description}",
+    "refactor": "refactor(${scope}): ${description}",
+    "test": "test(${scope}): ${description}",
+    "docs": "docs: ${description}",
+    "chore": "chore: ${description}"
+  }
+}

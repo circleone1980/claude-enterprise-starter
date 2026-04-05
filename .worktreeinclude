@@ -1,0 +1,53 @@
+# Worktree Include 配置
+# 指定哪些 gitignored 文件应该被复制到新的 worktree
+
+# 格式说明
+# - 每行一个文件路径
+# - 支持通配符 (*)
+# - 路径相对于项目根目录
+
+# 环境配置文件
+.env
+.env.local
+.env.*.local
+
+# IDE 配置
+.vscode/
+.idea/
+
+# 依赖目录（通常不需要复制）
+# node_modules/
+
+# 构建输出
+# dist/
+# build/
+
+# 日志文件
+*.log
+logs/
+
+# 本地 Claude 配置
+CLAUDE.local.md
+.claude/settings.local.json
+
+# 数据库文件（开发环境）
+*.db
+*.sqlite
+*.sqlite3
+
+# 临时文件
+*.tmp
+*.temp
+.cache/
+
+# 测试覆盖率报告
+coverage/
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# 使用说明
+# 1. 在创建 git worktree 时，这些文件会自动复制
+# 2. 复制发生在 worktree 创建后、首次使用前
+# 3. 敏感文件（如 .env）建议使用符号链接或手动管理

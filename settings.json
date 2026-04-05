@@ -1,0 +1,149 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Edit(**)",
+      "Write(**)",
+      "Bash(git:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(python:*)",
+      "Bash(pip:*)",
+      "Bash(pnpm:*)",
+      "Bash(yarn:*)",
+      "Bash(cargo:*)",
+      "Bash(go:*)",
+      "Bash(mvn:*)",
+      "Bash(gradle:*)",
+      "Bash(docker:*)",
+      "Bash(docker-compose:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(touch:*)",
+      "Bash(echo:*)",
+      "Bash(pwd)",
+      "Bash(which:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~/*)",
+      "Bash(rm -rf /)",
+      "Bash(sudo:*)",
+      "Bash(su:*)",
+      "Bash(chmod 777:*)",
+      "Bash(chown:*)",
+      "Bash(dd:*)",
+      "Bash(format:*)",
+      "Bash(fdisk:*)",
+      "Bash(mkfs:*)",
+      "Read(~/.ssh/**)",
+      "Read(~/.gnupg/**)",
+      "Read(~/.config/**)",
+      "Edit(~/**)",
+      "Write(~/**)",
+      "Edit(/etc/**)",
+      "Write(/etc/**)",
+      "Edit(/System/**)",
+      "Write(/System/**)"
+    ],
+    "defaultMode": "bypassPermissions"
+  },
+  "alwaysThinkingEnabled": true,
+  "hasCompletedOnboarding": true,
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/scripts/safety-guard.js"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/scripts/safety-guard.js"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/scripts/safety-guard.js"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[Agent Check] Verify subagent-type is specified for development roles'"
+          }
+        ]
+      },
+      {
+        "matcher": "TaskUpdate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/scripts/phase-controller.js"
+          }
+        ]
+      }
+    ]
+  },
+  "customInstructions": {
+    "rageMode": {
+      "enabled": true,
+      "description": "狂暴模式 - Claude Code 全权接管开发任务",
+      "features": {
+        "autoGitHubPush": true,
+        "autoAgentRestart": true,
+        "autoPhaseAdvance": true,
+        "safetyGuard": true
+      }
+    },
+    "agentTeamEnforcement": {
+      "enabled": true,
+      "rules": [
+        "All backend development MUST use subagent-type: everything-claude-code:python-reviewer",
+        "All frontend development MUST use subagent-type: everything-claude-code:typescript-reviewer",
+        "All development MUST call Skill tdd first (TDD is mandatory)",
+        "All code MUST be reviewed before commit"
+      ],
+      "requiredSkills": {
+        "pm": ["product-requirements", "sprint-planning"],
+        "po": ["product-requirements", "sprint-planning", "user-onboarding"],
+        "architect": ["product-requirements", "react-best-practices", "ui-ux-pro-max", "code-review"],
+        "ui-designer": ["ui-ux-pro-max"],
+        "backend": ["tdd", "prisma-database-setup", "code-review"],
+        "frontend": ["tdd", "antfu", "ui-ux-pro-max", "code-review"],
+        "qa": ["tdd", "code-review"],
+        "devops": ["code-review"],
+        "product-experience": ["user-onboarding", "product-requirements", "ui-ux-pro-max"]
+      },
+      "requiredAgents": {
+        "backend": "everything-claude-code:python-reviewer",
+        "frontend": "everything-claude-code:typescript-reviewer",
+        "architect": "everything-claude-code:architect",
+        "qa": "everything-claude-code:tdd-guide"
+      }
+    }
+  },
+  "_comment": "Updated 2026-04-05 - Unified skill mapping across all files"
+}

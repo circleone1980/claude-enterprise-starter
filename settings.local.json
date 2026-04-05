@@ -1,0 +1,38 @@
+{
+  "_comment": "个人设置覆盖 - 此文件应添加到 .gitignore，不提交到版本库",
+
+  "model": "claude-sonnet-4-6",
+
+  "permissions": {
+    "_comment": "个人权限覆盖，会覆盖 settings.json 中的设置",
+
+    "allow": [
+      "_comment": "示例：添加个人特定的权限",
+      "Bash(code:*)",
+      "Bash(claude:*)"
+    ],
+
+    "deny": [
+      "_comment": "示例：添加个人特定的限制"
+    ]
+  },
+
+  "outputStyle": "default",
+
+  "customInstructions": {
+    "_comment": "个人自定义指令覆盖",
+    "_example_personalPreference": {
+      "enabled": false,
+      "description": "示例：禁用某个功能"
+    }
+  },
+
+  "_usage": [
+    "1. 复制此文件到项目 .claude/ 目录",
+    "2. 重命名为 settings.local.json",
+    "3. 在 .gitignore 中添加: .claude/settings.local.json",
+    "4. 根据个人需求修改配置",
+    "",
+    "注意：此文件会覆盖 settings.json 中的同名配置"
+  ]
+}

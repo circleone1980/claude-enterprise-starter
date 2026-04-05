@@ -1,0 +1,75 @@
+{
+  "name": "rage-mode",
+  "version": "1.0.0",
+  "enabled": true,
+  "description": "狂暴模式 - Claude Code 全权接管开发任务",
+  "features": {
+    "autoGitHubPush": {
+      "enabled": true,
+      "interval": 1800000,
+      "onPhaseComplete": true
+    },
+    "autoAgentRestart": {
+      "enabled": true,
+      "checkInterval": 300000,
+      "maxRetries": 3,
+      "restartDelay": 10000
+    },
+    "autoPhaseAdvance": {
+      "enabled": true,
+      "requireQualityGates": true
+    },
+    "safetyGuard": {
+      "enabled": true,
+      "strictBoundaries": true
+    }
+  },
+  "phases": [
+    {
+      "id": 0,
+      "name": "项目初始化",
+      "autoAdvance": true,
+      "actions": ["初始化目录结构", "配置开发环境", "创建 GitHub 仓库"]
+    },
+    {
+      "id": 1,
+      "name": "需求分析",
+      "autoAdvance": true,
+      "requiredAgents": ["PM", "PO", "Architect"],
+      "qualityGates": ["PRD 完成", "架构设计完成"]
+    },
+    {
+      "id": 2,
+      "name": "开发实现",
+      "autoAdvance": true,
+      "requiredAgents": ["Frontend", "Backend", "UI Designer"],
+      "qualityGates": ["代码实现完成", "单元测试通过", "代码审查通过"]
+    },
+    {
+      "id": 3,
+      "name": "测试验证",
+      "autoAdvance": true,
+      "requiredAgents": ["QA"],
+      "qualityGates": ["测试覆盖率 >80%", "所有测试通过"]
+    },
+    {
+      "id": 4,
+      "name": "产品体验",
+      "autoAdvance": true,
+      "requiredAgents": ["产品体验师"],
+      "qualityGates": ["体验测试完成", "体验报告输出"]
+    },
+    {
+      "id": 5,
+      "name": "部署发布",
+      "autoAdvance": true,
+      "requiredAgents": ["DevOps"],
+      "qualityGates": ["部署成功", "健康检查通过"]
+    }
+  ],
+  "notifications": {
+    "onPhaseComplete": true,
+    "onAgentFailure": true,
+    "onAllComplete": true
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "name": "phase-gates",
+  "version": "1.0.0",
+  "enabled": true,
+  "gates": {
+    "phase0_to_phase1": {
+      "conditions": [
+        "目录结构已创建",
+        "开发环境已配置",
+        "GitHub 仓库已创建"
+      ],
+      "autoAdvance": true
+    },
+    "phase1_to_phase2": {
+      "conditions": [
+        "PRD 文档已完成",
+        "架构设计文档已完成",
+        "API 设计已完成",
+        "任务已分配"
+      ],
+      "autoAdvance": true,
+      "requireApproval": false
+    },
+    "phase2_to_phase3": {
+      "conditions": [
+        "所有代码已实现",
+        "单元测试覆盖率 > 80%",
+        "所有单元测试通过",
+        "代码审查已完成"
+      ],
+      "autoAdvance": true,
+      "requireApproval": false
+    },
+    "phase3_to_phase4": {
+      "conditions": [
+        "所有测试用例通过",
+        "集成测试通过",
+        "E2E 测试通过",
+        "测试报告已输出"
+      ],
+      "autoAdvance": true,
+      "requireApproval": false
+    },
+    "phase4_to_phase5": {
+      "conditions": [
+        "产品体验测试已完成",
+        "体验报告已输出",
+        "关键体验问题已修复"
+      ],
+      "autoAdvance": true,
+      "requireApproval": false
+    },
+    "phase5_to_complete": {
+      "conditions": [
+        "部署成功",
+        "健康检查通过",
+        "文档已更新",
+        "代码已推送到 GitHub"
+      ],
+      "autoAdvance": true,
+      "requireApproval": false,
+      "notifyOnComplete": true
+    }
+  },
+  "failureHandling": {
+    "retryCount": 3,
+    "retryDelay": 60000,
+    "escalateOnFailure": true,
+    "notificationChannel": "console"
+  }
+}

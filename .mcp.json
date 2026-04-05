@@ -1,0 +1,46 @@
+{
+  "$schema": "https://claude.ai/schema/mcp.json",
+  "mcpServers": {
+    "github": {
+      "command": "mcp-adapter",
+      "args": ["--server", "github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      },
+      "disabled": false,
+      "description": "GitHub 集成 - 自动创建仓库、推送代码、管理 PR"
+    },
+    "figma": {
+      "command": "mcp-adapter",
+      "args": ["--server", "figma"],
+      "env": {
+        "FIGMA_ACCESS_TOKEN": "${FIGMA_ACCESS_TOKEN}"
+      },
+      "disabled": false,
+      "description": "Figma 设计工具集成 - UI Designer 必用"
+    },
+    "playwright": {
+      "command": "mcp-adapter",
+      "args": ["--server", "playwright"],
+      "disabled": false,
+      "description": "Playwright 自动化测试 - 产品体验师、QA 必用"
+    },
+    "context7": {
+      "command": "mcp-adapter",
+      "args": ["--server", "context7"],
+      "disabled": false,
+      "description": "文档查询服务 - 获取最新框架文档"
+    },
+    "web-reader": {
+      "command": "mcp-adapter",
+      "args": ["--server", "web-reader"],
+      "disabled": false,
+      "description": "网页内容读取 - 竞品分析、文档获取"
+    }
+  },
+  "autoStart": true,
+  "logging": {
+    "level": "info",
+    "file": ".claude/logs/mcp.log"
+  }
+}

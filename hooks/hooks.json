@@ -1,0 +1,93 @@
+{
+  "version": "1.0.0",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/scripts/safety-guard.js",
+            "description": "安全边界检查 - Bash 命令"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/scripts/safety-guard.js",
+            "description": "安全边界检查 - Edit 操作"
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/scripts/safety-guard.js",
+            "description": "安全边界检查 - Write 操作"
+          }
+        ]
+      },
+      {
+        "matcher": "Delete",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/scripts/safety-guard.js",
+            "description": "安全边界检查 - Delete 操作"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[Agent Check] Verify subagent-type is specified for development roles'",
+            "description": "Agent 角色检查"
+          }
+        ]
+      },
+      {
+        "matcher": "TaskUpdate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/scripts/phase-controller.js",
+            "description": "阶段推进检查"
+          }
+        ]
+      },
+      {
+        "matcher": "TeamCreate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/scripts/auto-start-agents.js",
+            "description": "自动启动 Agent Team（狂暴模式）"
+          }
+        ]
+      }
+    ],
+    "Scheduled": [
+      {
+        "id": "github-push",
+        "interval": 1800000,
+        "command": "node .claude/hooks/scripts/auto-github-push.js",
+        "description": "定时推送 GitHub（每 30 分钟）"
+      },
+      {
+        "id": "agent-health",
+        "interval": 300000,
+        "command": "node .claude/hooks/scripts/agent-health-monitor.js",
+        "description": "Agent 健康监控（每 5 分钟）"
+      }
+    ]
+  }
+}

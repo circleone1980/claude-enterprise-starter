@@ -1,0 +1,31 @@
+{
+  "_comment": "个人设置覆盖示例 - 复制为 settings.local.json 并添加到 .gitignore",
+
+  "model": "claude-sonnet-4-6",
+
+  "permissions": {
+    "_comment": "个人权限覆盖",
+
+    "allow": [
+      "Bash(code:*)",
+      "Bash(claude:*)"
+    ],
+
+    "deny": []
+  },
+
+  "outputStyle": "terse",
+
+  "customInstructions": {
+    "_comment": "个人自定义指令",
+
+    "personalPreference": {
+      "enabled": true,
+      "rules": [
+        "使用中文回复",
+        "回答简洁",
+        "代码使用 TypeScript"
+      ]
+    }
+  }
+}

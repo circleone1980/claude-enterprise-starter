@@ -1,0 +1,75 @@
+{
+  "name": "agent-orchestration",
+  "version": "1.0.1",
+  "enabled": true,
+  "agents": {
+    "PM": {
+      "subagentType": "everything-claude-code:planner",
+      "requiredSkills": ["product-requirements", "sprint-planning"],
+      "parallelizable": false,
+      "dependencies": []
+    },
+    "PO": {
+      "subagentType": "general-purpose",
+      "requiredSkills": ["product-requirements", "sprint-planning", "user-onboarding"],
+      "parallelizable": true,
+      "dependencies": []
+    },
+    "Architect": {
+      "subagentType": "everything-claude-code:architect",
+      "requiredSkills": ["product-requirements", "react-best-practices", "ui-ux-pro-max", "code-review"],
+      "parallelizable": true,
+      "dependencies": []
+    },
+    "UI-Designer": {
+      "subagentType": "general-purpose",
+      "requiredSkills": ["ui-ux-pro-max"],
+      "parallelizable": true,
+      "dependencies": [],
+      "mcpServers": ["figma"]
+    },
+    "Frontend": {
+      "subagentType": "everything-claude-code:typescript-reviewer",
+      "requiredSkills": ["tdd", "antfu", "ui-ux-pro-max", "code-review"],
+      "parallelizable": true,
+      "dependencies": ["PM", "Architect"],
+      "count": 3
+    },
+    "Backend": {
+      "subagentType": "everything-claude-code:python-reviewer",
+      "requiredSkills": ["tdd", "prisma-database-setup", "code-review"],
+      "parallelizable": true,
+      "dependencies": ["PM", "Architect"],
+      "count": 3
+    },
+    "QA": {
+      "subagentType": "everything-claude-code:tdd-guide",
+      "requiredSkills": ["tdd", "code-review"],
+      "parallelizable": false,
+      "dependencies": ["Frontend", "Backend"],
+      "mcpServers": ["playwright"]
+    },
+    "DevOps": {
+      "subagentType": "general-purpose",
+      "requiredSkills": ["code-review"],
+      "parallelizable": false,
+      "dependencies": ["QA"],
+      "mcpServers": ["github"]
+    },
+    "产品体验师": {
+      "subagentType": "everything-claude-code:planner",
+      "requiredSkills": ["user-onboarding", "product-requirements", "ui-ux-pro-max"],
+      "parallelizable": false,
+      "dependencies": ["DevOps"],
+      "mcpServers": ["playwright"]
+    }
+  },
+  "healthMonitoring": {
+    "enabled": true,
+    "checkInterval": 300000,
+    "maxRetries": 3,
+    "restartDelay": 10000,
+    "alertOnFailure": true
+  },
+  "_comment": "Updated 2026-04-05 - Unified skill mapping across all files"
+}
