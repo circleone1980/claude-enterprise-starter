@@ -176,3 +176,5 @@ Before starting the sprint:
 - [ ] Risks assessed
 - [ ] Capacity confirmed
 - [ ] Definition of Done agreed
+
+**Related Skills**: `product-requirements`, `writing-plans` (for architecture design)

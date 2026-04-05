@@ -32,7 +32,8 @@ TaskCreate --subject "Sprint 1 开发任务" --description "详细任务描述"
 Agent --name "PM" \
   --subagent-type "everything-claude-code:planner" \
   --prompt "你是项目经理。
-    1. 调用 Skill product-requirements 分析需求
+    1. 调用 Skill writing-plans
+G; Skill product-requirements 分析需求
     2. 调用 Skill sprint-planning 进行任务规划
     3. 使用 TaskCreate 创建任务列表
     4. 使用 TaskUpdate 分配任务给对应角色
@@ -48,7 +49,8 @@ Agent --name "PM" \
 Agent --name "PO" \
   --subagent-type "general-purpose" \
   --prompt "你是产品经理。
-    1. 调用 Skill product-requirements 进行需求拆解
+    1. 调用 Skill writing-plans
+G; Skill product-requirements 进行需求拆解
     2. 调用 Skill sprint-planning 确定优先级
     3. 调用 Skill user-onboarding 设计用户引导策略
     4. 按 Business Capability → Product Feature → System Capability → Technical Implementation 拆解
@@ -65,7 +67,8 @@ Agent --name "PO" \
 Agent --name "Architect" \
   --subagent-type "everything-claude-code:architect" \
   --prompt "你是架构师（Staff/Principal Engineer Level）。
-    1. 调用 Skill product-requirements 理解需求上下文
+    1. 调用 Skill writing-plans
+G; Skill product-requirements 理解需求上下文
     2. 🔴 调用 Skill react-best-practices 获取 React 架构最佳实践（如涉及 React）
     3. 调用 Skill ui-ux-pro-max 获取 UI/UX 架构指导（如涉及 UI）
     4. 设计系统架构（高可用、高可扩展、高可维护、高安全、高性能）
@@ -163,7 +166,8 @@ Agent --name "产品体验师" \
   --subagent-type "everything-claude-code:planner" \
   --prompt "你是产品体验师。必须遵循以下流程：
     1. 🔴 调用 Skill user-onboarding 设计用户引导（FTUE/激活/Aha moment）
-    2. 调用 Skill product-requirements 理解产品功能
+    2. 调用 Skill writing-plans
+G; Skill product-requirements 理解产品功能
     3. 调用 Skill ui-ux-pro-max 获取 UX 评估标准
     4. 使用 Playwright MCP 模拟用户操作
     5. 从易用性、效率、一致性、可发现性、容错性、可访问性维度评估
@@ -190,7 +194,7 @@ TaskUpdate --taskId "3" --owner "QA"
 |------|------------|---------|-----------|
 | PM | `product-requirements` | `sprint-planning` | planner |
 | PO | `product-requirements` | `sprint-planning`, `user-onboarding` | general-purpose |
-| Architect | `react-best-practices` 🔴 | `product-requirements`, `ui-ux-pro-max`, `code-review` | architect |
+| Architect | `writing-plans` 🔴, `react-best-practices` 🔴 | `product-requirements`, `ui-ux-pro-max`, `code-review` | architect |
 | UI Designer | `ui-ux-pro-max` 🔴 | Figma MCP | general-purpose |
 | Frontend | `tdd` 🔴 | `ui-ux-pro-max --stack react`, `code-review` | typescript-reviewer |
 | Backend | `tdd` 🔴 | `code-review`, database-reviewer | python-reviewer |

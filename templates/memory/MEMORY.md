@@ -8,6 +8,7 @@
 
 1. **CLAUDE.md** — 包含所有规则 + Agent Team Skills 强制映射（最高优先级）
 2. **[Agent Team Skills 映射表](.claude/rules/04_agent_team.md)** — 各角色必用的 Skills/Agents 详细说明
+3. **[Architect Skills]**: `writing-plans` 🔴, `react-best-practices` 🔴, `product-requirements`
 
 ---
 
@@ -71,3 +72,4 @@
 ---
 
 *最后更新: [DATE]*
+
