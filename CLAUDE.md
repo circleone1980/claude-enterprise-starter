@@ -133,7 +133,7 @@ Module
 |------|-----------|---------|-----------|
 | **PM** | product-requirements | sprint-planning | planner |
 | **PO** | product-requirements | sprint-planning, user-onboarding | general-purpose |
-| **Architect** | react-best-practices 🔴 | product-requirements, ui-ux-pro-max, code-review | architect |
+| **Architect** | writing-plans 🔴 | product-requirements, react-best-practices, ui-ux-pro-max, code-review | architect |
 | **UI Designer** | ui-ux-pro-max 🔴 | Figma MCP | general-purpose |
 | **Frontend** | tdd 🔴, antfu 🔴 | ui-ux-pro-max, code-review | typescript-reviewer |
 | **Backend** | tdd 🔴, prisma-database-setup 🔴 | code-review | python-reviewer |

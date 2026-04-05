@@ -129,7 +129,7 @@
       "requiredSkills": {
         "pm": ["product-requirements", "sprint-planning"],
         "po": ["product-requirements", "sprint-planning", "user-onboarding"],
-        "architect": ["product-requirements", "react-best-practices", "ui-ux-pro-max", "code-review"],
+        "architect": ["writing-plans", "product-requirements", "react-best-practices", "ui-ux-pro-max", "code-review"],
         "ui-designer": ["ui-ux-pro-max"],
         "backend": ["tdd", "prisma-database-setup", "code-review"],
         "frontend": ["tdd", "antfu", "ui-ux-pro-max", "code-review"],

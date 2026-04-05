@@ -23,7 +23,7 @@ const AGENTS = {
   },
   'Architect': {
     subagentType: 'everything-claude-code:architect',
-    skills: ['product-requirements', 'react-best-practices', 'ui-ux-pro-max', 'code-review'],
+    skills: ['writing-plans', 'product-requirements', 'react-best-practices', 'ui-ux-pro-max', 'code-review'],
     phase: 1
   },
   'UI-Designer': {

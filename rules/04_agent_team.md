@@ -10,7 +10,7 @@
 |------|-----------|---------------------------|
 | **PM** | `product-requirements`, `sprint-planning` | `everything-claude-code:planner` |
 | **PO** | `product-requirements`, `sprint-planning`, `user-onboarding` | `general-purpose` |
-| **Architect** | `product-requirements`, `react-best-practices` 🔴, `ui-ux-pro-max`, `code-review` | `everything-claude-code:architect` |
+| **Architect** | `writing-plans` 🔴, `product-requirements`, `react-best-practices` 🔴, `ui-ux-pro-max`, `code-review` | `everything-claude-code:architect` |
 | **UI Designer** | `ui-ux-pro-max` 🔴 | `general-purpose` + Figma MCP |
 | **Frontend** | `tdd` 🔴, `antfu` 🔴, `ui-ux-pro-max --stack react`, `code-review` | `everything-claude-code:typescript-reviewer` |
 | **Backend** | `tdd` 🔴, `prisma-database-setup` 🔴, `code-review` | `everything-claude-code:python-reviewer`, `everything-claude-code:database-reviewer` |
@@ -89,6 +89,7 @@ Agent --name "产品体验师" \
 - `user-onboarding` - 用户引导策略
 
 ### Architect (架构师)
+- `writing-plans` 🔴 - **核心技能**，系统架构设计和功能拆解
 - `product-requirements` - 理解需求上下文
 - `react-best-practices` 🔴 - **核心技能**，40+ React/Next.js 架构优化规则
 - `ui-ux-pro-max` - UI/UX 架构设计指导

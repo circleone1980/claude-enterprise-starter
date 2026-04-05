@@ -17,7 +17,7 @@
     },
     "Architect": {
       "subagentType": "everything-claude-code:architect",
-      "requiredSkills": ["product-requirements", "react-best-practices", "ui-ux-pro-max", "code-review"],
+      "requiredSkills": ["writing-plans", "product-requirements", "react-best-practices", "ui-ux-pro-max", "code-review"],
       "parallelizable": true,
       "dependencies": []
     },
