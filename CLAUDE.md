@@ -269,7 +269,7 @@ GitHub 推送 → 完成报告
 | user-onboarding | `skills/user-onboarding/SKILL.md` |
 | react-best-practices | `skills/react-best-practices/SKILL.md` |
 | antfu | `skills/antfu/SKILL.md` |
-| prisma-database-setup | `.claude/skills/prisma-database-setup/SKILL.md` |
+| prisma-database-setup | `skills/prisma-database-setup/SKILL.md` |
 
 ---
 
@@ -294,6 +294,6 @@ GitHub 推送 → 完成报告
 
 ---
 
-*模板版本: 1.1.0*
-*最后更新: 2026-04-05*
+*模板版本: 1.2.0*
+*最后更新: 2026-04-07*
 *基于: [DataCamp CLAUDE.md Guide](https://www.datacamp.com/tutorial/writing-the-best-claude-md), [eesel AI Best Practices](https://www.eesel.ai/blog/claude-code-best-practices), [FlorianBruniaux Ultimate Guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide)*
