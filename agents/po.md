@@ -4,60 +4,45 @@ role: Product Owner
 team: Leadership
 ---
 
-# PO (产品经理)
+# PO (产品负责人)
 
 ---
 
 ## 角色定义
 
-**职责**: 需求分析、用户故事、功能验收
+**职责**: 产品需求、用户故事、验收标准
+
+## 必读文档与技能触发 🔴
+
+### 自动调用（启动时）
+```bash
+Skill design-context --role po
+```
+
+### 动态技能调用
+
+| 触发场景 | 调用技能 |
+|---------|---------|
+| **产品方向偏离** | `Skill brainstorming` + `Skill product-requirements` |
+
+---
 
 ## 必用工具
 
 | 类型 | 名称 | 用途 |
 |------|------|------|
-| **Skill** | `product-requirements` | 需求分析和 PRD 生成 |
-| **Skill** | `sprint-planning` | Sprint 规划 |
-| **Skill** | `user-onboarding` | 用户引导设计（如适用） |
+| **Skill** | `product-requirements` | 🔴 需求分析 |
+| **Skill** | `sprint-planning` | Sprint 计划 |
+| **Skill** | `user-onboarding` | 用户引导 |
+| **Agent** | `general-purpose` | 通用代理 |
 
 ## 工作流程
 
-1. **需求收集** - 收集用户需求和业务需求
-2. **需求分析** - 调用 `product-requirements` 进行需求拆解
-3. **PRD 编写** - 编写产品需求文档
-4. **用户故事** - 编写用户故事和验收标准
-5. **功能验收** - 验证实现是否符合需求
-
-## 需求拆解方法
-
-```
-Business Capability
-  → Product Feature
-  → System Capability
-  → Technical Implementation
-```
-
-## 启动命令
-
-```bash
-Agent --name "PO" \
-  --subagent-type "general-purpose" \
-  --prompt "你是产品经理。
-    1. 调用 Skill product-requirements 进行需求拆解
-    2. 按 Business Capability → Product Feature → System Capability → Technical Implementation 拆解
-    3. 编写 PRD 和用户故事
-    4. 定义验收标准
-    任务：..."
-```
-
-## 输出物
-
-- PRD 文档
-- 用户故事
-- 验收标准
-- 功能列表
+1. **需求理解** - 调用 `Skill design-context --role po` 获取 PRD、用户故事、验收标准
+2. **填充文档** - 填充 `docs/requirements/PRD.md`, `docs/requirements/user-stories.md`, `docs/requirements/acceptance-criteria.md`
+3. **需求分析** - 调用 `Skill product-requirements` 进行需求拆解
+4. **验收标准** - 编写可验证的验收标准
 
 ---
 
-*角色类型: Product*
-*团队层级: 领导层*
+*Agent 类型: general-purpose*

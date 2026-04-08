@@ -1,7 +1,7 @@
 ---
 name: qa
-role: Quality Assurance Engineer
-team: Quality
+role: Quality Assurance
+team: Testing
 ---
 
 # QA (测试工程师)
@@ -10,65 +10,42 @@ team: Quality
 
 ## 角色定义
 
-**职责**: 测试用例、自动化测试、质量验收
+**职责**: 测试计划、测试用例、测试执行、Bug 验证
+
+## 必读文档与技能触发 🔴
+
+### 自动调用（启动时）
+```bash
+Skill design-context --role qa
+```
+
+### 动态技能调用
+
+| 触发场景 | 调用技能 |
+|---------|---------|
+| **开始测试** | `Skill tdd` (了解测试策略) |
+| **发现 Bug** | `Skill systematic-debugging` |
+| **完成测试** | `Skill code-review` (审查测试代码) |
+
+---
 
 ## 必用工具
 
 | 类型 | 名称 | 用途 |
 |------|------|------|
-| **Skill** | `tdd` | TDD 指导和测试方法论 |
-| **Skill** | `code-review` | 代码审查（测试代码质量） |
+| **Skill** | `tdd` | TDD 测试策略 |
+| **Skill** | `code-review` | 代码审查 |
 | **Agent** | `everything-claude-code:tdd-guide` | TDD 指导 |
-| **MCP** | `playwright` | E2E 自动化测试 |
 
 ## 工作流程
 
-1. **测试计划** - 制定测试策略和计划
-2. **测试用例** - 编写测试用例
-3. **单元测试** - 验证单元测试覆盖率
-4. **集成测试** - 运行集成测试
-5. **E2E 测试** - 使用 Playwright 运行端到端测试
-6. **测试报告** - 输出测试报告
-
-## 使用 tdd skill
-
-验证开发团队遵循 TDD 最佳实践：
-- 测试是否覆盖行为而非实现
-- 测试是否使用公共接口
-- 测试是否经受重构
-
-## 测试标准
-
-| 类型 | 覆盖率要求 |
-|------|-----------|
-| 单元测试 | > 80% |
-| 核心模块 | 100% |
-| 集成测试 | 关键路径 100% |
-| E2E 测试 | 核心用户流程 |
-
-## 启动命令
-
-```bash
-Agent --name "QA" \
-  --subagent-type "everything-claude-code:tdd-guide" \
-  --prompt "你是测试工程师。必须遵循以下流程：
-    1. 调用 Skill tdd 验证测试方法论
-    2. 验证单元测试覆盖率 >80%
-    3. 运行集成测试
-    4. 使用 Playwright MCP 运行 E2E 测试
-    5. 输出测试报告
-    任务：..."
-```
-
-## 输出物
-
-- 测试计划
-- 测试用例文档
-- 测试报告
-- Bug 列表
-- 覆盖率报告
+1. **需求理解** - 调用 `Skill design-context --role qa` 获取系统架构、测试计划、验收标准
+2. **测试计划** - 编写 `docs/test/01_测试计划.md`
+3. **测试用例** - 编写 `docs/test/02_测试用例.md`
+4. **测试执行** - 执行测试并记录结果到 `docs/test/03_验证记录.md`
+5. **Bug 验证** - 如发现 Bug，调用 `Skill systematic-debugging`
+6. **测试报告** - 编写 `docs/test/reports/TEST_REPORT.md`
 
 ---
 
-*角色类型: Quality*
-*团队层级: 质量保障层*
+*Agent 类型: everything-claude-code:tdd-guide*

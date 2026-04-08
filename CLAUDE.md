@@ -77,7 +77,39 @@
 
 ---
 
-## 四、需求分析方法
+## 四、文档体系
+
+> **状态**: Phase 1 冻结层文档完成后锁定，修改需 ADR
+
+### 文档分层
+
+| 层级 | 路径 | 说明 |
+|------|------|------|
+| **冻结层** | `docs/requirements/`, `docs/design/` | Phase 1 产出，Phase 2 开始前冻结，修改需 ADR |
+| **演化层** | `docs/dev/`, `docs/test/`, `docs/fixes/` | 持续更新，Agent 可自行修改 |
+| **ADR层** | `docs/superpowers/decisions/` | 设计变更记录 |
+
+### 核心文档
+
+| 文档 | 路径 | 负责人 |
+|------|------|--------|
+| **PRD** | `docs/requirements/PRD.md` | PM + PO |
+| **系统架构设计** | `docs/design/01_系统架构设计.md` | Architect |
+| **数据库设计** | `docs/design/02_数据库设计.md` | Architect + Backend |
+| **API 接口设计** | `docs/design/03_API接口设计.md` | Architect |
+| **UI 设计规范** | `docs/design/04_UI设计规范.md` | UI Designer |
+
+### 文档生命周期
+
+- **创建**: Phase 1 由 PM/PO/Architect/UI Designer 填充冻结层文档
+- **冻结**: Phase 1→2 门禁通过后锁定，修改需 ADR
+- **更新**: 演化层文档可随时更新，冻结层文档通过 ADR 更新
+
+**详细规则**: [文档生命周期规则](rules/06_document_lifecycle.md)
+
+---
+
+## 五、需求分析方法
 
 在分析系统功能时，必须按照 **product-requirements 方式进行需求拆解**：
 
@@ -235,6 +267,8 @@ GitHub 推送 → 完成报告
 - [质量门禁](rules/03_quality.md) - 测试覆盖率、代码审查
 - [Agent Team 规则](rules/04_agent_team.md) - 角色映射、技能使用
 - [安全规范](rules/05_security.md) - 安全边界、敏感数据处理
+- [文档生命周期规则](rules/06_document_lifecycle.md) - 文档分层、冻结/演化规则、ADR 流程 🔴
+- [技能触发规则](rules/07_skill_triggers.md) - 技能触发时机、动态调用指令 🔴
 
 **Why**: 模块化减少主文件大小，提高规则可维护性和可发现性
 
@@ -270,6 +304,7 @@ GitHub 推送 → 完成报告
 | react-best-practices | `skills/react-best-practices/SKILL.md` |
 | antfu | `skills/antfu/SKILL.md` |
 | prisma-database-setup | `skills/prisma-database-setup/SKILL.md` |
+| **design-context** 🔴 | `skills/design-context/SKILL.md` 🔴 |
 
 ---
 
@@ -294,6 +329,7 @@ GitHub 推送 → 完成报告
 
 ---
 
-*模板版本: 1.2.0*
-*最后更新: 2026-04-07*
+*模板版本: 2.0.0*
+*最后更新: 2026-04-08*
+*重大变更: 新增文档体系、技能触发规则、design-context 技能*
 *基于: [DataCamp CLAUDE.md Guide](https://www.datacamp.com/tutorial/writing-the-best-claude-md), [eesel AI Best Practices](https://www.eesel.ai/blog/claude-code-best-practices), [FlorianBruniaux Ultimate Guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide)*

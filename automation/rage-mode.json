@@ -35,8 +35,18 @@
       "id": 1,
       "name": "需求分析",
       "autoAdvance": true,
-      "requiredAgents": ["PM", "PO", "Architect"],
-      "qualityGates": ["PRD 完成", "架构设计完成"]
+      "requiredAgents": ["PM", "PO", "Architect", "UI Designer"],
+      "qualityGates": [
+        "PRD 完成",
+        "用户故事完成",
+        "验收标准完成",
+        "架构设计完成",
+        "数据库设计完成",
+        "API 接口设计完成",
+        "UI 设计规范完成",
+        "冻结层文档已审查",
+        "冻结层文档已锁定"
+      ]
     },
     {
       "id": 2,

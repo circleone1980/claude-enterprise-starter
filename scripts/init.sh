@@ -68,6 +68,22 @@ echo -e "${BLUE}[6/6] 复制可选组件...${NC}"
 cp -r "$TEMPLATE_DIR/commands" .claude/ 2>/dev/null || true
 cp -r "$TEMPLATE_DIR/output-styles" .claude/ 2>/dev/null || true
 
+# 创建文档目录结构
+echo -e "${BLUE}[7/7] 创建文档目录结构...${NC}"
+if [ -d "$TEMPLATE_DIR/docs/templates" ]; then
+    mkdir -p docs/{requirements,design,superpowers/{specs,decisions},dev,test,fixes,sql}
+    cp -r "$TEMPLATE_DIR/docs/templates/requirements/"* docs/requirements/ 2>/dev/null || true
+    cp -r "$TEMPLATE_DIR/docs/templates/design/"* docs/design/ 2>/dev/null || true
+    cp -r "$TEMPLATE_DIR/docs/templates/superpowers/"* docs/superpowers/ 2>/dev/null || true
+    cp -r "$TEMPLATE_DIR/docs/templates/dev/"* docs/dev/ 2>/dev/null || true
+    cp -r "$TEMPLATE_DIR/docs/templates/test/"* docs/test/ 2>/dev/null || true
+    cp -r "$TEMPLATE_DIR/docs/templates/fixes/"* docs/fixes/ 2>/dev/null || true
+    cp -r "$TEMPLATE_DIR/docs/templates/sql/"* docs/sql/ 2>/dev/null || true
+    echo -e "${GREEN}  ✓ 文档目录已创建${NC}"
+else
+    echo -e "${YELLOW}  ⚠ 跳过文档目录创建（模板文件不存在）${NC}"
+fi
+
 # 创建本地配置
 echo -e "${YELLOW}创建本地配置文件...${NC}"
 if [ -f "$TEMPLATE_DIR/CLAUDE.local.md.example" ]; then
