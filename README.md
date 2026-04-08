@@ -9,7 +9,7 @@
 > 🚀 Enterprise-grade Claude Code configuration template with Agent Team orchestration, Rage Mode automation, TDD workflow, and production-ready configurations.
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-blue)](https://code.claude.com)
-[![Version](https://img.shields.io/badge/Version-1.1.0-green)](./CLAUDE.md)
+[![Version](https://img.shields.io/badge/Version-2.0.0-green)](./CLAUDE.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 ### Features
@@ -20,7 +20,9 @@
 | **Rage Mode** 🔴 | Full automation - auto GitHub push, agent health monitoring, phase advancement |
 | **TDD Workflow** | Enforced Test-Driven Development with Red-Green-Refactor cycle |
 | **Quality Gates** | 4-stage verification: functionality, code review, testing, documentation |
-| **Skills System** | 9+ integrated skills: TDD, UI/UX, Prisma, React best practices |
+| **Skills System** | 10+ integrated skills: TDD, UI/UX, Prisma, React best practices, design-context |
+| **Document System** 🆕 | Frozen/Evolution/ADR document layers with design-context skill for auto-loading |
+| **Skill Triggers** 🆕 | 4-layer skill triggering mechanism (Rules + Skill + Task + Dynamic) |
 | **Commands** | Custom slash commands: `/commit`, `/pr`, `/review` |
 | **Output Styles** | 3 output modes: terse, detailed, enterprise |
 
@@ -44,29 +46,50 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 .claude/
 ├── CLAUDE.md              # Core instructions
 ├── settings.json          # Permissions, hooks, configs
-├── rules/                 # Modular rules (6 files)
-├── skills/                # Custom skills (9+ skills)
+├── rules/                 # Modular rules (8 files)
+│   ├── 00_global.md       # Language, startup constraints
+│   ├── 01_development.md  # Development constraints
+│   ├── 02_database.md     # Database standards
+│   ├── 03_quality.md      # Quality gates
+│   ├── 04_agent_team.md   # Agent Team rules
+│   ├── 05_security.md     # Security standards
+│   ├── 06_document_lifecycle.md  # 🆕 Document lifecycle (Frozen/Evolution/ADR)
+│   └── 07_skill_triggers.md      # 🆕 Skill trigger rules
+├── skills/                # Custom skills (10+ skills)
+│   ├── design-context/    # 🆕 Auto-load design docs by role
+│   ├── tdd/               # TDD workflow
+│   ├── code-review/       # Code review
+│   └── ...
 ├── agents/                # Agent definitions (9 roles)
 ├── commands/              # Slash commands
 ├── output-styles/         # Output style variants
 ├── agent-memory/          # Persistent agent memory
 ├── automation/            # Rage mode configs
 └── hooks/                 # Hook scripts
+
+docs/                      # 🆕 Project documentation (from templates)
+├── requirements/          # Frozen layer: PRD, user stories, acceptance criteria
+├── design/                # Frozen layer: Architecture, DB, API, UI design
+├── superpowers/           # ADR + brainstorming records
+├── dev/                   # Evolution layer: Dev guides, coding standards
+├── test/                  # Evolution layer: Test plans, cases, reports
+├── fixes/                 # Evolution layer: Changelog, fix records
+└── sql/                   # Database scripts
 ```
 
 ### Agent Team Roles
 
 | Role | Responsibilities | Required Skills |
 |------|------------------|-----------------|
-| PM | Project management, task distribution | product-requirements, sprint-planning |
-| PO | Requirements analysis, user stories | product-requirements, user-onboarding |
-| Architect | System design, technical solutions | writing-plans 🔴, react-best-practices 🔴, code-review |
-| UI Designer | Interface design, interaction | ui-ux-pro-max |
-| Frontend | Frontend development | tdd, antfu, ui-ux-pro-max |
-| Backend | Backend development | tdd, prisma-database-setup |
-| QA | Testing, verification | tdd, code-review |
-| DevOps | Deployment, CI/CD | code-review |
-| Product Experience | User perspective testing | user-onboarding, ui-ux-pro-max |
+| PM | Project management, task distribution | product-requirements, sprint-planning, **design-context** 🆕 |
+| PO | Requirements analysis, user stories | product-requirements, user-onboarding, **design-context** 🆕 |
+| Architect | System design, technical solutions | writing-plans 🔴, react-best-practices 🔴, code-review, **design-context** 🆕 |
+| UI Designer | Interface design, interaction | ui-ux-pro-max, **design-context** 🆕 |
+| Frontend | Frontend development | tdd, antfu, ui-ux-pro-max, **design-context** 🆕 |
+| Backend | Backend development | tdd, prisma-database-setup, **design-context** 🆕 |
+| QA | Testing, verification | tdd, code-review, **design-context** 🆕 |
+| DevOps | Deployment, CI/CD | code-review, **design-context** 🆕 |
+| Product Experience | User perspective testing | user-onboarding, ui-ux-pro-max, **design-context** 🆕 |
 
 ### Rage Mode Features
 
@@ -117,7 +140,9 @@ Agent --name "Backend-1" \
 | **狂暴模式** 🔴 | 全自动开发 - 自动 GitHub 推送、Agent 监控、阶段推进 |
 | **TDD 工作流** | 强制测试驱动开发，Red-Green-Refactor 循环 |
 | **质量门禁** | 4 阶段验证：功能、代码审查、测试、文档 |
-| **技能系统** | 9+ 集成技能：TDD、UI/UX、Prisma、React 最佳实践 |
+| **技能系统** | 10+ 集成技能：TDD、UI/UX、Prisma、React 最佳实践、design-context |
+| **文档体系** 🆕 | 冻结层/演化层/ADR 三层文档体系，design-context 技能自动加载 |
+| **技能触发** 🆕 | 四层技能触发机制（Rules + Skill + Task + Dynamic） |
 | **命令系统** | 自定义斜杠命令：`/commit`、`/pr`、`/review` |
 | **输出风格** | 3 种输出模式：简洁、详细、企业级 |
 
@@ -141,29 +166,37 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 .claude/
 ├── CLAUDE.md              # 核心指令文件
 ├── settings.json          # 权限、钩子、配置
-├── rules/                 # 模块化规则（6 个文件）
-├── skills/                # 自定义技能（9+ 技能）
+├── rules/                 # 模块化规则（8 个文件）
+│   ├── 06_document_lifecycle.md  # 🆕 文档生命周期（冻结/演化/ADR）
+│   └── 07_skill_triggers.md      # 🆕 技能触发规则
+├── skills/                # 自定义技能（10+ 技能）
+│   ├── design-context/    # 🆕 按角色自动加载设计文档
+│   └── ...
 ├── agents/                # 代理定义（9 个角色）
-├── commands/              # 斜杠命令
-├── output-styles/         # 输出风格变体
-├── agent-memory/          # 代理持久记忆
-├── automation/            # 狂暴模式配置
-└── hooks/                 # 钩子脚本
+└── ...
+
+docs/                      # 🆕 项目文档（来自模板）
+├── requirements/          # 冻结层：PRD、用户故事、验收标准
+├── design/                # 冻结层：架构、数据库、API、UI 设计
+├── superpowers/           # ADR + 脑暴记录
+├── dev/                   # 演化层：开发指南、编码规范
+├── test/                  # 演化层：测试计划、用例、报告
+└── ...
 ```
 
 ### Agent Team 角色
 
 | 角色 | 职责 | 必用技能 |
 |------|------|---------|
-| PM | 项目管理、任务分配 | product-requirements, sprint-planning |
-| PO | 需求分析、用户故事 | product-requirements, user-onboarding |
-| 架构师 | 系统设计、技术方案 | writing-plans 🔴, react-best-practices 🔴, code-review |
-| UI 设计师 | 界面设计、交互规范 | ui-ux-pro-max |
-| 前端开发 | 前端开发 | tdd, antfu, ui-ux-pro-max |
-| 后端开发 | 后端开发 | tdd, prisma-database-setup |
-| QA | 测试验证 | tdd, code-review |
-| DevOps | 部署运维 | code-review |
-| 产品体验师 | 用户视角测试 | user-onboarding, ui-ux-pro-max |
+| PM | 项目管理、任务分配 | product-requirements, sprint-planning, **design-context** 🆕 |
+| PO | 需求分析、用户故事 | product-requirements, user-onboarding, **design-context** 🆕 |
+| 架构师 | 系统设计、技术方案 | writing-plans 🔴, react-best-practices 🔴, code-review, **design-context** 🆕 |
+| UI 设计师 | 界面设计、交互规范 | ui-ux-pro-max, **design-context** 🆕 |
+| 前端开发 | 前端开发 | tdd, antfu, ui-ux-pro-max, **design-context** 🆕 |
+| 后端开发 | 后端开发 | tdd, prisma-database-setup, **design-context** 🆕 |
+| QA | 测试验证 | tdd, code-review, **design-context** 🆕 |
+| DevOps | 部署运维 | code-review, **design-context** 🆕 |
+| 产品体验师 | 用户视角测试 | user-onboarding, ui-ux-pro-max, **design-context** 🆕 |
 
 ### 狂暴模式功能
 
@@ -238,5 +271,5 @@ MIT License
 
 ---
 
-*Template Version: 1.1.0*
-*Last Updated: 2026-04-05*
+*Template Version: 2.0.0*
+*Last Updated: 2026-04-08*
