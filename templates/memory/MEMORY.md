@@ -60,13 +60,33 @@
 
 ---
 
+## 文档体系
+
+### 冻结层文档
+- **PRD**: `docs/requirements/PRD.md`
+- **用户故事**: `docs/requirements/user-stories.md`
+- **验收标准**: `docs/requirements/acceptance-criteria.md`
+- **系统架构设计**: `docs/design/01_系统架构设计.md`
+- **数据库设计**: `docs/design/02_数据库设计.md`
+- **API 接口设计**: `docs/design/03_API接口设计.md`
+- **UI 设计规范**: `docs/design/04_UI设计规范.md`
+
+### ADR 文档
+- **ADR 目录**: `docs/superpowers/decisions/`
+
+**详细规则**: [文档生命周期规则](.claude/rules/06_document_lifecycle.md)
+
+---
+
 ## 快速恢复
 
 ```bash
 1. 读取 CLAUDE.md
-2. 读取开发计划: plans/development-plan.md
-3. 检查 Agent 状态: /agents
-4. 检查任务状态: /tasks
+2. 读取设计文档摘要: Skill design-context --role {角色}
+3. 读取开发计划: plans/development-plan.md
+4. 检查冻结层文档: docs/requirements/ 和 docs/design/
+5. 检查 Agent 状态: /agents
+6. 检查任务状态: /tasks
 ```
 
 ---

@@ -22,12 +22,38 @@ team: Development
 | **Skill** | `code-review` | 代码审查 |
 | **Agent** | `everything-claude-code:typescript-reviewer` | TypeScript 代码审查 |
 
+## 必读文档与技能触发 🔴
+
+### 启动时必调
+```bash
+# 1. 获取设计约束（自动读取相关设计文档）
+Skill design-context --role frontend
+
+# 2. 获取 UI 最佳实践
+Skill ui-ux-pro-max --stack react
+
+# 3. 获取前端工具链规范
+Skill antfu
+
+# 4. 启动 TDD 流程
+Skill tdd
+```
+
+### 动态技能触发
+- 遇到 **设计困惑/方案选型** → 调用 `Skill brainstorming`
+- 遇到 **Bug** → 调用 `Skill systematic-debugging`
+- 完成代码 → 调用 `Skill verification-before-completion`
+- 完成后 → 调用 `Skill code-review`
+
+---
+
 ## 工作流程 (TDD 强制)
 
-1. **设计理解** - 调用 `ui-ux-pro-max --stack react` 获取 React 最佳实践
-2. **工具规范** - 调用 `antfu` 获取前端工具链规范（ESLint、TypeScript、pnpm）
-3. **TDD 启动** - 调用 `tdd` skill 启动 TDD 流程
-4. **Red** - 编写失败的测试用例
+1. **🔴 设计理解** - 调用 `Skill design-context --role frontend` 获取设计约束
+2. **UI 最佳实践** - 调用 `ui-ux-pro-max --stack react` 获取 React 最佳实践
+3. **工具规范** - 调用 `antfu` 获取前端工具链规范（ESLint、TypeScript、pnpm）
+4. **🔴 TDD 启动** - 调用 `tdd` skill 启动 TDD 流程
+5. **Red** - 编写失败的测试用例
 5. **Green** - 实现代码使测试通过
 6. **Refactor** - 重构代码，保持测试通过
 7. **代码审查** - 使用 `typescript-reviewer` 审查代码

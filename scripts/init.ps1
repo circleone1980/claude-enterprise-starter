@@ -72,6 +72,30 @@ if (Test-Path $OutputStylesDir) {
     Copy-Item -Path $OutputStylesDir -Destination $ClaudeDir -Recurse -Force
 }
 
+# 创建文档目录结构
+Write-Host "[7/7] 创建文档目录结构..." -ForegroundColor Blue
+$DocsTemplatesDir = Join-Path $TemplateDir "docs\templates"
+if (Test-Path $DocsTemplatesDir) {
+    $DocsDirs = @("requirements", "design", "superpowers\specs", "superpowers\decisions", "dev", "test", "fixes", "sql")
+    foreach ($Dir in $DocsDirs) {
+        $TargetDocsDir = Join-Path $TargetDir "docs\$Dir"
+        New-Item -ItemType Directory -Path $TargetDocsDir -Force | Out-Null
+    }
+
+    # 复制模板文件
+    Copy-Item -Path (Join-Path $DocsTemplatesDir "requirements\*") -Destination (Join-Path $TargetDir "docs\requirements") -Force -ErrorAction SilentlyContinue
+    Copy-Item -Path (Join-Path $DocsTemplatesDir "design\*") -Destination (Join-Path $TargetDir "docs\design") -Force -ErrorAction SilentlyContinue
+    Copy-Item -Path (Join-Path $DocsTemplatesDir "superpowers\*") -Destination (Join-Path $TargetDir "docs\superpowers") -Recurse -Force -ErrorAction SilentlyContinue
+    Copy-Item -Path (Join-Path $DocsTemplatesDir "dev\*") -Destination (Join-Path $TargetDir "docs\dev") -Force -ErrorAction SilentlyContinue
+    Copy-Item -Path (Join-Path $DocsTemplatesDir "test\*") -Destination (Join-Path $TargetDir "docs\test") -Force -ErrorAction SilentlyContinue
+    Copy-Item -Path (Join-Path $DocsTemplatesDir "fixes\*") -Destination (Join-Path $TargetDir "docs\fixes") -Force -ErrorAction SilentlyContinue
+    Copy-Item -Path (Join-Path $DocsTemplatesDir "sql\*") -Destination (Join-Path $TargetDir "docs\sql") -Force -ErrorAction SilentlyContinue
+
+    Write-Host "  ✓ 文档目录已创建" -ForegroundColor Green
+} else {
+    Write-Host "  ⚠ 跳过文档目录创建（模板文件不存在）" -ForegroundColor Yellow
+}
+
 # 创建本地配置
 Write-Host "创建本地配置文件..." -ForegroundColor Yellow
 

@@ -1,0 +1,134 @@
+{
+  "skill_name": "design-context",
+  "evals": [
+    {
+      "id": 1,
+      "name": "frontend-role-test",
+      "prompt": "我是前端开发，需要了解项目的设计约束，请帮我读取相关设计文档。",
+      "expected_output": "应返回 Frontend 角色的设计上下文摘要，包含架构约束、API 约束、数据库约束、UI 约束和编码约束。",
+      "files": [],
+      "assertions": [
+        {
+          "name": "包含架构约束",
+          "description": "输出应包含系统架构设计部分",
+          "type": "contains",
+          "expected": "## 🏗️ 架构约束"
+        },
+        {
+          "name": "包含 API 约束",
+          "description": "输出应包含 API 接口设计部分",
+          "type": "contains",
+          "expected": "## 🔌 API 约束"
+        },
+        {
+          "name": "包含数据库约束",
+          "description": "输出应包含数据库设计部分",
+          "type": "contains",
+          "expected": "## 🗄️ 数据库约束"
+        },
+        {
+          "name": "包含 UI 约束",
+          "description": "输出应包含 UI 设计规范部分",
+          "type": "contains",
+          "expected": "## 🎨 UI 约束"
+        },
+        {
+          "name": "包含编码约束",
+          "description": "输出应包含编码规范部分",
+          "type": "contains",
+          "expected": "## 📝 编码约束"
+        },
+        {
+          "name": "包含角色标识",
+          "description": "输出标题应标明角色为 Frontend",
+          "type": "contains",
+          "expected": "# 设计上下文摘要 - Frontend"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "backend-role-test",
+      "prompt": "我是后端开发，需要了解项目的设计约束，请帮我读取相关设计文档。",
+      "expected_output": "应返回 Backend 角色的设计上下文摘要，包含架构约束、API 约束、数据库约束和编码约束。",
+      "files": [],
+      "assertions": [
+        {
+          "name": "包含架构约束",
+          "description": "输出应包含系统架构设计部分",
+          "type": "contains",
+          "expected": "## 🏗️ 架构约束"
+        },
+        {
+          "name": "包含 API 约束",
+          "description": "输出应包含 API 接口设计部分",
+          "type": "contains",
+          "expected": "## 🔌 API 约束"
+        },
+        {
+          "name": "包含数据库约束",
+          "description": "输出应包含完整的数据库设计（包括表结构、字段约束）",
+          "type": "contains",
+          "expected": "## 🗄️ 数据库约束"
+        },
+        {
+          "name": "包含编码约束",
+          "description": "输出应包含编码规范部分",
+          "type": "contains",
+          "expected": "## 📝 编码约束"
+        },
+        {
+          "name": "包含角色标识",
+          "description": "输出标题应标明角色为 Backend",
+          "type": "contains",
+          "expected": "# 设计上下文摘要 - Backend"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "architect-role-test",
+      "prompt": "我是架构师，需要了解项目的所有设计文档，请帮我读取相关设计文档。",
+      "expected_output": "应返回 Architect 角色的设计上下文摘要，包含所有设计文档和 ADR。",
+      "files": [],
+      "assertions": [
+        {
+          "name": "包含架构约束",
+          "description": "输出应包含系统架构设计部分",
+          "type": "contains",
+          "expected": "## 🏗️ 架构约束"
+        },
+        {
+          "name": "包含 API 约束",
+          "description": "输出应包含 API 接口设计部分",
+          "type": "contains",
+          "expected": "## 🔌 API 约束"
+        },
+        {
+          "name": "包含数据库约束",
+          "description": "输出应包含数据库设计部分",
+          "type": "contains",
+          "expected": "## 🗄️ 数据库约束"
+        },
+        {
+          "name": "包含 UI 约束",
+          "description": "输出应包含 UI 设计规范部分",
+          "type": "contains",
+          "expected": "## 🎨 UI 约束"
+        },
+        {
+          "name": "包含角色标识",
+          "description": "输出标题应标明角色为 Architect",
+          "type": "contains",
+          "expected": "# 设计上下文摘要 - Architect"
+        },
+        {
+          "name": "包含文档完整性",
+          "description": "输出应包含文档完整性统计",
+          "type": "contains",
+          "expected": "*文档完整性:"
+        }
+      ]
+    }
+  ]
+}
