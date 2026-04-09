@@ -368,6 +368,7 @@ GitHub 推送 → 完成报告
 | prisma-database-setup | `skills/prisma-database-setup/SKILL.md` |
 | design-context 🔴 | `skills/design-context/SKILL.md` |
 | ui-style-selector | `skills/ui-style-selector/SKILL.md` |
+| **writing-plans** | `skills/writing-plans/SKILL.md` |
 | **springboot-patterns** 🔴 | `skills/springboot-patterns/SKILL.md` |
 | **springboot-tdd** 🔴 | `skills/springboot-tdd/SKILL.md` |
 | **springboot-security** | `skills/springboot-security/SKILL.md` |

@@ -1,6 +1,6 @@
 # Claude Enterprise Starter 使用手册
 
-> 版本: 2.1.0 | 最后更新: 2026-04-09
+> 版本: 2.2.0 | 最后更新: 2026-04-09
 
 本手册帮助团队成员快速上手 Claude Enterprise Starter 模板项目。
 
@@ -20,7 +20,7 @@ Claude Enterprise Starter 是一个**企业级 Claude Code 配置模板**，将 
 | 需求理解偏差导致返工 | PM/PO/Architect 分角色协作，冻结层文档 |
 | 前后端风格不统一 | 固化技术栈 + UI 风格选择机制 |
 | 大型项目难以管理 | 5 阶段开发流程 + Agent 并行开发 |
-| 重复造轮子 | 13 个内置技能覆盖常见开发场景 |
+| 重复造轮子 | 27 个内置技能覆盖常见开发场景 |
 
 ### 核心理念
 
@@ -145,11 +145,11 @@ CLAUDE.local.md
 
 ### 3.3 技能系统 (`skills/`)
 
-13 个自定义技能，详见[第五章](#五技能系统skills)。
+27 个自定义技能，详见[第五章](#五技能系统skills)。
 
 ### 3.4 代理系统 (`agents/`)
 
-9 个角色定义文件，每个包含：
+13 个角色定义文件，每个包含：
 - 角色职责描述
 - 必调技能列表
 - 标准操作流程（SOP）
@@ -173,6 +173,15 @@ CLAUDE.local.md
 | `auto-github-push.js` | 每 30 分钟 | 自动推送代码 |
 | `agent-health-monitor.js` | 每 5 分钟 | Agent 健康检查 |
 | `auto-start-agents.js` | TeamCreate 后 | 自动启动 Agent |
+| `block-no-verify.js` | Bash 前 | 阻止 git push --no-verify / --force |
+| `commit-quality.js` | Bash 前 | 提交前 console.log + 密钥泄露检测 |
+| `suggest-compact.js` | Edit/Write 前 | 建议压缩上下文（逻辑节点） |
+| `config-protection.js` | Edit/Write 前 | 阻止修改 linter/formatter/构建配置 |
+| `edit-accumulator.js` | Edit/Write 后 | 累积编辑文件路径，供 Stop 时批量处理 |
+| `console-warn.js` | Edit/Write 后 | 检测编辑文件中的 console.log |
+| `format-typecheck.js` | Stop 时 | 批量格式化 + 类型检查所有编辑过的文件 |
+| `doc-sync-check.js` | Stop 时 | 提醒同步文档（README.md / GUIDE.md） |
+| `session-evaluate.js` | Stop 时 | 评估会话可提取模式 |
 
 ### 3.7 文档体系 (`docs/`)
 
@@ -199,7 +208,7 @@ CLAUDE.md 是 Claude Code 的主要配置文件，包含 12 个章节：
 | 八、狂暴模式 | 自动化能力、阶段推进、安全边界 |
 | 九、规则加载 | 8 个模块化规则文件 |
 | 十、代理定义 | 9 个角色定义文件路径 |
-| 十一、技能文件 | 13 个技能文件路径 |
+| 十一、技能文件 | 27 个技能文件路径 |
 | 十二、验证与信任 | 验证策略、信任校准 |
 
 ### 4.2 settings.json — 权限与钩子
@@ -273,6 +282,21 @@ CLAUDE.md 是 Claude Code 的主要配置文件，包含 12 个章节：
 | **antfu** | 背景知识 | - | paths: *.ts | ESLint/TS/pnpm/Vitest 规范 |
 | **prisma-database-setup** | 背景知识 | - | paths: *.prisma | 数据库配置指导 |
 | **design-context** | 辅助工具 | low | 否 | 按角色加载设计文档 |
+| **springboot-patterns** | 流程控制 | high | 否 | SpringBoot 架构模式 |
+| **springboot-tdd** | 流程控制 | high | 否 | SpringBoot TDD |
+| **springboot-security** | 流程控制 | high | 否 | SpringBoot 安全配置 |
+| **jpa-patterns** | 背景知识 | - | 否 | JPA 数据访问模式 |
+| **java-coding-standards** | 背景知识 | - | 否 | Java 编码规范 |
+| **writing-plans** | 流程控制 | high | 否 | 架构设计与实施计划 |
+| **llm-integration** | 背景知识 | - | 否 | LLM API 集成模式 |
+| **vlm-integration** | 背景知识 | - | 否 | VLM 视觉语言模型集成 |
+| **workflow-engine** | 背景知识 | high | 否 | 工作流编排模式 |
+| **verification-loop** | 流程控制 | high | 否 | 6 阶段验证循环 |
+| **search-first** | 流程控制 | medium | 否 | 编码前先研究 |
+| **security-review** | 流程控制 | high | 否 | 10 域安全审查 |
+| **strategic-compact** | 辅助工具 | low | 否 | 战略性上下文压缩 |
+| **gan-harness** | 流程控制 | high | 否 | GAN 生成对抗网络式开发 |
+| **continuous-learning** | 辅助工具 | low | 否 | 持续学习本能系统 |
 
 ### 5.2 Frontmatter 配置说明
 
@@ -348,7 +372,7 @@ Skill product-requirements --effort high
 
 ## 六、Agent Team 系统
 
-### 6.1 九个角色
+### 6.1 十三个角色
 
 | 角色 | 职责 | Agent 类型 | 可并行 |
 |------|------|-----------|--------|
@@ -357,10 +381,14 @@ Skill product-requirements --effort high
 | **Architect** | 系统设计、技术选型、架构规划 | architect | 是 |
 | **UI Designer** | 界面设计、交互规范、风格选择 | general-purpose | 是 |
 | **Frontend** | 前端开发（React + TS + Vite） | typescript-reviewer | 是 ×3 |
-| **Backend** | 后端开发（Python/FastAPI） | python-reviewer | 是 ×3 |
+| **Backend-Java** | Java 后端开发（SpringBoot + JPA） | java-reviewer | 是 ×2 |
+| **Backend-Python** | Python 后端开发（Prisma + LLM） | python-reviewer | 是 ×1 |
 | **QA** | 测试验证、Bug 追踪 | tdd-guide | 否 |
 | **DevOps** | 部署、CI/CD、GitHub 管理 | general-purpose | 否 |
 | **产品体验师** | 用户视角测试、体验评估 | planner | 否 |
+| **GAN Planner** | 产品规格设计、功能拆解 | general-purpose | 否 |
+| **GAN Generator** | 代码实现、开发服务器维护 | general-purpose | 是 |
+| **GAN Evaluator** | 质量评估、评分反馈 | general-purpose | 否 |
 
 ### 6.2 Agent 类型说明
 
@@ -370,16 +398,29 @@ Skill product-requirements --effort high
 | `architect` | 架构设计 | 读写 + 系统设计工具 |
 | `typescript-reviewer` | 前端开发 | 全部工具，专注 TS/React |
 | `python-reviewer` | 后端开发 | 全部工具，专注 Python |
+| `java-reviewer` | Java 后端开发 | 全部工具，专注 Java/SpringBoot |
 | `tdd-guide` | 测试 | 全部工具，专注测试 |
 | `general-purpose` | 通用 | 全部工具 |
 
 ### 6.3 启动 Agent 的标准格式
 
 ```bash
-# 后端开发
-Agent --name "Backend-1" \
+# Java 后端开发
+Agent --name "Backend-Java-1" \
+  --subagent-type "everything-claude-code:java-reviewer" \
+  --prompt "你是 Java 后端开发。必须遵循以下流程：
+    1. 🔴 调用 Skill springboot-patterns 获取 SpringBoot 架构模式
+    2. 🔴 调用 Skill springboot-tdd 启动 TDD 流程
+    3. 编写测试用例（Red 阶段）
+    4. 实现代码（Green 阶段）
+    5. 重构优化（Refactor 阶段）
+    6. 调用 Skill code-review 审查代码
+    任务：实现用户注册 REST API"
+
+# Python 后端开发
+Agent --name "Backend-Python-1" \
   --subagent-type "everything-claude-code:python-reviewer" \
-  --prompt "你是后端开发。必须遵循以下流程：
+  --prompt "你是 Python 后端开发。必须遵循以下流程：
     1. 调用 Skill design-context --role backend 获取设计约束
     2. 调用 Skill tdd 启动 TDD 流程
     3. 调用 Skill prisma-database-setup 获取数据库配置
@@ -424,9 +465,10 @@ Frontend-1 ─┐
 Frontend-2 ─┤  ← 3 个前端 Agent 并行处理不同 Feature
 Frontend-3 ─┘
 
-Backend-1  ─┐
-Backend-2  ─┤  ← 3 个后端 Agent 并行处理不同 Feature
-Backend-3  ─┘
+Backend-Java-1  ─┐
+Backend-Java-2  ─┤  ← 2 个 Java 后端 Agent 并行
+
+Backend-Python-1 ─── ← 1 个 Python 后端 Agent
 ```
 
 使用 Git worktrees 实现并行开发隔离：
@@ -451,9 +493,10 @@ Phase 1: 需求分析（PM / PO / Architect / UI Designer 并行）
 │  Architect → /writing-plans → /ui-style-selector（确认 UI 风格）
 │  门禁: PRD + 用户故事 + 验收标准 + 架构设计 + DB + API + UI 设计 + 冻结层锁定
 ↓
-Phase 2: 开发实现（Frontend ×3 / Backend ×3 并行）
+Phase 2: 开发实现（Frontend ×3 / Backend-Java ×2 / Backend-Python ×1 并行）
 │  Frontend → /design-context → /ui-ux-pro-max → /tdd → 开发 → /code-review
-│  Backend → /design-context → /prisma-database-setup → /tdd → 开发 → /code-review
+│  Backend-Java → /springboot-patterns → /springboot-tdd → /jpa-patterns → 开发 → /code-review
+│  Backend-Python → /design-context → /prisma-database-setup → /tdd → 开发 → /code-review
 │  自动激活: 编辑 .tsx → react-best-practices + antfu; 编辑 .prisma → prisma-database-setup
 │  内置: 大型重构(5+文件) → /batch
 │  门禁: 代码实现完成 + 单元测试通过 + 代码审查通过
@@ -795,4 +838,4 @@ Skill content and instructions here...
 
 ---
 
-*使用手册版本: 2.1.0 | 项目模板: [GitHub](https://github.com/circleone1980/claude-enterprise-starter)*
+*使用手册版本: 2.2.0 | 项目模板: [GitHub](https://github.com/circleone1980/claude-enterprise-starter)*

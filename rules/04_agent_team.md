@@ -31,10 +31,24 @@
 - `antfu` 🔴 - **核心技能**，ESLint/TypeScript/pnpm/Vitest
 - Superpowers `test-driven-development` - TDD 方法论
 
-### Backend (后端开发)
+### Backend-Java (Java 后端开发)
+- `springboot-patterns` 🔴 - **核心技能**，SpringBoot 架构模式
+- `springboot-tdd` 🔴 - **核心技能**，SpringBoot TDD
+- `springboot-security` - SpringBoot 安全配置
+- `jpa-patterns` - JPA 数据访问模式
+- `java-coding-standards` - Java 编码规范
+- `llm-integration` - LLM API 集成
+- `vlm-integration` - VLM 视觉语言模型集成
+- `workflow-engine` - 工作流编排
+- `code-review` - 代码审查
+
+### Backend-Python (Python 后端开发)
 - `tdd` 🔴 - **核心技能**，Red-Green-Refactor
 - `prisma-database-setup` 🔴 - **核心技能**，数据库配置
-- Superpowers `test-driven-development` - TDD 方法论
+- `llm-integration` 🔴 - **核心技能**，LLM API 集成
+- `vlm-integration` 🔴 - **核心技能**，VLM 视觉语言模型集成
+- `workflow-engine` - 工作流编排
+- `code-review` - 代码审查
 
 ### QA (测试工程师)
 - `tdd` - TDD 方法论
@@ -55,15 +69,26 @@
 
 ## 开发前检查清单
 
-**后端开发**:
-- [ ] 1. 🔴 调用 `Skill design-context --role backend` 获取设计约束
-- [ ] 2. 🔴 调用 `Skill tdd` 启动 TDD 流程
-- [ ] 3. 调用 `Skill prisma-database-setup` 获取数据库配置
+**Java 后端开发**:
+- [ ] 1. 🔴 调用 `Skill springboot-patterns` 获取 SpringBoot 架构模式
+- [ ] 2. 🔴 调用 `Skill springboot-tdd` 启动 TDD 流程
+- [ ] 3. 调用 `Skill jpa-patterns` 获取 JPA 数据访问指导
 - [ ] 4. 编写测试用例（Red 阶段）
 - [ ] 5. 实现代码（Green 阶段）
 - [ ] 6. 重构优化（Refactor 阶段）
 - [ ] 7. 调用 `Skill code-review` 审查代码
 - [ ] 8. 确保测试覆盖率 >80%
+
+**Python 后端开发**:
+- [ ] 1. 🔴 调用 `Skill design-context --role backend` 获取设计约束
+- [ ] 2. 🔴 调用 `Skill tdd` 启动 TDD 流程
+- [ ] 3. 调用 `Skill prisma-database-setup` 获取数据库配置
+- [ ] 4. 调用 `Skill llm-integration` 获取 LLM 集成指导（如需）
+- [ ] 5. 编写测试用例（Red 阶段）
+- [ ] 6. 实现代码（Green 阶段）
+- [ ] 7. 重构优化（Refactor 阶段）
+- [ ] 8. 调用 `Skill code-review` 审查代码
+- [ ] 9. 确保测试覆盖率 >80%
 
 **前端开发**:
 - [ ] 1. 🔴 调用 `Skill design-context --role frontend` 获取设计约束

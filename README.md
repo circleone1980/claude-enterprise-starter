@@ -9,28 +9,30 @@
 > 🚀 Enterprise-grade Claude Code configuration template with Agent Team orchestration, Rage Mode automation, TDD workflow, and production-ready configurations.
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-blue)](https://code.claude.com)
-[![Version](https://img.shields.io/badge/Version-2.1.0-green)](./CLAUDE.md)
+[![Version](https://img.shields.io/badge/Version-2.2.0-green)](./CLAUDE.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 ### Features
 
 | Feature | Description |
 |---------|-------------|
-| **Agent Team** | 9 specialized roles collaborating in parallel (PM, PO, Architect, Designer, Frontend, Backend, QA, DevOps, Product Experience) |
+| **Agent Team** | 13 specialized roles collaborating in parallel (PM, PO, Architect, Designer, Frontend, Backend-Java, Backend-Python, QA, DevOps, Product Experience, GAN Planner/Generator/Evaluator) |
 | **Rage Mode** 🔴 | Full automation - auto GitHub push, agent health monitoring, phase advancement |
 | **TDD Workflow** | Enforced Test-Driven Development with Red-Green-Refactor cycle |
 | **Quality Gates** | 4-stage verification: functionality, code review, testing, documentation |
-| **Skills System** | 13 integrated skills with advanced frontmatter configuration |
-| **Frontmatter Config** 🆕 | `effort`, `paths`, `allowed-tools`, `user-invocable` for precise skill control |
-| **UI Style Selector** 🆕 | 60 brand design templates with auto-scenario matching |
-| **Tech Stack** 🆕 | React + TypeScript + Vite (fixed), no alternatives allowed |
-| **Built-in Skills** 🆕 | `/batch` (parallel refactor), `/simplify` (code quality review) |
-| **SSOT Architecture** 🆕 | `automation/agent-orchestration.json` as single source of truth |
-| **Per-Role SOP** 🆕 | Standard Operating Procedure for all 9 agent roles |
+| **Skills System** | 27 integrated skills with advanced frontmatter configuration |
+| **Backend Dual-Stack** 🆕 | Java + Python backend (SpringBoot + Prisma + LLM + VLM + Workflow) |
+| **GAN Harness** 🆕 | Planner→Generator→Evaluator loop for quality-driven development |
+| **Hook Reinforcement** 🆕 | 14 hooks covering full lifecycle (commit quality, config protection, edit accumulator) |
+| **Continuous Learning** 🆕 | Instinct-based learning system with confidence scoring |
+| **Frontmatter Config** | `effort`, `paths`, `allowed-tools`, `user-invocable` for precise skill control |
+| **UI Style Selector** | 60 brand design templates with auto-scenario matching |
+| **Tech Stack** | React + TypeScript + Vite (frontend fixed), Java + SpringBoot + Python (backend) |
+| **SSOT Architecture** | `automation/agent-orchestration.json` as single source of truth |
+| **Per-Role SOP** | Standard Operating Procedure for all 13 agent roles |
 | **Document System** | Frozen/Evolution/ADR document layers with design-context skill for auto-loading |
 | **Skill Triggers** | Global phase flowchart (Phase 1-5) + dynamic trigger rules |
 | **Commands** | Custom slash commands: `/commit`, `/pr`, `/review` |
-| **Output Styles** | 3 output modes: terse, detailed, enterprise |
 
 ### Quick Start
 
@@ -62,7 +64,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── 05_security.md               # Security standards
 │   ├── 06_document_lifecycle.md     # Document lifecycle (Frozen/Evolution/ADR)
 │   └── 07_skill_triggers.md         # Skill triggers + global phase flowchart
-├── skills/                          # Custom skills (13 skills)
+├── skills/                          # Custom skills (27 skills)
 │   ├── ui-style-selector/           # UI style auto-selection (60 templates)
 │   ├── design-context/              # Auto-load design docs by role
 │   ├── tdd/                         # TDD workflow
@@ -75,17 +77,35 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── ui-ux-pro-max/               # UI/UX best practices (paths: *.tsx)
 │   ├── react-best-practices/        # React patterns (auto-activate on .tsx)
 │   ├── antfu/                       # ESLint/TS/pnpm/Vitest (auto-activate)
-│   └── prisma-database-setup/       # Prisma DB config (paths: *.prisma)
-├── agents/                          # Agent definitions with SOP (9 roles)
+│   ├── prisma-database-setup/       # Prisma DB config (paths: *.prisma)
+│   ├── springboot-patterns/         # SpringBoot architecture patterns 🆕
+│   ├── springboot-tdd/              # SpringBoot TDD workflow 🆕
+│   ├── springboot-security/         # SpringBoot security config 🆕
+│   ├── jpa-patterns/                # JPA data access patterns 🆕
+│   ├── java-coding-standards/       # Java coding standards 🆕
+│   ├── llm-integration/             # LLM API integration 🆕
+│   ├── vlm-integration/             # VLM vision model integration 🆕
+│   ├── workflow-engine/             # Workflow orchestration 🆕
+│   ├── verification-loop/           # 6-phase verification cycle 🆕
+│   ├── search-first/                # Research before coding 🆕
+│   ├── security-review/             # 10-domain security audit 🆕
+│   ├── strategic-compact/           # Strategic context compression 🆕
+│   ├── gan-harness/                 # GAN development loop 🆕
+│   └── continuous-learning/         # Instinct-based learning 🆕
+├── agents/                          # Agent definitions with SOP (14 roles)
 │   ├── pm.md                        # Project Manager
 │   ├── po.md                        # Product Owner
 │   ├── architect.md                 # Architect
 │   ├── ui-designer.md               # UI Designer
 │   ├── frontend.md                  # Frontend Developer
-│   ├── backend.md                   # Backend Developer
+│   ├── backend-java.md              # Java Backend Developer 🆕
+│   ├── backend-python.md            # Python Backend Developer 🆕
 │   ├── qa.md                        # QA Engineer
 │   ├── devops.md                    # DevOps Engineer
-│   └── product-experience.md        # Product Experience Tester
+│   ├── product-experience.md        # Product Experience Tester
+│   ├── gan-planner.md               # GAN Product Spec Designer 🆕
+│   ├── gan-generator.md             # GAN Code Generator 🆕
+│   └── gan-evaluator.md             # GAN Quality Evaluator 🆕
 ├── automation/                      # Automation configs
 │   ├── agent-orchestration.json     # SSOT: role-skill mapping
 │   ├── rage-mode.json               # Rage mode phases & features
@@ -93,12 +113,21 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   └── github-integration.json      # GitHub auto-push config
 ├── hooks/                           # Hook system
 │   ├── hooks.json                   # Hook definitions
-│   └── scripts/                     # Hook scripts
+│   └── scripts/                     # Hook scripts (14 scripts)
 │       ├── safety-guard.js          # Pre-tool safety check
 │       ├── phase-controller.js      # Phase gate validator
 │       ├── auto-github-push.js      # Auto push (every 30min)
 │       ├── agent-health-monitor.js  # Agent health check (every 5min)
-│       └── auto-start-agents.js     # Auto-start agents on team create
+│       ├── auto-start-agents.js     # Auto-start agents on team create
+│       ├── block-no-verify.js       # Block git push --no-verify 🆕
+│       ├── commit-quality.js        # Pre-commit: console.log + secrets detection 🆕
+│       ├── suggest-compact.js       # Suggest /compact at logical boundaries 🆕
+│       ├── config-protection.js     # Block linter/formatter config changes 🆕
+│       ├── edit-accumulator.js      # Accumulate edited files for batch processing 🆕
+│       ├── console-warn.js          # Detect console.log in edits 🆕
+│       ├── format-typecheck.js      # Batch format + typecheck on stop 🆕
+│       ├── doc-sync-check.js        # Remind to sync docs on stop 🆕
+│       └── session-evaluate.js      # Session evaluation on stop 🆕
 ├── commands/                        # Slash commands
 │   ├── commit.md                    # /commit
 │   ├── pr.md                        # /pr
@@ -172,9 +201,23 @@ QUICKSTART.md                        # 5-minute quick start guide
 | **product-requirements** | high | - | Business logic analysis |
 | **user-onboarding** | high | - | User psychology analysis |
 | **sprint-planning** | medium | - | Structured process |
-| **ui-style-selector** | high | - | 🆕 60 templates scenario matching |
+| **ui-style-selector** | high | - | 60 templates scenario matching |
 | **tdd** | - | - | Core TDD methodology |
 | **tdd-workflow** | low | - | Operation manual level |
+| **springboot-patterns** | high | - | SpringBoot architecture patterns 🆕 |
+| **springboot-tdd** | high | - | SpringBoot TDD workflow 🆕 |
+| **springboot-security** | high | - | SpringBoot security config 🆕 |
+| **jpa-patterns** | - | - | JPA data access patterns 🆕 |
+| **java-coding-standards** | - | - | Java coding standards 🆕 |
+| **llm-integration** | - | - | LLM API integration 🆕 |
+| **vlm-integration** | - | - | VLM vision model integration 🆕 |
+| **workflow-engine** | high | - | Workflow orchestration 🆕 |
+| **verification-loop** | high | - | 6-phase verification cycle 🆕 |
+| **search-first** | medium | - | Research before coding 🆕 |
+| **security-review** | high | - | 10-domain security audit 🆕 |
+| **strategic-compact** | low | - | Strategic context compression 🆕 |
+| **gan-harness** | high | - | GAN development loop 🆕 |
+| **continuous-learning** | low | - | Instinct-based learning 🆕 |
 
 ### Agent Team Roles
 
@@ -182,13 +225,17 @@ QUICKSTART.md                        # 5-minute quick start guide
 |------|------------------|-------------|------------|
 | PM | Project management, task distribution | product-requirements, sprint-planning | planner |
 | PO | Requirements analysis, user stories | product-requirements, user-onboarding | general-purpose |
-| Architect | System design, technical solutions | writing-plans 🔴, ui-style-selector 🆕, code-review | architect |
-| UI Designer | Interface design, interaction | ui-ux-pro-max 🔴, ui-style-selector 🆕 | general-purpose |
+| Architect | System design, technical solutions | writing-plans 🔴, ui-style-selector, code-review | architect |
+| UI Designer | Interface design, interaction | ui-ux-pro-max 🔴, ui-style-selector | general-purpose |
 | Frontend | Frontend development | tdd 🔴, antfu 🔴, ui-ux-pro-max | typescript-reviewer |
-| Backend | Backend development | tdd 🔴, prisma-database-setup 🔴 | python-reviewer |
-| QA | Testing, verification | tdd, code-review | tdd-guide |
+| Backend-Java | Java backend (SpringBoot + JPA) | springboot-patterns 🔴, springboot-tdd 🔴, jpa-patterns | java-reviewer |
+| Backend-Python | Python backend (Prisma + LLM) | tdd 🔴, prisma-database-setup 🔴, llm-integration | python-reviewer |
+| QA | Testing, verification | tdd, verification-loop 🔴, code-review | tdd-guide |
 | DevOps | Deployment, CI/CD | code-review | general-purpose |
 | Product Experience | User perspective testing | user-onboarding 🔴, ui-ux-pro-max | planner |
+| GAN Planner | Product spec design | gan-harness | general-purpose |
+| GAN Generator | Code implementation | gan-harness | general-purpose |
+| GAN Evaluator | Quality evaluation | gan-harness | general-purpose |
 
 ### Frontend Tech Stack (Fixed)
 
@@ -200,6 +247,19 @@ QUICKSTART.md                        # 5-minute quick start guide
 | Package Manager | pnpm | npm, yarn |
 | Test Runner | Vitest | Jest |
 | Lint | ESLint flat config (antfu) | - |
+
+### Backend Tech Stack (Dual-Stack)
+
+| Technology | Java Stack | Python Stack |
+|-----------|------------|--------------|
+| Runtime | Java 17+ | Python 3.12+ |
+| Framework | Spring Boot 3.x | Prisma + FastAPI |
+| Build | Maven/Gradle | pip/poetry |
+| Testing | JUnit 5 + Mockito | pytest |
+| Data Access | JPA/Hibernate | Prisma Client |
+| Security | springboot-security | Custom middleware |
+| LLM/VLM | llm-integration + vlm-integration | llm-integration + vlm-integration |
+| Workflow | Spring Statemachine / Flowable | Prefect / Temporal |
 
 ### UI Style Selection Flow
 
@@ -216,7 +276,7 @@ Project Scenario Description
 
 ```
 Phase 1: Requirements → PM/PO/Architect parallel → Freeze docs
-Phase 2: Development  → Frontend×3/Backend×3 parallel → TDD + Review
+Phase 2: Development  → Frontend×3/Backend-Java×2/Backend-Python×1 parallel → TDD + Review
 Phase 3: Testing      → QA verification → Coverage >80%
 Phase 4: UX Review    → Product Experience evaluation
 Phase 5: Deployment   → DevOps → GitHub push
@@ -246,8 +306,13 @@ Phase 5: Deployment   → DevOps → GitHub push
 # UI style selection (before frontend development)
 /ui-style-selector
 
-# Manual agent start
-Agent --name "Backend-1" \
+# Manual agent start (Java backend)
+Agent --name "Backend-Java-1" \
+  --subagent-type "everything-claude-code:java-reviewer" \
+  --prompt "Use Skill springboot-patterns, then Skill springboot-tdd, then implement login API"
+
+# Manual agent start (Python backend)
+Agent --name "Backend-Python-1" \
   --subagent-type "everything-claude-code:python-reviewer" \
   --prompt "Use Skill tdd first, then implement login API"
 ```
@@ -272,17 +337,20 @@ Agent --name "Backend-1" \
 
 | 功能 | 说明 |
 |------|------|
-| **Agent Team** | 9 个专业角色并行协作（PM、PO、架构师、设计师、前端、后端、QA、DevOps、产品体验师） |
+| **Agent Team** | 13 个专业角色并行协作（PM、PO、架构师、设计师、前端、Java后端、Python后端、QA、DevOps、产品体验师、GAN 规划/生成/评估） |
 | **狂暴模式** 🔴 | 全自动开发 - 自动 GitHub 推送、Agent 监控、阶段推进 |
 | **TDD 工作流** | 强制测试驱动开发，Red-Green-Refactor 循环 |
 | **质量门禁** | 4 阶段验证：功能、代码审查、测试、文档 |
-| **技能系统** | 13 个集成技能，全部配置高级 Frontmatter |
-| **Frontmatter 配置** 🆕 | `effort`、`paths`、`allowed-tools`、`user-invocable` 精准控制技能调用 |
-| **UI 风格选择** 🆕 | 60 个品牌设计模板，基于场景自动匹配 |
-| **技术栈固化** 🆕 | React + TypeScript + Vite，禁止替代方案 |
-| **内置 Skills** 🆕 | `/batch`（并行重构）、`/simplify`（代码质量审查） |
-| **SSOT 架构** 🆕 | `automation/agent-orchestration.json` 单一真相源 |
-| **角色 SOP** 🆕 | 全部 9 个角色标准化操作流程 |
+| **技能系统** | 27 个集成技能，全部配置高级 Frontmatter |
+| **后端双栈** 🆕 | Java + Python 后端（SpringBoot + Prisma + LLM + VLM + Workflow） |
+| **GAN Harness** 🆕 | Planner→Generator→Evaluator 循环，质量驱动开发 |
+| **Hook 强化** 🆕 | 14 个 Hooks 覆盖全生命周期（提交质量、配置保护、编辑累积器） |
+| **持续学习** 🆕 | 基于本能的学习系统，置信度评分 |
+| **Frontmatter 配置** | `effort`、`paths`、`allowed-tools`、`user-invocable` 精准控制技能调用 |
+| **UI 风格选择** | 60 个品牌设计模板，基于场景自动匹配 |
+| **技术栈** | React + TypeScript + Vite（前端固化），Java + SpringBoot + Python（后端） |
+| **SSOT 架构** | `automation/agent-orchestration.json` 单一真相源 |
+| **角色 SOP** | 全部 13 个角色标准化操作流程 |
 | **文档体系** | 冻结层/演化层/ADR 三层文档体系 |
 | **技能触发** | 全局阶段流程图（Phase 1-5）+ 动态触发规则 |
 | **命令系统** | 自定义斜杠命令：`/commit`、`/pr`、`/review` |
@@ -317,7 +385,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── 05_security.md               # 安全规范
 │   ├── 06_document_lifecycle.md     # 文档生命周期（冻结/演化/ADR）
 │   └── 07_skill_triggers.md         # 技能触发 + 全局流程图
-├── skills/                          # 自定义技能（13 个）
+├── skills/                          # 自定义技能（27 个）
 │   ├── ui-style-selector/           # UI 风格自动选择（60 模板）
 │   ├── design-context/              # 按角色自动加载设计文档
 │   ├── tdd/                         # TDD 工作流
@@ -330,17 +398,35 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── ui-ux-pro-max/               # UI/UX 最佳实践 (paths: *.tsx)
 │   ├── react-best-practices/        # React 模式（编辑 .tsx 自动激活）
 │   ├── antfu/                       # ESLint/TS/pnpm/Vitest（编辑自动激活）
-│   └── prisma-database-setup/       # Prisma 数据库配置 (paths: *.prisma)
-├── agents/                          # 代理定义（9 个角色，各含 SOP）
+│   ├── prisma-database-setup/       # Prisma 数据库配置 (paths: *.prisma)
+│   ├── springboot-patterns/         # SpringBoot 架构模式 🆕
+│   ├── springboot-tdd/              # SpringBoot TDD 工作流 🆕
+│   ├── springboot-security/         # SpringBoot 安全配置 🆕
+│   ├── jpa-patterns/                # JPA 数据访问模式 🆕
+│   ├── java-coding-standards/       # Java 编码规范 🆕
+│   ├── llm-integration/             # LLM API 集成 🆕
+│   ├── vlm-integration/             # VLM 视觉模型集成 🆕
+│   ├── workflow-engine/             # 工作流编排 🆕
+│   ├── verification-loop/           # 6 阶段验证循环 🆕
+│   ├── search-first/                # 编码前先研究 🆕
+│   ├── security-review/             # 10 域安全审查 🆕
+│   ├── strategic-compact/           # 战略性上下文压缩 🆕
+│   ├── gan-harness/                 # GAN 开发循环 🆕
+│   └── continuous-learning/         # 基于本能的持续学习 🆕
+├── agents/                          # 代理定义（14 个角色，各含 SOP）
 │   ├── pm.md                        # 项目经理
 │   ├── po.md                        # 产品负责人
 │   ├── architect.md                 # 架构师
 │   ├── ui-designer.md               # UI 设计师
 │   ├── frontend.md                  # 前端开发
-│   ├── backend.md                   # 后端开发
+│   ├── backend-java.md              # Java 后端开发 🆕
+│   ├── backend-python.md            # Python 后端开发 🆕
 │   ├── qa.md                        # 测试工程师
 │   ├── devops.md                    # 运维工程师
-│   └── product-experience.md        # 产品体验师
+│   ├── product-experience.md        # 产品体验师
+│   ├── gan-planner.md               # GAN 产品规格设计 🆕
+│   ├── gan-generator.md             # GAN 代码生成 🆕
+│   └── gan-evaluator.md             # GAN 质量评估 🆕
 ├── automation/                      # 自动化配置
 │   ├── agent-orchestration.json     # SSOT：角色-技能映射唯一真相源
 │   ├── rage-mode.json               # 狂暴模式阶段与功能
@@ -348,12 +434,21 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   └── github-integration.json      # GitHub 自动推送配置
 ├── hooks/                           # 钩子系统
 │   ├── hooks.json                   # 钩子定义
-│   └── scripts/                     # 钩子脚本
+│   └── scripts/                     # 钩子脚本（14 个）
 │       ├── safety-guard.js          # 工具调用前安全检查
 │       ├── phase-controller.js      # 阶段门禁验证
 │       ├── auto-github-push.js      # 自动推送（每 30 分钟）
 │       ├── agent-health-monitor.js  # Agent 健康监控（每 5 分钟）
-│       └── auto-start-agents.js     # 团队创建时自动启动 Agent
+│       ├── auto-start-agents.js     # 团队创建时自动启动 Agent
+│       ├── block-no-verify.js       # 阻止 git push --no-verify 🆕
+│       ├── commit-quality.js        # 提交前 console.log + 密钥检测 🆕
+│       ├── suggest-compact.js       # 建议压缩上下文 🆕
+│       ├── config-protection.js     # 阻止修改 linter/构建配置 🆕
+│       ├── edit-accumulator.js      # 累积编辑文件路径 🆕
+│       ├── console-warn.js          # 检测 console.log 🆕
+│       ├── format-typecheck.js      # Stop 时批量格式化+类型检查 🆕
+│       ├── doc-sync-check.js        # Stop 时提醒同步文档 🆕
+│       └── session-evaluate.js      # Stop 时评估会话 🆕
 ├── commands/                        # 斜杠命令
 │   ├── commit.md                    # /commit
 │   ├── pr.md                        # /pr
@@ -419,13 +514,17 @@ QUICKSTART.md                        # 5 分钟快速开始
 |------|------|---------|-----------|
 | PM | 项目管理、任务分配 | product-requirements, sprint-planning | planner |
 | PO | 需求分析、用户故事 | product-requirements, user-onboarding | general-purpose |
-| 架构师 | 系统设计、技术方案 | writing-plans 🔴, ui-style-selector 🆕, code-review | architect |
-| UI 设计师 | 界面设计、交互规范 | ui-ux-pro-max 🔴, ui-style-selector 🆕 | general-purpose |
+| 架构师 | 系统设计、技术方案 | writing-plans 🔴, ui-style-selector, code-review | architect |
+| UI 设计师 | 界面设计、交互规范 | ui-ux-pro-max 🔴, ui-style-selector | general-purpose |
 | 前端开发 | 前端开发 | tdd 🔴, antfu 🔴, ui-ux-pro-max | typescript-reviewer |
-| 后端开发 | 后端开发 | tdd 🔴, prisma-database-setup 🔴 | python-reviewer |
-| QA | 测试验证 | tdd, code-review | tdd-guide |
+| Java 后端 | Java 后端（SpringBoot + JPA） | springboot-patterns 🔴, springboot-tdd 🔴, jpa-patterns | java-reviewer |
+| Python 后端 | Python 后端（Prisma + LLM） | tdd 🔴, prisma-database-setup 🔴, llm-integration | python-reviewer |
+| QA | 测试验证 | tdd, verification-loop 🔴, code-review | tdd-guide |
 | DevOps | 部署运维 | code-review | general-purpose |
 | 产品体验师 | 用户视角测试 | user-onboarding 🔴, ui-ux-pro-max | planner |
+| GAN 规划器 | 产品规格设计 | gan-harness | general-purpose |
+| GAN 生成器 | 代码实现 | gan-harness | general-purpose |
+| GAN 评估器 | 质量评估 | gan-harness | general-purpose |
 
 ### 技能 Frontmatter 高级配置
 
@@ -441,9 +540,23 @@ QUICKSTART.md                        # 5 分钟快速开始
 | **product-requirements** | high | - | 业务逻辑分析 |
 | **user-onboarding** | high | - | 用户心理分析 |
 | **sprint-planning** | medium | - | 结构化流程 |
-| **ui-style-selector** | high | - | 🆕 60 模板场景匹配 |
+| **ui-style-selector** | high | - | 60 模板场景匹配 |
 | **tdd** | - | - | 核心 TDD 方法论 |
 | **tdd-workflow** | low | - | 操作手册级别 |
+| **springboot-patterns** | high | - | SpringBoot 架构模式 🆕 |
+| **springboot-tdd** | high | - | SpringBoot TDD 工作流 🆕 |
+| **springboot-security** | high | - | SpringBoot 安全配置 🆕 |
+| **jpa-patterns** | - | - | JPA 数据访问模式 🆕 |
+| **java-coding-standards** | - | - | Java 编码规范 🆕 |
+| **llm-integration** | - | - | LLM API 集成 🆕 |
+| **vlm-integration** | - | - | VLM 视觉模型集成 🆕 |
+| **workflow-engine** | high | - | 工作流编排 🆕 |
+| **verification-loop** | high | - | 6 阶段验证循环 🆕 |
+| **search-first** | medium | - | 编码前先研究 🆕 |
+| **security-review** | high | - | 10 域安全审查 🆕 |
+| **strategic-compact** | low | - | 战略性上下文压缩 🆕 |
+| **gan-harness** | high | - | GAN 开发循环 🆕 |
+| **continuous-learning** | low | - | 基于本能的持续学习 🆕 |
 
 ### 前端技术栈（固化）
 
@@ -455,6 +568,19 @@ QUICKSTART.md                        # 5 分钟快速开始
 | 包管理 | pnpm | npm、yarn |
 | 测试 | Vitest | Jest |
 | Lint | ESLint flat config (antfu) | - |
+
+### 后端技术栈（双栈）
+
+| 技术 | Java 栈 | Python 栈 |
+|------|---------|----------|
+| 运行时 | Java 17+ | Python 3.12+ |
+| 框架 | Spring Boot 3.x | Prisma + FastAPI |
+| 构建 | Maven/Gradle | pip/poetry |
+| 测试 | JUnit 5 + Mockito | pytest |
+| 数据访问 | JPA/Hibernate | Prisma Client |
+| 安全 | springboot-security | 自定义中间件 |
+| LLM/VLM | llm-integration + vlm-integration | llm-integration + vlm-integration |
+| 工作流 | Spring Statemachine / Flowable | Prefect / Temporal |
 
 ### UI 风格选择流程
 
@@ -471,7 +597,7 @@ QUICKSTART.md                        # 5 分钟快速开始
 
 ```
 Phase 1: 需求分析 → PM/PO/Architect 并行 → 冻结层文档
-Phase 2: 开发实现 → Frontend×3/Backend×3 并行 → TDD + 代码审查
+Phase 2: 开发实现 → Frontend×3/Backend-Java×2/Backend-Python×1 并行 → TDD + 代码审查
 Phase 3: 测试验证 → QA 验证 → 覆盖率 >80%
 Phase 4: 产品体验 → 产品体验师评估
 Phase 5: 部署发布 → DevOps → GitHub 推送
@@ -501,8 +627,13 @@ Phase 5: 部署发布 → DevOps → GitHub 推送
 # UI 风格选择（前端开发前）
 /ui-style-selector
 
-# 手动启动 Agent
-Agent --name "Backend-1" \
+# 手动启动 Agent（Java 后端）
+Agent --name "Backend-Java-1" \
+  --subagent-type "everything-claude-code:java-reviewer" \
+  --prompt "先调用 Skill springboot-patterns，再调用 Skill springboot-tdd，然后实现登录 API"
+
+# 手动启动 Agent（Python 后端）
+Agent --name "Backend-Python-1" \
   --subagent-type "everything-claude-code:python-reviewer" \
   --prompt "先调用 Skill tdd，然后实现登录 API"
 ```
@@ -546,5 +677,5 @@ MIT License
 
 ---
 
-*Template Version: 2.1.0*
+*Template Version: 2.2.0*
 *Last Updated: 2026-04-09*
