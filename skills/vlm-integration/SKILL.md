@@ -1,5 +1,6 @@
 ---
 name: vlm-integration
+origin: custom
 description: |
   VLM 视觉语言模型集成 — 图像理解、多模态处理、OCR、图像描述、视觉问答。
   TRIGGER when: 集成图像识别、视觉AI、多模态功能。

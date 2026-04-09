@@ -1,5 +1,6 @@
 ---
 name: gan-harness
+origin: custom
 description: |
   GAN 生成对抗网络式开发 — Planner→Generator→Evaluator 闭环评估。
   TRIGGER when: 用户想快速原型一个产品、从一句话生成完整应用。

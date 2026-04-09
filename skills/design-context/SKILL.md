@@ -1,5 +1,6 @@
 ---
 name: design-context
+origin: custom
 description: |
   Load design context for a role. Reads design docs and returns constraint summary.
   TRIGGER when: agent starts, before dev tasks, user mentions "设计文档", "约束", "规范".

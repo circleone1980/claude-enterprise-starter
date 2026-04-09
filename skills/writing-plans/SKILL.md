@@ -1,6 +1,7 @@
 ---
 name: writing-plans
 description: 環境架构设计和功能拆解 - 用于设计系统架构、分解功能模块、制定技术方案
+origin: superpowers
 effort: high
 ---
 

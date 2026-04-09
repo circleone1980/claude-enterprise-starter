@@ -1,5 +1,6 @@
 ---
 name: workflow-engine
+origin: custom
 description: |
   Workflow 编排模式 — 状态机、DAG 工作流、审批流、任务调度。
   TRIGGER when: 实现审批流、任务编排、异步工作流、定时任务。

@@ -1,5 +1,6 @@
 ---
 name: sprint-planning
+origin: custom
 description: |
   Sprint planning and iteration management for agile development teams.
   

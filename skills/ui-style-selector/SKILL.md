@@ -1,5 +1,6 @@
 ---
 name: ui-style-selector
+origin: custom
 description: |
   Select UI design style based on project scenario. Brainstorm to match scenario
   with 60 brand styles, then load the corresponding DESIGN.md template.

@@ -2,10 +2,11 @@
 name: code-review
 description: |
   Systematic code review for quality, security, performance, and maintainability.
-  
+
   TRIGGER when: user asks for code review, PR review, mentions "代码审查", "code review", "review", "check my code", "审查代码", "PR review", "merge review", or after completing any feature implementation.
-  
+
   Use this skill after completing development work and before merging to main branch. Code review is mandatory - all code changes must be reviewed before commit.
+origin: ECC
 effort: high
 ---
 

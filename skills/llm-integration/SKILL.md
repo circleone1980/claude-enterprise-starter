@@ -1,5 +1,6 @@
 ---
 name: llm-integration
+origin: custom
 description: |
   LLM API 集成模式 — OpenAI/Claude SDK、Prompt 管理、Token 优化、流式响应、错误处理。
   TRIGGER when: 集成 LLM API、实现 AI 功能、Prompt 工程、Token 管理。

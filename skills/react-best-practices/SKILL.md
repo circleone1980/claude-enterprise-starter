@@ -1,5 +1,6 @@
 ---
 name: react-best-practices
+origin: vercel
 description: React/Next.js performance optimization with 40+ rules. TRIGGER when: optimizing React apps, mentions 'React performance', 'bundle size'. Comprehensive guide for eliminating waterfalls, optimizing bundles, and improving rendering.
 paths: "**/*.tsx,**/*.jsx"
 user-invocable: false

@@ -1,5 +1,6 @@
 ---
 name: "user-onboarding"
+origin: custom
 description: "Design and improve product user onboarding (first-time user experience) to drive activation and early retention. Produces an Onboarding & Activation Pack (aha moment spec, first 30 seconds + first mile plan, onboarding journey map, experiment backlog, measurement plan). Use for Growth teams."
 effort: high
 ---
