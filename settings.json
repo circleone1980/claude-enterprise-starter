@@ -63,7 +63,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/scripts/safety-guard.js"
+            "command": "node hooks/scripts/safety-guard.js"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/block-no-verify.js"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/commit-quality.js"
           }
         ]
       },
@@ -72,7 +80,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/scripts/safety-guard.js"
+            "command": "node hooks/scripts/safety-guard.js"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/suggest-compact.js"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/config-protection.js"
           }
         ]
       },
@@ -81,7 +97,24 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/scripts/safety-guard.js"
+            "command": "node hooks/scripts/safety-guard.js"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/suggest-compact.js"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/config-protection.js"
+          }
+        ]
+      },
+      {
+        "matcher": "Delete",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/scripts/safety-guard.js"
           }
         ]
       }
@@ -101,7 +134,49 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/scripts/phase-controller.js"
+            "command": "node hooks/scripts/phase-controller.js"
+          }
+        ]
+      },
+      {
+        "matcher": "TeamCreate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/scripts/auto-start-agents.js"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/scripts/edit-accumulator.js"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/console-warn.js"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/scripts/format-typecheck.js",
+            "timeout": 300
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/scripts/doc-sync-check.js",
+            "timeout": 10
           }
         ]
       }
@@ -121,18 +196,19 @@
     "agentTeamEnforcement": {
       "enabled": true,
       "rules": [
-        "All backend development MUST use subagent-type: everything-claude-code:python-reviewer",
+        "All backend development MUST use subagent-type: everything-claude-code:java-reviewer (Java) or everything-claude-code:python-reviewer (Python)",
         "All frontend development MUST use subagent-type: everything-claude-code:typescript-reviewer",
         "All development MUST call Skill tdd first (TDD is mandatory)",
         "All code MUST be reviewed before commit"
       ],
       "requiredAgents": {
-        "backend": "everything-claude-code:python-reviewer",
+        "backend-java": "everything-claude-code:java-reviewer",
+        "backend-python": "everything-claude-code:python-reviewer",
         "frontend": "everything-claude-code:typescript-reviewer",
         "architect": "everything-claude-code:architect",
         "qa": "everything-claude-code:tdd-guide"
       }
     }
   },
-  "_comment": "Updated 2026-04-09 - removed requiredSkills (moved to automation/agent-orchestration.json as SSOT)"
+  "_comment": "Updated 2026-04-09 - v2.2.0: ECC 集成 hooks 强化 + 后端技术栈拆分 (Java/Python)"
 }

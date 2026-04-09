@@ -1,6 +1,6 @@
 {
   "name": "agent-orchestration",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "enabled": true,
   "agents": {
     "PM": {
@@ -35,18 +35,39 @@
       "dependencies": ["PM", "Architect"],
       "count": 3
     },
-    "Backend": {
-      "subagentType": "everything-claude-code:python-reviewer",
-      "requiredSkills": ["tdd", "prisma-database-setup", "code-review"],
+    "Backend-Java": {
+      "subagentType": "everything-claude-code:java-reviewer",
+      "requiredSkills": ["springboot-patterns", "springboot-tdd", "springboot-security", "jpa-patterns", "java-coding-standards", "llm-integration", "vlm-integration", "workflow-engine", "code-review"],
       "parallelizable": true,
       "dependencies": ["PM", "Architect"],
-      "count": 3
+      "count": 2,
+      "techStack": {
+        "language": "Java 17+",
+        "framework": "Spring Boot 3.x",
+        "build": "Maven / Gradle",
+        "test": "JUnit 5 + Mockito + Testcontainers",
+        "ai": "OpenAI Java SDK / Anthropic Java SDK"
+      }
+    },
+    "Backend-Python": {
+      "subagentType": "everything-claude-code:python-reviewer",
+      "requiredSkills": ["tdd", "prisma-database-setup", "llm-integration", "vlm-integration", "workflow-engine", "code-review"],
+      "parallelizable": true,
+      "dependencies": ["PM", "Architect"],
+      "count": 1,
+      "techStack": {
+        "language": "Python 3.12+",
+        "framework": "FastAPI / Flask",
+        "build": "uv / pip + pyproject.toml",
+        "test": "pytest",
+        "ai": "OpenAI SDK / Anthropic SDK"
+      }
     },
     "QA": {
       "subagentType": "everything-claude-code:tdd-guide",
       "requiredSkills": ["tdd", "code-review"],
       "parallelizable": false,
-      "dependencies": ["Frontend", "Backend"],
+      "dependencies": ["Frontend", "Backend-Java", "Backend-Python"],
       "mcpServers": ["playwright"]
     },
     "DevOps": {
@@ -71,6 +92,6 @@
     "restartDelay": 10000,
     "alertOnFailure": true
   },
-  "_comment": "SSOT - Updated 2026-04-09 - 角色技能映射的唯一权威定义源，其他文件引用此处",
+  "_comment": "SSOT v2.0.0 - Updated 2026-04-09 - Backend 拆分为 Java/Python 双角色 + 新增 AI/Workflow 技能栈",
   "_ssot_note": "CLAUDE.md 第七节、rules/04、rules/07、agents/*.md 均引用此文件，不重复定义"
 }

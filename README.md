@@ -50,45 +50,112 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 
 ```
 .claude/
-├── CLAUDE.md              # Core instructions
-├── settings.json          # Permissions, hooks, configs
-├── rules/                 # Modular rules (8 files)
-│   ├── 00_global.md       # Language, startup constraints
-│   ├── 01_development.md  # Development constraints + tech stack
-│   ├── 02_database.md     # Database standards
-│   ├── 03_quality.md      # Quality gates
-│   ├── 04_agent_team.md   # Agent Team rules (references SSOT)
-│   ├── 05_security.md     # Security standards
-│   ├── 06_document_lifecycle.md  # Document lifecycle (Frozen/Evolution/ADR)
-│   └── 07_skill_triggers.md      # Skill triggers + global phase flowchart
-├── skills/                # Custom skills (13 skills)
-│   ├── ui-style-selector/ # 🆕 UI style auto-selection (60 templates)
-│   ├── design-context/    # Auto-load design docs by role
-│   ├── tdd/               # TDD workflow
-│   ├── code-review/       # Code review
-│   ├── react-best-practices/ # Auto-activates on .tsx/.jsx (paths)
-│   ├── antfu/             # Auto-activates on .ts/.tsx (paths)
-│   └── ...
-├── agents/                # Agent definitions with SOP (9 roles)
-├── commands/              # Slash commands
-├── output-styles/         # Output style variants
-├── agent-memory/          # Persistent agent memory
-├── automation/            # SSOT: agent-orchestration.json + Rage mode
-└── hooks/                 # Hook scripts
+├── CLAUDE.md                        # Core instructions (12 sections)
+├── settings.json                    # Permissions, hooks, rage mode config
+├── settings.local.json              # Local overrides (gitignored)
+├── rules/                           # Modular rules (8 files)
+│   ├── 00_global.md                 # Language, startup constraints
+│   ├── 01_development.md            # Development constraints + tech stack
+│   ├── 02_database.md               # Database standards
+│   ├── 03_quality.md                # Quality gates
+│   ├── 04_agent_team.md             # Agent Team rules (references SSOT)
+│   ├── 05_security.md               # Security standards
+│   ├── 06_document_lifecycle.md     # Document lifecycle (Frozen/Evolution/ADR)
+│   └── 07_skill_triggers.md         # Skill triggers + global phase flowchart
+├── skills/                          # Custom skills (13 skills)
+│   ├── ui-style-selector/           # UI style auto-selection (60 templates)
+│   ├── design-context/              # Auto-load design docs by role
+│   ├── tdd/                         # TDD workflow
+│   ├── tdd-workflow/                # TDD operation manual
+│   ├── code-review/                 # Code review (effort: high)
+│   ├── writing-plans/               # Architecture planning (effort: high)
+│   ├── product-requirements/        # Requirements analysis (effort: high)
+│   ├── user-onboarding/             # FTUE design (effort: high)
+│   ├── sprint-planning/             # Sprint planning (effort: medium)
+│   ├── ui-ux-pro-max/               # UI/UX best practices (paths: *.tsx)
+│   ├── react-best-practices/        # React patterns (auto-activate on .tsx)
+│   ├── antfu/                       # ESLint/TS/pnpm/Vitest (auto-activate)
+│   └── prisma-database-setup/       # Prisma DB config (paths: *.prisma)
+├── agents/                          # Agent definitions with SOP (9 roles)
+│   ├── pm.md                        # Project Manager
+│   ├── po.md                        # Product Owner
+│   ├── architect.md                 # Architect
+│   ├── ui-designer.md               # UI Designer
+│   ├── frontend.md                  # Frontend Developer
+│   ├── backend.md                   # Backend Developer
+│   ├── qa.md                        # QA Engineer
+│   ├── devops.md                    # DevOps Engineer
+│   └── product-experience.md        # Product Experience Tester
+├── automation/                      # Automation configs
+│   ├── agent-orchestration.json     # SSOT: role-skill mapping
+│   ├── rage-mode.json               # Rage mode phases & features
+│   ├── phase-gates.json             # Quality gate conditions
+│   └── github-integration.json      # GitHub auto-push config
+├── hooks/                           # Hook system
+│   ├── hooks.json                   # Hook definitions
+│   └── scripts/                     # Hook scripts
+│       ├── safety-guard.js          # Pre-tool safety check
+│       ├── phase-controller.js      # Phase gate validator
+│       ├── auto-github-push.js      # Auto push (every 30min)
+│       ├── agent-health-monitor.js  # Agent health check (every 5min)
+│       └── auto-start-agents.js     # Auto-start agents on team create
+├── commands/                        # Slash commands
+│   ├── commit.md                    # /commit
+│   ├── pr.md                        # /pr
+│   └── review.md                    # /review
+├── output-styles/                   # Output format variants
+│   ├── terse.md                     # Concise output
+│   ├── detailed.md                  # Detailed output
+│   └── enterprise.md                # Enterprise report format
+├── agent-memory/                    # Persistent agent memory
+│   └── {role}/MEMORY.md             # Per-agent memory files
+└── scripts/                         # Setup scripts
+    ├── init.sh                      # Unix setup script
+    └── init.ps1                     # Windows setup script
 
-docs/                      # Project documentation
-├── requirements/          # Frozen layer: PRD, user stories
-├── design/                # Frozen layer: Architecture, DB, API, UI
-├── superpowers/           # ADR + brainstorming records
-├── dev/                   # Evolution layer
-├── test/                  # Evolution layer
-└── fixes/                 # Evolution layer
+docs/                                # Project documentation (from templates)
+├── requirements/                    # Frozen layer: PRD, user stories
+│   ├── PRD.md                       # Product Requirements Document
+│   ├── user-stories.md              # User stories
+│   └── acceptance-criteria.md       # Acceptance criteria
+├── design/                          # Frozen layer: System design
+│   ├── 01_系统架构设计.md             # Architecture design
+│   ├── 02_数据库设计.md               # Database design
+│   ├── 03_API接口设计.md              # API design
+│   └── 04_UI设计规范.md              # UI design spec
+├── dev/                             # Evolution layer: Dev guides
+│   ├── 01_开发环境搭建.md             # Environment setup
+│   ├── 02_编码规范.md                 # Coding standards
+│   └── 03_Git工作流.md               # Git workflow
+├── test/                            # Evolution layer: Test docs
+│   ├── 01_测试计划.md                 # Test plan
+│   ├── 02_测试用例.md                 # Test cases
+│   └── 03_验证记录.md                # Verification records
+├── fixes/                           # Evolution layer: Fixes
+│   └── CHANGELOG.md                 # Changelog
+├── sql/                             # Database scripts
+├── superpowers/                     # ADR + brainstorming
+│   ├── decisions/                   # Architecture Decision Records
+│   └── specs/                       # Brainstorming specs
+├── templates/                       # 📋 Document templates (copy to use)
+│   ├── requirements/
+│   ├── design/
+│   ├── dev/
+│   ├── test/
+│   ├── fixes/
+│   └── superpowers/
+└── GUIDE.md                         # 📖 Detailed usage manual
 
-tips/                      # 🆕 Reference guides & design resources
-├── Claude Code Skills功能指南.md
-└── UI设计风格/            # 60 brand design templates
-    ├── ui风格对照表.md     # Scenario ↔ Style mapping table
-    └── design-md/          # {style}/DESIGN.md per style
+tips/                                # Reference guides & design resources
+├── Claude Code Skills功能指南.md     # Skills optimization guide
+└── UI设计风格/                       # 60 brand design templates
+    ├── ui风格对照表.md                # Scenario ↔ Style mapping table
+    └── design-md/                    # {style}/DESIGN.md per style
+
+.mcp.json                            # MCP server configs (GitHub, Figma, Playwright...)
+.worktreeinclude                     # Git worktree config
+CLAUDE.local.md.example              # Local config template (gitignored)
+QUICKSTART.md                        # 5-minute quick start guide
 ```
 
 ### Skills Frontmatter Configuration
@@ -167,6 +234,8 @@ Phase 5: Deployment   → DevOps → GitHub push
 
 ### Usage
 
+> 📖 **For detailed instructions, see the [Usage Guide](docs/GUIDE.md)**
+
 ```bash
 # Verify installation
 /doctor
@@ -236,26 +305,112 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 
 ```
 .claude/
-├── CLAUDE.md              # 核心指令文件
-├── settings.json          # 权限、钩子、配置
-├── rules/                 # 模块化规则（8 个文件）
-│   ├── 01_development.md  # 开发约束 + 技术栈固化
-│   ├── 04_agent_team.md   # Agent Team 规则（引用 SSOT）
-│   ├── 06_document_lifecycle.md  # 文档生命周期
-│   └── 07_skill_triggers.md      # 技能触发 + 全局流程图
-├── skills/                # 自定义技能（13 个）
-│   ├── ui-style-selector/ # 🆕 UI 风格自动选择（60 模板）
-│   ├── design-context/    # 按角色自动加载设计文档
-│   ├── react-best-practices/ # paths: **/*.tsx 自动激活
-│   └── ...
-├── agents/                # 代理定义（9 个角色，各含 SOP）
-└── automation/            # SSOT: agent-orchestration.json
+├── CLAUDE.md                        # 核心指令文件（12 个章节）
+├── settings.json                    # 权限、钩子、狂暴模式配置
+├── settings.local.json              # 本地覆盖配置（gitignored）
+├── rules/                           # 模块化规则（8 个文件）
+│   ├── 00_global.md                 # 语言、启动约束
+│   ├── 01_development.md            # 开发约束 + 技术栈固化
+│   ├── 02_database.md               # 数据库规范
+│   ├── 03_quality.md                # 质量门禁
+│   ├── 04_agent_team.md             # Agent Team 规则（引用 SSOT）
+│   ├── 05_security.md               # 安全规范
+│   ├── 06_document_lifecycle.md     # 文档生命周期（冻结/演化/ADR）
+│   └── 07_skill_triggers.md         # 技能触发 + 全局流程图
+├── skills/                          # 自定义技能（13 个）
+│   ├── ui-style-selector/           # UI 风格自动选择（60 模板）
+│   ├── design-context/              # 按角色自动加载设计文档
+│   ├── tdd/                         # TDD 工作流
+│   ├── tdd-workflow/                # TDD 操作手册
+│   ├── code-review/                 # 代码审查 (effort: high)
+│   ├── writing-plans/               # 架构规划 (effort: high)
+│   ├── product-requirements/        # 需求分析 (effort: high)
+│   ├── user-onboarding/             # 用户引导设计 (effort: high)
+│   ├── sprint-planning/             # Sprint 规划 (effort: medium)
+│   ├── ui-ux-pro-max/               # UI/UX 最佳实践 (paths: *.tsx)
+│   ├── react-best-practices/        # React 模式（编辑 .tsx 自动激活）
+│   ├── antfu/                       # ESLint/TS/pnpm/Vitest（编辑自动激活）
+│   └── prisma-database-setup/       # Prisma 数据库配置 (paths: *.prisma)
+├── agents/                          # 代理定义（9 个角色，各含 SOP）
+│   ├── pm.md                        # 项目经理
+│   ├── po.md                        # 产品负责人
+│   ├── architect.md                 # 架构师
+│   ├── ui-designer.md               # UI 设计师
+│   ├── frontend.md                  # 前端开发
+│   ├── backend.md                   # 后端开发
+│   ├── qa.md                        # 测试工程师
+│   ├── devops.md                    # 运维工程师
+│   └── product-experience.md        # 产品体验师
+├── automation/                      # 自动化配置
+│   ├── agent-orchestration.json     # SSOT：角色-技能映射唯一真相源
+│   ├── rage-mode.json               # 狂暴模式阶段与功能
+│   ├── phase-gates.json             # 质量门禁条件
+│   └── github-integration.json      # GitHub 自动推送配置
+├── hooks/                           # 钩子系统
+│   ├── hooks.json                   # 钩子定义
+│   └── scripts/                     # 钩子脚本
+│       ├── safety-guard.js          # 工具调用前安全检查
+│       ├── phase-controller.js      # 阶段门禁验证
+│       ├── auto-github-push.js      # 自动推送（每 30 分钟）
+│       ├── agent-health-monitor.js  # Agent 健康监控（每 5 分钟）
+│       └── auto-start-agents.js     # 团队创建时自动启动 Agent
+├── commands/                        # 斜杠命令
+│   ├── commit.md                    # /commit
+│   ├── pr.md                        # /pr
+│   └── review.md                    # /review
+├── output-styles/                   # 输出风格
+│   ├── terse.md                     # 简洁模式
+│   ├── detailed.md                  # 详细模式
+│   └── enterprise.md                # 企业报告格式
+├── agent-memory/                    # Agent 持久化记忆
+│   └── {role}/MEMORY.md             # 各角色记忆文件
+└── scripts/                         # 安装脚本
+    ├── init.sh                      # Unix 安装脚本
+    └── init.ps1                     # Windows 安装脚本
 
-tips/                      # 🆕 参考指南与设计资源
-├── Claude Code Skills功能指南.md
-└── UI设计风格/            # 60 个品牌设计模板
-    ├── ui风格对照表.md     # 场景 ↔ 风格对照表
-    └── design-md/          # {style}/DESIGN.md
+docs/                                # 项目文档（来自模板）
+├── requirements/                    # 冻结层：PRD、用户故事
+│   ├── PRD.md                       # 产品需求文档
+│   ├── user-stories.md              # 用户故事
+│   └── acceptance-criteria.md       # 验收标准
+├── design/                          # 冻结层：系统设计
+│   ├── 01_系统架构设计.md             # 架构设计
+│   ├── 02_数据库设计.md               # 数据库设计
+│   ├── 03_API接口设计.md              # API 设计
+│   └── 04_UI设计规范.md              # UI 设计规范
+├── dev/                             # 演化层：开发指南
+│   ├── 01_开发环境搭建.md             # 环境搭建
+│   ├── 02_编码规范.md                 # 编码规范
+│   └── 03_Git工作流.md               # Git 工作流
+├── test/                            # 演化层：测试文档
+│   ├── 01_测试计划.md                 # 测试计划
+│   ├── 02_测试用例.md                 # 测试用例
+│   └── 03_验证记录.md                # 验证记录
+├── fixes/                           # 演化层：修复记录
+│   └── CHANGELOG.md                 # 变更日志
+├── sql/                             # 数据库脚本
+├── superpowers/                     # ADR + 脑暴
+│   ├── decisions/                   # 架构决策记录
+│   └── specs/                       # 脑暴记录
+├── templates/                       # 📋 文档模板（复制使用）
+│   ├── requirements/
+│   ├── design/
+│   ├── dev/
+│   ├── test/
+│   ├── fixes/
+│   └── superpowers/
+└── GUIDE.md                         # 📖 详细使用手册
+
+tips/                                # 参考指南与设计资源
+├── Claude Code Skills功能指南.md     # Skills 优化指南
+└── UI设计风格/                       # 60 个品牌设计模板
+    ├── ui风格对照表.md                # 场景 ↔ 风格对照表
+    └── design-md/                    # {style}/DESIGN.md
+
+.mcp.json                            # MCP 服务配置（GitHub、Figma、Playwright...）
+.worktreeinclude                     # Git worktree 配置
+CLAUDE.local.md.example              # 本地配置模板（gitignored）
+QUICKSTART.md                        # 5 分钟快速开始
 ```
 
 ### Agent Team 角色
@@ -333,6 +488,8 @@ Phase 5: 部署发布 → DevOps → GitHub 推送
 | 安全边界守护 | 每次工具调用 |
 
 ### 使用方式
+
+> 📖 **详细使用说明请参阅 [使用手册](docs/GUIDE.md)**
 
 ```bash
 # 验证安装

@@ -32,6 +32,11 @@
 统一使用 Python 构建脚本插入，脚本统一放在 `docx/sql/` 文件夹下
 **Why**: 版本可控、可审计、可回滚
 
+### 规则6：退出前文档同步 🔴
+退出 Claude Code 前，必须将本次会话所有变更同步到 `README.md` 和 `docs/GUIDE.md` 的对应位置。未同步不得退出。
+**Why**: 文档是团队协作入口，不同步团队成员无法感知变更
+**详细规则**: [rules/00_global.md](rules/00_global.md)
+
 ---
 
 ## 一-B、技术栈约束
@@ -49,6 +54,22 @@
 
 > **Why**: 技术栈统一降低团队协作摩擦，模板工程默认基于此技术栈
 > **约束**: 所有前端 Skills 和 Agent 配置默认基于此技术栈，如需变更需通过 ADR
+
+### 后端技术栈（Java + Python 双栈）
+
+| 类别 | 技术选型 | 版本要求 |
+|------|---------|---------|
+| 主语言 | Java | 17+ (records, sealed classes) |
+| 框架 | Spring Boot | 3.x |
+| ORM | Spring Data JPA | 最新稳定版 |
+| 构建 | Maven / Gradle | Maven 3.9+ / Gradle 8+ |
+| 测试 | JUnit 5 + Mockito + Testcontainers | 最新稳定版 |
+| 辅助语言 | Python | 3.12+ |
+| AI SDK | OpenAI SDK / Anthropic SDK | 最新稳定版 |
+| 工作流 | Flowable / Prefect | 最新稳定版 |
+
+> **Why**: Java 处理核心业务逻辑和高并发场景，Python 处理 AI/ML 和数据处理
+> **约束**: Java 后端使用 `everything-claude-code:java-reviewer`，Python 后端使用 `everything-claude-code:python-reviewer`
 
 ---
 
@@ -187,9 +208,10 @@ Module
 | **Architect** | writing-plans 🔴 | product-requirements, react-best-practices, ui-ux-pro-max, ui-style-selector, code-review | architect |
 | **UI Designer** | ui-ux-pro-max 🔴, ui-style-selector | Figma MCP | general-purpose |
 | **Frontend** | tdd 🔴, antfu 🔴 | ui-ux-pro-max, code-review | typescript-reviewer |
-| **Backend** | tdd 🔴, prisma-database-setup 🔴 | code-review | python-reviewer |
-| **QA** | tdd | code-review, Playwright MCP | tdd-guide |
-| **DevOps** | code-review | GitHub MCP | general-purpose |
+| **Backend-Java** | springboot-patterns 🔴, springboot-tdd 🔴 | jpa-patterns, springboot-security, java-coding-standards, llm-integration, vlm-integration, workflow-engine, code-review | java-reviewer |
+| **Backend-Python** | tdd 🔴 | prisma-database-setup, llm-integration, vlm-integration, workflow-engine, code-review | python-reviewer |
+| **QA** | tdd, verification-loop 🔴 | code-review, security-review, Playwright MCP | tdd-guide |
+| **DevOps** | code-review | security-review, GitHub MCP | general-purpose |
 | **产品体验师** | user-onboarding 🔴 | product-requirements, ui-ux-pro-max | planner |
 
 **Why**: 技能映射确保角色专业化，避免通用 Agent 能力稀释
@@ -200,10 +222,24 @@ Module
 ### 启动 Agent 标准格式
 
 ```bash
-# 后端开发 - 标准
-Agent --name "Backend-1" \
+# Java 后端开发 - 标准
+Agent --name "Backend-Java-1" \
+  --subagent-type "everything-claude-code:java-reviewer" \
+  --prompt "你是 Java 后端开发。必须遵循以下流程：
+    1. 🔴 调用 Skill springboot-patterns 获取 SpringBoot 架构指导
+    2. 🔴 调用 Skill springboot-tdd 启动 TDD 流程
+    3. 编写测试用例（Red 阶段）
+    4. 实现代码（Green 阶段）
+    5. 重构优化（Refactor 阶段）
+    6. 如涉及安全 → 调用 Skill springboot-security
+    7. 如涉及 AI → 调用 Skill llm-integration / vlm-integration
+    8. 使用 code-review 审查代码质量
+    任务：..."
+
+# Python 后端开发 - 标准
+Agent --name "Backend-Python-1" \
   --subagent-type "everything-claude-code:python-reviewer" \
-  --prompt "你是后端开发。必须遵循以下流程：
+  --prompt "你是 Python 后端开发。必须遵循以下流程：
     1. 🔴 调用 Skill tdd 启动 TDD 流程（垂直切片模式）
     2. 🔴 调用 Skill prisma-database-setup 获取数据库配置指导
     3. 编写测试用例（Red 阶段）
@@ -259,7 +295,7 @@ Phase 0: 项目初始化
     ↓ (自动)
 Phase 1: 需求分析 (PM/PO/Architect 并行)
     ↓ (自动验证通过后)
-Phase 2: 开发实现 (Frontend x3 / Backend x3 / UI Designer 并行)
+Phase 2: 开发实现 (Frontend x3 / Backend-Java x2 / Backend-Python x1 / UI Designer 并行)
     ↓ (自动验证通过后)
 Phase 3: 测试验证 (QA + 代码审查)
     ↓ (自动验证通过后)
@@ -305,10 +341,14 @@ GitHub 推送 → 完成报告
 | Architect | `agents/architect.md` |
 | UI Designer | `agents/ui-designer.md` |
 | Frontend | `agents/frontend.md` |
-| Backend | `agents/backend.md` |
+| Backend-Java | `agents/backend-java.md` |
+| Backend-Python | `agents/backend-python.md` |
 | QA | `agents/qa.md` |
 | DevOps | `agents/devops.md` |
 | 产品体验师 | `agents/product-experience.md` |
+| GAN Planner | `agents/gan-planner.md` |
+| GAN Generator | `agents/gan-generator.md` |
+| GAN Evaluator | `agents/gan-evaluator.md` |
 
 ---
 
@@ -326,8 +366,22 @@ GitHub 推送 → 完成报告
 | react-best-practices | `skills/react-best-practices/SKILL.md` |
 | antfu | `skills/antfu/SKILL.md` |
 | prisma-database-setup | `skills/prisma-database-setup/SKILL.md` |
-| **design-context** 🔴 | `skills/design-context/SKILL.md` 🔴 |
-| **ui-style-selector** | `skills/ui-style-selector/SKILL.md` |
+| design-context 🔴 | `skills/design-context/SKILL.md` |
+| ui-style-selector | `skills/ui-style-selector/SKILL.md` |
+| **springboot-patterns** 🔴 | `skills/springboot-patterns/SKILL.md` |
+| **springboot-tdd** 🔴 | `skills/springboot-tdd/SKILL.md` |
+| **springboot-security** | `skills/springboot-security/SKILL.md` |
+| **jpa-patterns** | `skills/jpa-patterns/SKILL.md` |
+| **java-coding-standards** | `skills/java-coding-standards/SKILL.md` |
+| **llm-integration** | `skills/llm-integration/SKILL.md` |
+| **vlm-integration** | `skills/vlm-integration/SKILL.md` |
+| **workflow-engine** | `skills/workflow-engine/SKILL.md` |
+| **verification-loop** 🔴 | `skills/verification-loop/SKILL.md` |
+| **search-first** | `skills/search-first/SKILL.md` |
+| **security-review** | `skills/security-review/SKILL.md` |
+| **strategic-compact** | `skills/strategic-compact/SKILL.md` |
+| **gan-harness** | `skills/gan-harness/SKILL.md` |
+| **continuous-learning** | `skills/continuous-learning/SKILL.md` |
 
 ---
 
@@ -352,7 +406,7 @@ GitHub 推送 → 完成报告
 
 ---
 
-*模板版本: 2.0.0*
-*最后更新: 2026-04-08*
-*重大变更: 新增文档体系、技能触发规则、design-context 技能*
+*模板版本: 2.2.0*
+*最后更新: 2026-04-09*
+*重大变更: ECC 集成 — Hooks 强化(13个)、后端双栈(Java/Python)、新增 15 个 Skills、GAN Harness、持续学习*
 *基于: [DataCamp CLAUDE.md Guide](https://www.datacamp.com/tutorial/writing-the-best-claude-md), [eesel AI Best Practices](https://www.eesel.ai/blog/claude-code-best-practices), [FlorianBruniaux Ultimate Guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide)*

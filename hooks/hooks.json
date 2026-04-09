@@ -1,5 +1,6 @@
 {
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "_comment": "Updated 2026-04-09 - ECC 集成: 修复路径 + 新增 hooks (block-no-verify, commit-quality, suggest-compact, config-protection, edit-accumulator, console-warn, format-typecheck, doc-sync-check)",
   "hooks": {
     "PreToolUse": [
       {
@@ -7,8 +8,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/scripts/safety-guard.js",
+            "command": "node hooks/scripts/safety-guard.js",
             "description": "安全边界检查 - Bash 命令"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/block-no-verify.js",
+            "description": "阻止 git push --no-verify / --force 等跳过 hooks 的操作"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/commit-quality.js",
+            "description": "提交前: console.log 检测 + 密钥泄露检测"
           }
         ]
       },
@@ -17,8 +28,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/scripts/safety-guard.js",
+            "command": "node hooks/scripts/safety-guard.js",
             "description": "安全边界检查 - Edit 操作"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/suggest-compact.js",
+            "description": "建议压缩上下文（逻辑节点）"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/config-protection.js",
+            "description": "阻止修改 linter/formatter/构建配置"
           }
         ]
       },
@@ -27,8 +48,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/scripts/safety-guard.js",
+            "command": "node hooks/scripts/safety-guard.js",
             "description": "安全边界检查 - Write 操作"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/suggest-compact.js",
+            "description": "建议压缩上下文（逻辑节点）"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/config-protection.js",
+            "description": "阻止修改 linter/formatter/构建配置"
           }
         ]
       },
@@ -37,7 +68,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/scripts/safety-guard.js",
+            "command": "node hooks/scripts/safety-guard.js",
             "description": "安全边界检查 - Delete 操作"
           }
         ]
@@ -59,7 +90,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/scripts/phase-controller.js",
+            "command": "node hooks/scripts/phase-controller.js",
             "description": "阶段推进检查"
           }
         ]
@@ -69,8 +100,58 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/scripts/auto-start-agents.js",
+            "command": "node hooks/scripts/auto-start-agents.js",
             "description": "自动启动 Agent Team（狂暴模式）"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/scripts/edit-accumulator.js",
+            "description": "累积编辑的文件路径，供 Stop 时批量处理"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/console-warn.js",
+            "description": "检测编辑文件中的 console.log"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "id": "stop:format-typecheck",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/scripts/format-typecheck.js",
+            "timeout": 300,
+            "description": "批量格式化 + 类型检查所有编辑过的文件（edit-accumulator 模式）"
+          }
+        ]
+      },
+      {
+        "id": "stop:check-console-log",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/scripts/console-warn.js",
+            "timeout": 30,
+            "description": "批量检查修改文件中的 console.log"
+          }
+        ]
+      },
+      {
+        "id": "stop:doc-sync-check",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/scripts/doc-sync-check.js",
+            "timeout": 10,
+            "description": "提醒同步文档（对应规则 00_global.md）"
           }
         ]
       }
@@ -79,13 +160,13 @@
       {
         "id": "github-push",
         "interval": 1800000,
-        "command": "node .claude/hooks/scripts/auto-github-push.js",
+        "command": "node hooks/scripts/auto-github-push.js",
         "description": "定时推送 GitHub（每 30 分钟）"
       },
       {
         "id": "agent-health",
         "interval": 300000,
-        "command": "node .claude/hooks/scripts/agent-health-monitor.js",
+        "command": "node hooks/scripts/agent-health-monitor.js",
         "description": "Agent 健康监控（每 5 分钟）"
       }
     ]

@@ -43,8 +43,9 @@
 | 角色 | 必调技能 | 辅助技能 |
 |------|---------|---------|
 | **Frontend** | `Skill tdd` 🔴 | `Skill ui-ux-pro-max --stack react` |
-| **Backend** | `Skill tdd` 🔴 | `Skill prisma-database-setup`, `Skill database-migrations` ⚡ |
-| **QA** | `Skill tdd` | `Skill product-requirements`（了解测试策略） |
+| **Backend-Java** | `Skill springboot-tdd` 🔴, `Skill springboot-patterns` 🔴 | `Skill jpa-patterns`, `Skill springboot-security`, `Skill llm-integration`, `Skill vlm-integration`, `Skill workflow-engine` |
+| **Backend-Python** | `Skill tdd` 🔴 | `Skill prisma-database-setup`, `Skill llm-integration`, `Skill vlm-integration`, `Skill workflow-engine` |
+| **QA** | `Skill tdd` | `Skill verification-loop` 🔴, `Skill security-review`, `Skill product-requirements` |
 
 **标准开发流程**：
 ```bash
@@ -55,13 +56,24 @@
 4. 实现组件代码（Green 阶段）
 5. 重构优化（Refactor 阶段）
 
-# Backend 标准
+# Backend-Java 标准
+1. Skill springboot-patterns           # 获取 SpringBoot 架构指导
+2. Skill springboot-tdd                # 启动 TDD 流程（JUnit 5）
+3. 编写测试用例（Red 阶段）
+4. 实现代码（Green 阶段）
+5. 重构优化（Refactor 阶段）
+6. IF 安全相关 → Skill springboot-security
+7. IF AI 功能 → Skill llm-integration / vlm-integration
+8. IF 工作流 → Skill workflow-engine
+
+# Backend-Python 标准
 1. Skill prisma-database-setup        # 获取数据库配置指导
-2. Skill database-migrations           # ⚡ External skill（如已安装）
-3. Skill tdd                           # 启动 TDD 流程
-4. 编写测试用例（Red 阶段）
-5. 实现代码（Green 阶段）
-6. 重构优化（Refactor 阶段）
+2. Skill tdd                           # 启动 TDD 流程（pytest）
+3. 编写测试用例（Red 阶段）
+4. 实现代码（Green 阶段）
+5. 重构优化（Refactor 阶段）
+6. IF AI 功能 → Skill llm-integration / vlm-integration
+7. IF 工作流 → Skill workflow-engine
 ```
 
 ### 2.2 遇到问题
@@ -144,10 +156,11 @@ Agent --name "{角色名称}" \
 | 角色 | 角色特定技能 |
 |------|------------|
 | **Frontend** | 开始时调用 `Skill ui-ux-pro-max --stack react` |
-| **Backend** | 开始时调用 `Skill prisma-database-setup`，如需迁移调用 `Skill database-migrations` ⚡ |
-| **QA** | 开始时调用 `Skill tdd`（了解测试策略） |
+| **Backend-Java** | 开始时调用 `Skill springboot-patterns`，数据访问时调用 `Skill jpa-patterns` |
+| **Backend-Python** | 开始时调用 `Skill prisma-database-setup`，AI 功能时调用 `Skill llm-integration` |
+| **QA** | 开始时调用 `Skill tdd`（了解测试策略），验证时调用 `Skill verification-loop` |
 | **Architect** | 完成设计初稿后调用 `Skill writing-plans` |
-| **DevOps** | 涉及安全操作时调用 `Skill security-review` ⚡ |
+| **DevOps** | 涉及安全操作时调用 `Skill security-review` |
 
 ---
 
@@ -207,7 +220,8 @@ Claude Code 内置技能无需安装，直接通过 `/` 命令调用：
 前置: Phase 1 门禁通过
 显式调用:
   Frontend → /design-context → /ui-ux-pro-max → /antfu → /tdd → 开发 → /code-review (effort:high) → /simplify
-  Backend → /design-context → /prisma-database-setup → /tdd → 开发 → /code-review (effort:high) → /simplify
+  Backend-Java → /design-context → /springboot-patterns → /springboot-tdd → 开发 → /code-review (effort:high) → /simplify
+  Backend-Python → /design-context → /prisma-database-setup → /tdd → 开发 → /code-review (effort:high) → /simplify
 自动激活 (paths):
   编辑 .tsx/.jsx → react-best-practices + antfu + ui-ux-pro-max 自动考虑加载
   编辑 .prisma → prisma-database-setup 自动考虑加载
