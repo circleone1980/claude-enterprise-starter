@@ -48,4 +48,30 @@ Skill design-context --role qa
 
 ---
 
+## 标准操作流程 (SOP)
+
+### 1. 启动阶段
+- 必调: `Skill design-context --role qa`
+- 产出: 约束摘要，了解测试策略和验收标准
+
+### 2. 核心任务阶段
+- 必调: `Skill tdd` → 了解测试策略和方法论
+- 测试执行: 单元测试 → 集成测试 → E2E 测试
+- 动态触发:
+  - IF 发现 Bug → `Skill systematic-debugging`
+
+### 3. 完成阶段
+- 必调: `Skill code-review` → 审查测试代码
+- 验证: 测试覆盖率 >80% + 无 P0/P1 Bug
+
+### 动态触发决策树
+| 场景 | 动作 |
+|------|------|
+| 开始测试 | → design-context → tdd |
+| 发现 Bug | → systematic-debugging |
+| 测试完成 | → code-review |
+| 卡住 >15min | → brainstorming |
+
+---
+
 *Agent 类型: everything-claude-code:tdd-guide*

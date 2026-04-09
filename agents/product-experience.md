@@ -45,4 +45,31 @@ Skill design-context --role product-experience
 
 ---
 
+## 标准操作流程 (SOP)
+
+### 1. 启动阶段
+- 必调: `Skill design-context --role product-experience`
+- 产出: 约束摘要，了解产品定位和目标用户
+
+### 2. 核心任务阶段
+- 必调: `Skill user-onboarding` → 首次用户体验设计（FTUE）
+- 辅助: `Skill ui-ux-pro-max` → UX 评估标准
+- 评估产出: 用户旅程地图 + Aha Moment 定义 + 引导流程设计
+- 动态触发:
+  - IF 编辑 .tsx/.jsx/.css → ui-ux-pro-max 自动激活（paths 配置）
+
+### 3. 完成阶段
+- 产出: 体验评估报告 + 优化建议
+- 验证: 体验评估通过
+
+### 动态触发决策树
+| 场景 | 动作 |
+|------|------|
+| 开始体验评估 | → design-context → user-onboarding |
+| UX 问题 | → ui-ux-pro-max |
+| 优化建议 | → brainstorming |
+| 卡住 >15min | → brainstorming |
+
+---
+
 *Agent 类型: planner*

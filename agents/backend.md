@@ -52,4 +52,35 @@ Skill design-context --role backend
 
 ---
 
+## 标准操作流程 (SOP)
+
+### 1. 启动阶段
+- 必调: `Skill design-context --role backend`
+- 产出: 约束摘要，了解数据库设计和 API 设计约束
+
+### 2. 核心任务阶段
+- 必调: `Skill prisma-database-setup` → 获取数据库配置指导
+- 必调: `Skill tdd` → 启动 TDD 流程（垂直切片模式）
+- 开发循环: 编写测试(Red) → 实现代码(Green) → 重构(Refactor)
+- 动态触发:
+  - IF 编辑 .prisma → prisma-database-setup 自动激活（paths 配置）
+  - IF 数据库变更 → `Skill database-migrations`
+  - IF 遇到 Bug → `Skill systematic-debugging`
+
+### 3. 完成阶段
+- 必调: `Skill code-review` → 审查代码质量
+- 内置: `/simplify` → 并行代码质量优化
+- 验证: 测试覆盖率 >80% + 编译通过
+
+### 动态触发决策树
+| 场景 | 动作 |
+|------|------|
+| 开始新 Feature | → design-context → prisma-database-setup → tdd |
+| 数据库 Schema 变更 | → prisma-database-setup → database-migrations |
+| 遇到 Bug | → systematic-debugging |
+| 完成代码 | → code-review → /simplify |
+| 卡住 >15min | → brainstorming |
+
+---
+
 *Agent 类型: everything-claude-code:python-reviewer*

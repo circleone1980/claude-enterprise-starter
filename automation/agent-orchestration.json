@@ -17,13 +17,13 @@
     },
     "Architect": {
       "subagentType": "everything-claude-code:architect",
-      "requiredSkills": ["writing-plans", "product-requirements", "react-best-practices", "ui-ux-pro-max", "code-review"],
+      "requiredSkills": ["writing-plans", "product-requirements", "react-best-practices", "ui-ux-pro-max", "ui-style-selector", "code-review"],
       "parallelizable": true,
       "dependencies": []
     },
     "UI-Designer": {
       "subagentType": "general-purpose",
-      "requiredSkills": ["ui-ux-pro-max"],
+      "requiredSkills": ["ui-ux-pro-max", "ui-style-selector"],
       "parallelizable": true,
       "dependencies": [],
       "mcpServers": ["figma"]
@@ -71,5 +71,6 @@
     "restartDelay": 10000,
     "alertOnFailure": true
   },
-  "_comment": "Updated 2026-04-05 - Unified skill mapping across all files"
+  "_comment": "SSOT - Updated 2026-04-09 - 角色技能映射的唯一权威定义源，其他文件引用此处",
+  "_ssot_note": "CLAUDE.md 第七节、rules/04、rules/07、agents/*.md 均引用此文件，不重复定义"
 }

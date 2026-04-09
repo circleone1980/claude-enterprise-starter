@@ -32,6 +32,7 @@
 | Architect 完成**架构设计初稿** | `Skill writing-plans` | Architect |
 | Architect 需要创建**实施计划** | `Skill writing-plans` | Architect |
 | PM 需要创建**Sprint 计划** | `Skill sprint-planning` | PM |
+| **UI 风格选择**（项目初始或新模块） | `Skill ui-style-selector` | Architect, UI Designer |
 
 ---
 
@@ -169,6 +170,74 @@ Agent --name "{角色名称}" \
 |------|------|---------|
 | **Rigid（刚性）** | `tdd`, `systematic-debugging` | 严格遵循，不要跳过步骤 |
 | **Flexible（灵活）** | `brainstorming`, `backend-patterns` | 根据上下文适配原则 |
+
+---
+
+## 十、内置技能触发规则
+
+Claude Code 内置技能无需安装，直接通过 `/` 命令调用：
+
+| 触发场景 | 内置技能 | 适用角色 | 说明 |
+|---------|---------|---------|------|
+| 大规模重构（涉及 5+ 文件） | `/batch` | Architect, PM | 自动拆解任务、创建独立分支、并行处理 |
+| 完成代码审查后 | `/simplify` | Frontend, Backend | 三个代理并行审查代码质量 |
+| 代码合并前最终检查 | `/simplify` | QA, DevOps | 最终质量检查 |
+| 按间隔监控任务 | `/loop` | DevOps | 定期检查部署状态等 |
+| 加载 Claude API 参考 | `/claude-api` | Backend | 当代码导入 `anthropic` SDK 时自动触发 |
+
+---
+
+## 十一、全局阶段流程图
+
+### Phase 1: 需求分析
+
+```
+前置: 项目初始化完成
+显式调用:
+  PM → /product-requirements (effort:high) → /sprint-planning (effort:medium)
+  PO → /product-requirements (effort:high) → /user-onboarding (effort:high)
+  Architect → /writing-plans (effort:high) → /ui-style-selector (确认视觉方向)
+自动激活: 无（设计文档阶段无代码文件）
+完成: 冻结层文档通过门禁验证
+```
+
+### Phase 2: 开发实现
+
+```
+前置: Phase 1 门禁通过
+显式调用:
+  Frontend → /design-context → /ui-ux-pro-max → /antfu → /tdd → 开发 → /code-review (effort:high) → /simplify
+  Backend → /design-context → /prisma-database-setup → /tdd → 开发 → /code-review (effort:high) → /simplify
+自动激活 (paths):
+  编辑 .tsx/.jsx → react-best-practices + antfu + ui-ux-pro-max 自动考虑加载
+  编辑 .prisma → prisma-database-setup 自动考虑加载
+内置: 大型重构(5+文件) → /batch
+完成: 所有 Feature 编译通过 + 测试通过 + code-review 通过
+```
+
+### Phase 3: 测试验证
+
+```
+前置: Phase 2 门禁通过
+显式调用: QA → /design-context → /tdd → 测试 → /code-review
+完成: 测试覆盖率 >80% + 无 P0/P1 Bug
+```
+
+### Phase 4: 产品体验
+
+```
+前置: Phase 3 门禁通过
+显式调用: 产品体验师 → /design-context → /user-onboarding (effort:high) → /ui-ux-pro-max
+完成: 体验评估通过
+```
+
+### Phase 5: 部署发布
+
+```
+前置: Phase 4 门禁通过
+显式调用: DevOps → /design-context → /code-review → /simplify (合并前最终检查)
+完成: 部署成功 + 无回滚
+```
 
 ---
 

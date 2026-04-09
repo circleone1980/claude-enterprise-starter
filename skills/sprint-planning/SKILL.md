@@ -6,6 +6,7 @@ description: |
   TRIGGER when: user asks about sprint planning, iteration planning, task allocation, mentions "Sprint", "迭代", "迭代规划", "任务分配", "task planning", "sprint backlog", "story points", "velocity".
   
   Use this skill when starting a new development cycle, planning work distribution, or organizing tasks into iterations. Essential for PM and PO roles.
+effort: medium
 ---
 
 # Sprint Planning

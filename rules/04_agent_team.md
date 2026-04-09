@@ -1,6 +1,7 @@
 # Agent Team 详细规则
 
 > Agent Team 体系的详细说明（主文件中的精简版补充）
+> **角色-技能映射的权威定义源**: `automation/agent-orchestration.json`
 
 ---
 
@@ -13,11 +14,13 @@
 
 ### Architect (架构师)
 - `writing-plans` 🔴 - **核心技能**，系统架构设计
-- `react-best-practices` 🔴 - **核心技能**，React 架构优化
+- `react-best-practices` - React 架构优化
+- `ui-style-selector` - UI 风格选择（架构设计时确认视觉方向）
 - Superpowers `brainstorming` - 架构脑暴
 
 ### UI Designer (UI 设计师)
 - `ui-ux-pro-max` 🔴 - **核心技能**，50+ 设计风格、161 配色方案
+- `ui-style-selector` 🔴 - **核心技能**，基于场景选择 UI 风格模板
 - Superpowers `frontend-design` - 前端设计指导
 - MCP `figma` - Figma 设计工具集成
 
@@ -51,19 +54,25 @@
 ## 开发前检查清单
 
 **后端开发**:
-- [ ] 1. 🔴 调用 `Skill tdd` 启动 TDD 流程
-- [ ] 2. 调用 `Skill prisma-database-setup` 获取数据库配置
-- [ ] 3. 编写测试用例（Red 阶段）
-- [ ] 4. 实现代码（Green 阶段）
-- [ ] 5. 重构优化（Refactor 阶段）
-- [ ] 6. 调用 `Skill code-review` 审查代码
-- [ ] 7. 确保测试覆盖率 >80%
+- [ ] 1. 🔴 调用 `Skill design-context --role backend` 获取设计约束
+- [ ] 2. 🔴 调用 `Skill tdd` 启动 TDD 流程
+- [ ] 3. 调用 `Skill prisma-database-setup` 获取数据库配置
+- [ ] 4. 编写测试用例（Red 阶段）
+- [ ] 5. 实现代码（Green 阶段）
+- [ ] 6. 重构优化（Refactor 阶段）
+- [ ] 7. 调用 `Skill code-review` 审查代码
+- [ ] 8. 确保测试覆盖率 >80%
 
 **前端开发**:
-- [ ] 1. 调用 `Skill ui-ux-pro-max --stack react`
-- [ ] 2. 🔴 调用 `Skill tdd` 启动 TDD 流程
+- [ ] 1. 🔴 调用 `Skill design-context --role frontend` 获取设计约束
+- [ ] 2. 调用 `Skill ui-ux-pro-max --stack react` 获取 UI 最佳实践
 - [ ] 3. 调用 `Skill antfu` 获取工具链配置
-- [ ] 4-7. 同上
+- [ ] 4. 🔴 调用 `Skill tdd` 启动 TDD 流程
+- [ ] 5. 编写测试用例（Red 阶段）
+- [ ] 6. 实现组件代码（Green 阶段）
+- [ ] 7. 重构优化（Refactor 阶段）
+- [ ] 8. 调用 `Skill code-review` 审查代码
+- [ ] 9. 确保测试覆盖率 >80%
 
 ---
 

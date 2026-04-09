@@ -6,6 +6,7 @@ description: |
   TRIGGER when: user asks about requirements, needs analysis, wants to write PRD, mentions "需求分析", "产品需求", "requirements", "PRD", "product requirements", "功能设计", "业务分析", "用户故事", "验收标准".
   
   Use this skill whenever the user discusses product features, business capabilities, or any kind of requirements documentation - even if they don't explicitly say "PRD" or "requirements".
+effort: high
 ---
 
 # Product Requirements Analysis

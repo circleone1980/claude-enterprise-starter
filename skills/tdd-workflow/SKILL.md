@@ -6,6 +6,7 @@ description: |
   TRIGGER when: user wants to implement a feature, fix a bug, write tests, mentions "TDD", "测试驱动开发", "test-driven", "unit test", "testing", "Red-Green", "覆盖率", "pytest", "jest".
   
   Use this skill BEFORE writing implementation code. TDD is mandatory for all development work - backend (Python/FastAPI) and frontend (React/TypeScript). Even if user doesn't explicitly mention TDD, suggest this workflow for any new feature development.
+effort: low
 ---
 
 # Test-Driven Development Workflow

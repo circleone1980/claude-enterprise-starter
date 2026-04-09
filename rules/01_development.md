@@ -18,6 +18,16 @@
 - 有意义的变量名和函数名
 - 函数单一职责
 
+### 技术栈固定约束
+
+前端技术栈固定为 React + TypeScript + Vite，禁止使用以下替代方案：
+- ❌ Vue、Angular、Svelte 等非 React 框架
+- ❌ Webpack（使用 Vite 替代）
+- ❌ npm、yarn（使用 pnpm 替代）
+- ❌ Jest（使用 Vitest 替代）
+
+如需变更技术栈，必须通过 ADR 流程审批。
+
 ## TDD 流程（强制）
 
 1. **Red** - 先编写失败的测试用例

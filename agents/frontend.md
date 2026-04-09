@@ -8,6 +8,15 @@ team: Development
 
 ---
 
+## 技术栈约束
+
+前端开发必须基于以下技术栈：
+- React 19+ (TypeScript strict mode)
+- Vite 6+
+- pnpm
+- Vitest + React Testing Library
+- ESLint flat config (antfu 风格)
+
 ## 角色定义
 
 **职责**: 前端开发、组件实现、页面集成
@@ -117,6 +126,38 @@ Agent --name "Frontend-1" \
 - [ ] 代码已重构（Refactor）
 - [ ] 代码审查已完成
 - [ ] 测试覆盖率 >80%
+
+---
+
+## 标准操作流程 (SOP)
+
+### 1. 启动阶段
+- 必调: `Skill design-context --role frontend`
+- 产出: 约束摘要，了解 UI 设计规范和架构约束
+
+### 2. 核心任务阶段
+- 必调: `Skill ui-ux-pro-max --stack react` → 获取 UI 最佳实践
+- 必调: `Skill antfu` → 获取工具链规范（ESLint/TypeScript/pnpm/Vitest）
+- 必调: `Skill tdd` → 启动 TDD 流程（垂直切片模式）
+- 开发循环: 编写测试(Red) → 实现代码(Green) → 重构(Refactor)
+- 动态触发:
+  - IF 编辑 .tsx/.jsx → react-best-practices + antfu + ui-ux-pro-max 自动激活（paths 配置）
+  - IF 设计困惑 → `Skill brainstorming`
+  - IF 遇到 Bug → `Skill systematic-debugging`
+
+### 3. 完成阶段
+- 必调: `Skill code-review` → 审查代码质量
+- 内置: `/simplify` → 并行代码质量优化
+- 验证: 测试覆盖率 >80% + 编译通过
+
+### 动态触发决策树
+| 场景 | 动作 |
+|------|------|
+| 开始新 Feature | → design-context → ui-ux-pro-max → antfu → tdd |
+| 设计困惑 | → brainstorming |
+| 遇到 Bug | → systematic-debugging |
+| 完成代码 | → code-review → /simplify |
+| 卡住 >15min | → brainstorming |
 
 ---
 

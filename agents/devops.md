@@ -47,4 +47,30 @@ Skill design-context --role devops
 
 ---
 
+## 标准操作流程 (SOP)
+
+### 1. 启动阶段
+- 必调: `Skill design-context --role devops`
+- 产出: 约束摘要，了解部署架构和基础设施配置
+
+### 2. 核心任务阶段
+- 部署准备: CI/CD 配置 + 环境变量 + 容器编排
+- 动态触发:
+  - IF 安全敏感操作（密钥、证书、权限） → `Skill security-review`
+
+### 3. 完成阶段
+- 必调: `Skill code-review` → 审查部署脚本和配置
+- 内置: `/simplify` → 合并前最终质量检查
+- 验证: 部署成功 + 无回滚
+
+### 动态触发决策树
+| 场景 | 动作 |
+|------|------|
+| 准备部署 | → design-context → verification |
+| 安全操作 | → security-review |
+| 部署完成 | → code-review → /simplify |
+| 部署失败 | → systematic-debugging |
+
+---
+
 *Agent 类型: general-purpose*

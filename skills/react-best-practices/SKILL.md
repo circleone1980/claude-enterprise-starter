@@ -1,6 +1,8 @@
 ---
 name: react-best-practices
-description: Comprehensive React and Next.js performance optimization guide with 40+ rules for eliminating waterfalls, optimizing bundles, and improving rendering. Use when optimizing React apps, reviewing performance, or refactoring components.
+description: React/Next.js performance optimization with 40+ rules. TRIGGER when: optimizing React apps, mentions 'React performance', 'bundle size'. Comprehensive guide for eliminating waterfalls, optimizing bundles, and improving rendering.
+paths: "**/*.tsx,**/*.jsx"
+user-invocable: false
 version: 1.0.0
 author: Vercel Engineering
 license: MIT

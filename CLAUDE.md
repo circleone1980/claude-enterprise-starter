@@ -34,6 +34,24 @@
 
 ---
 
+## 一-B、技术栈约束
+
+### 前端技术栈（固定）
+
+| 类别 | 技术选型 | 版本要求 |
+|------|---------|---------|
+| 框架 | React | 19+ (Server Components + Client Components) |
+| 语言 | TypeScript | strict mode |
+| 构建工具 | Vite | 6+ |
+| 包管理 | pnpm | 9+ |
+| 测试 | Vitest + React Testing Library | 最新稳定版 |
+| Lint | ESLint flat config (antfu 风格) | 最新稳定版 |
+
+> **Why**: 技术栈统一降低团队协作摩擦，模板工程默认基于此技术栈
+> **约束**: 所有前端 Skills 和 Agent 配置默认基于此技术栈，如需变更需通过 ADR
+
+---
+
 ## 二、系统设计标准
 
 ### 角色定位
@@ -157,16 +175,17 @@ Module
 
 ## 七、Agent Team Skills 强制规则 🔴
 
-> **最高优先级 - 强制执行**: 创建任何 Agent Team 或 Subagent 时，必须使用以下 Skills/Agents
+> **角色-技能映射的定义源**: `automation/agent-orchestration.json`
+> 以下为简化视图，完整配置含 subagentType、dependencies、count 等字段详见上述文件
 
-### 各角色强制映射表
+### 各角色技能（简化视图）
 
 | 角色 | 核心技能 🔴 | 辅助技能 | Agent 类型 |
 |------|-----------|---------|-----------|
 | **PM** | product-requirements | sprint-planning | planner |
 | **PO** | product-requirements | sprint-planning, user-onboarding | general-purpose |
-| **Architect** | writing-plans 🔴 | product-requirements, react-best-practices, ui-ux-pro-max, code-review | architect |
-| **UI Designer** | ui-ux-pro-max 🔴 | Figma MCP | general-purpose |
+| **Architect** | writing-plans 🔴 | product-requirements, react-best-practices, ui-ux-pro-max, ui-style-selector, code-review | architect |
+| **UI Designer** | ui-ux-pro-max 🔴, ui-style-selector | Figma MCP | general-purpose |
 | **Frontend** | tdd 🔴, antfu 🔴 | ui-ux-pro-max, code-review | typescript-reviewer |
 | **Backend** | tdd 🔴, prisma-database-setup 🔴 | code-review | python-reviewer |
 | **QA** | tdd | code-review, Playwright MCP | tdd-guide |
@@ -174,6 +193,9 @@ Module
 | **产品体验师** | user-onboarding 🔴 | product-requirements, ui-ux-pro-max | planner |
 
 **Why**: 技能映射确保角色专业化，避免通用 Agent 能力稀释
+
+> 详细配置和启动命令模板见 `rules/04_agent_team.md`
+> 角色标准操作流程（SOP）见各 `agents/*.md` 文件
 
 ### 启动 Agent 标准格式
 
@@ -305,6 +327,7 @@ GitHub 推送 → 完成报告
 | antfu | `skills/antfu/SKILL.md` |
 | prisma-database-setup | `skills/prisma-database-setup/SKILL.md` |
 | **design-context** 🔴 | `skills/design-context/SKILL.md` 🔴 |
+| **ui-style-selector** | `skills/ui-style-selector/SKILL.md` |
 
 ---
 

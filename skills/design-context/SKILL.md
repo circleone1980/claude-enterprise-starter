@@ -1,6 +1,13 @@
 ---
 name: design-context
-description: 根据角色自动读取相关设计文档并返回关键约束摘要。在 Agent 启动时、开发任务开始前、或用户提到"设计文档"、"约束"、"规范"时自动调用。支持角色：pm, frontend, backend, qa, devops, architect, ui-designer, product-experience。
+description: |
+  Load design context for a role. Reads design docs and returns constraint summary.
+  TRIGGER when: agent starts, before dev tasks, user mentions "设计文档", "约束", "规范".
+  Supports roles: pm, po, frontend, backend, qa, devops, architect, ui-designer, product-experience.
+user-invocable: false
+disable-model-invocation: true
+allowed-tools: Read Grep Glob
+effort: low
 ---
 
 # 设计上下文技能

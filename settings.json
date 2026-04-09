@@ -126,17 +126,6 @@
         "All development MUST call Skill tdd first (TDD is mandatory)",
         "All code MUST be reviewed before commit"
       ],
-      "requiredSkills": {
-        "pm": ["product-requirements", "sprint-planning"],
-        "po": ["product-requirements", "sprint-planning", "user-onboarding"],
-        "architect": ["writing-plans", "product-requirements", "react-best-practices", "ui-ux-pro-max", "code-review"],
-        "ui-designer": ["ui-ux-pro-max"],
-        "backend": ["tdd", "prisma-database-setup", "code-review"],
-        "frontend": ["tdd", "antfu", "ui-ux-pro-max", "code-review"],
-        "qa": ["tdd", "code-review"],
-        "devops": ["code-review"],
-        "product-experience": ["user-onboarding", "product-requirements", "ui-ux-pro-max"]
-      },
       "requiredAgents": {
         "backend": "everything-claude-code:python-reviewer",
         "frontend": "everything-claude-code:typescript-reviewer",
@@ -145,5 +134,5 @@
       }
     }
   },
-  "_comment": "Updated 2026-04-05 - Unified skill mapping across all files"
+  "_comment": "Updated 2026-04-09 - removed requiredSkills (moved to automation/agent-orchestration.json as SSOT)"
 }

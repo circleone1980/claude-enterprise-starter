@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Test-driven development with red-green-refactor loop. Use when user wants to build features or fix bugs using TDD, mentions "red-green-refactor", wants integration tests, or asks for test-first development.
+description: Test-driven development with red-green-refactor loop. TRIGGER when: user wants to build features or fix bugs, mentions "TDD", "测试驱动开发", "red-green-refactor", "test-first", "单元测试", "unit test", "integration test", "覆盖率", or asks for test-first development.
 ---
 
 # Test-Driven Development

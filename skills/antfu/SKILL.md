@@ -2,6 +2,8 @@
 name: antfu
 description: Anthony Fu's opinionated tooling and conventions for JavaScript/TypeScript projects. Use when setting up new projects, configuring ESLint/Prettier alternatives, monorepos, library publishing, or when the user mentions Anthony Fu's preferences.
 source: https://github.com/antfu/skills/tree/main/skills/antfu
+paths: "**/*.ts,**/*.tsx,**/*.js,**/*.jsx"
+user-invocable: false
 ---
 
 ## Coding Practices

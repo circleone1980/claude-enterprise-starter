@@ -46,4 +46,33 @@ Skill design-context --role ui-designer
 
 ---
 
+## 标准操作流程 (SOP)
+
+### 1. 启动阶段
+- 必调: `Skill design-context --role ui-designer`
+- 产出: 约束摘要，了解 UI 设计规范和品牌约束
+
+### 2. 核心任务阶段
+- 必调: `Skill ui-style-selector` → 基于场景选择 UI 风格模板（60 个品牌风格）
+- 必调: `Skill ui-ux-pro-max --stack react` → 获取完整设计系统推荐
+- 设计产出: 色彩体系 + 排版系统 + 间距系统 + 组件规范
+- 动态触发:
+  - IF 设计选择困难 → `Skill brainstorming`
+  - IF 编辑 .tsx/.jsx/.css → ui-ux-pro-max 自动激活（paths 配置）
+
+### 3. 完成阶段
+- 产出: UI 设计规范文档 → `docs/design/04_UI设计规范.md`
+- 验证: 设计规范与选定风格一致
+
+### 动态触发决策树
+| 场景 | 动作 |
+|------|------|
+| 项目初始/新模块 | → ui-style-selector → ui-ux-pro-max |
+| 设计选择困难 | → brainstorming |
+| 需要配色方案 | → ui-ux-pro-max --domain color |
+| 需要字体推荐 | → ui-ux-pro-max --domain typography |
+| 卡住 >15min | → brainstorming |
+
+---
+
 *Agent 类型: general-purpose*
