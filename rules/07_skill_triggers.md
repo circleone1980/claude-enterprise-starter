@@ -43,7 +43,7 @@
 | 角色 | 必调技能 | 辅助技能 |
 |------|---------|---------|
 | **Frontend** | `Skill tdd` 🔴 | `Skill ui-ux-pro-max --stack react` |
-| **Backend** | `Skill tdd` 🔴 | `Skill database-migrations`, `Skill prisma-database-setup` |
+| **Backend** | `Skill tdd` 🔴 | `Skill prisma-database-setup`, `Skill database-migrations` ⚡ |
 | **QA** | `Skill tdd` | `Skill product-requirements`（了解测试策略） |
 
 **标准开发流程**：
@@ -57,7 +57,7 @@
 
 # Backend 标准
 1. Skill prisma-database-setup        # 获取数据库配置指导
-2. Skill database-migrations           # 数据库迁移模式（如需）
+2. Skill database-migrations           # ⚡ External skill（如已安装）
 3. Skill tdd                           # 启动 TDD 流程
 4. 编写测试用例（Red 阶段）
 5. 实现代码（Green 阶段）
@@ -78,7 +78,7 @@
 | 触发场景 | 调用技能 | 适用角色 |
 |---------|---------|---------|
 | Frontend/Backend **完成代码编写** | `Skill code-review` 🔴 | Frontend, Backend |
-| 涉及**安全敏感代码**（认证、加密、SQL） | `Skill security-review` 🔴 | Backend, DevOps |
+| 涉及**安全敏感代码**（认证、加密、SQL） | `Skill security-review` 🔴 ⚡ | Backend, DevOps |
 | 功能实现完成，准备提交 | `Skill verification-before-completion` 🔴 | 所有开发角色 |
 
 ---
@@ -98,7 +98,7 @@
 | 触发场景 | 调用技能 | 适用角色 |
 |---------|---------|---------|
 | DevOps **准备部署** | `Skill verification-before-completion` | DevOps |
-| DevOps 涉及**安全敏感操作** | `Skill security-review` | DevOps |
+| DevOps 涉及**安全敏感操作** | `Skill security-review` ⚡ | DevOps |
 
 ---
 
@@ -144,10 +144,10 @@ Agent --name "{角色名称}" \
 | 角色 | 角色特定技能 |
 |------|------------|
 | **Frontend** | 开始时调用 `Skill ui-ux-pro-max --stack react` |
-| **Backend** | 开始时调用 `Skill prisma-database-setup`，如需迁移调用 `Skill database-migrations` |
+| **Backend** | 开始时调用 `Skill prisma-database-setup`，如需迁移调用 `Skill database-migrations` ⚡ |
 | **QA** | 开始时调用 `Skill tdd`（了解测试策略） |
 | **Architect** | 完成设计初稿后调用 `Skill writing-plans` |
-| **DevOps** | 涉及安全操作时调用 `Skill security-review` |
+| **DevOps** | 涉及安全操作时调用 `Skill security-review` ⚡ |
 
 ---
 
@@ -240,5 +240,7 @@ Claude Code 内置技能无需安装，直接通过 `/` 命令调用：
 ```
 
 ---
+
+> **图例**: 🔴 = 强制调用 | ⚡ = External skill（非本项目内置，需额外安装或通过 Superpowers 提供）
 
 *加载顺序: 07*

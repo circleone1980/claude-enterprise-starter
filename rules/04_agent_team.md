@@ -7,6 +7,8 @@
 
 ## 角色详细技能说明
 
+> **注意**: 以下仅列出各角色的**核心技能**，完整技能列表（含辅助技能）见 `automation/agent-orchestration.json` (SSOT)
+
 ### PM (项目经理)
 - `product-requirements` - 需求理解和拆解
 - `sprint-planning` - Sprint 规划和任务分配

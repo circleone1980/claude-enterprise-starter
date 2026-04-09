@@ -9,7 +9,7 @@
 > 🚀 Enterprise-grade Claude Code configuration template with Agent Team orchestration, Rage Mode automation, TDD workflow, and production-ready configurations.
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-blue)](https://code.claude.com)
-[![Version](https://img.shields.io/badge/Version-2.0.0-green)](./CLAUDE.md)
+[![Version](https://img.shields.io/badge/Version-2.1.0-green)](./CLAUDE.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 ### Features
@@ -20,9 +20,15 @@
 | **Rage Mode** 🔴 | Full automation - auto GitHub push, agent health monitoring, phase advancement |
 | **TDD Workflow** | Enforced Test-Driven Development with Red-Green-Refactor cycle |
 | **Quality Gates** | 4-stage verification: functionality, code review, testing, documentation |
-| **Skills System** | 10+ integrated skills: TDD, UI/UX, Prisma, React best practices, design-context |
-| **Document System** 🆕 | Frozen/Evolution/ADR document layers with design-context skill for auto-loading |
-| **Skill Triggers** 🆕 | 4-layer skill triggering mechanism (Rules + Skill + Task + Dynamic) |
+| **Skills System** | 13 integrated skills with advanced frontmatter configuration |
+| **Frontmatter Config** 🆕 | `effort`, `paths`, `allowed-tools`, `user-invocable` for precise skill control |
+| **UI Style Selector** 🆕 | 60 brand design templates with auto-scenario matching |
+| **Tech Stack** 🆕 | React + TypeScript + Vite (fixed), no alternatives allowed |
+| **Built-in Skills** 🆕 | `/batch` (parallel refactor), `/simplify` (code quality review) |
+| **SSOT Architecture** 🆕 | `automation/agent-orchestration.json` as single source of truth |
+| **Per-Role SOP** 🆕 | Standard Operating Procedure for all 9 agent roles |
+| **Document System** | Frozen/Evolution/ADR document layers with design-context skill for auto-loading |
+| **Skill Triggers** | Global phase flowchart (Phase 1-5) + dynamic trigger rules |
 | **Commands** | Custom slash commands: `/commit`, `/pr`, `/review` |
 | **Output Styles** | 3 output modes: terse, detailed, enterprise |
 
@@ -48,48 +54,106 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 ├── settings.json          # Permissions, hooks, configs
 ├── rules/                 # Modular rules (8 files)
 │   ├── 00_global.md       # Language, startup constraints
-│   ├── 01_development.md  # Development constraints
+│   ├── 01_development.md  # Development constraints + tech stack
 │   ├── 02_database.md     # Database standards
 │   ├── 03_quality.md      # Quality gates
-│   ├── 04_agent_team.md   # Agent Team rules
+│   ├── 04_agent_team.md   # Agent Team rules (references SSOT)
 │   ├── 05_security.md     # Security standards
-│   ├── 06_document_lifecycle.md  # 🆕 Document lifecycle (Frozen/Evolution/ADR)
-│   └── 07_skill_triggers.md      # 🆕 Skill trigger rules
-├── skills/                # Custom skills (10+ skills)
-│   ├── design-context/    # 🆕 Auto-load design docs by role
+│   ├── 06_document_lifecycle.md  # Document lifecycle (Frozen/Evolution/ADR)
+│   └── 07_skill_triggers.md      # Skill triggers + global phase flowchart
+├── skills/                # Custom skills (13 skills)
+│   ├── ui-style-selector/ # 🆕 UI style auto-selection (60 templates)
+│   ├── design-context/    # Auto-load design docs by role
 │   ├── tdd/               # TDD workflow
 │   ├── code-review/       # Code review
+│   ├── react-best-practices/ # Auto-activates on .tsx/.jsx (paths)
+│   ├── antfu/             # Auto-activates on .ts/.tsx (paths)
 │   └── ...
-├── agents/                # Agent definitions (9 roles)
+├── agents/                # Agent definitions with SOP (9 roles)
 ├── commands/              # Slash commands
 ├── output-styles/         # Output style variants
 ├── agent-memory/          # Persistent agent memory
-├── automation/            # Rage mode configs
+├── automation/            # SSOT: agent-orchestration.json + Rage mode
 └── hooks/                 # Hook scripts
 
-docs/                      # 🆕 Project documentation (from templates)
-├── requirements/          # Frozen layer: PRD, user stories, acceptance criteria
-├── design/                # Frozen layer: Architecture, DB, API, UI design
+docs/                      # Project documentation
+├── requirements/          # Frozen layer: PRD, user stories
+├── design/                # Frozen layer: Architecture, DB, API, UI
 ├── superpowers/           # ADR + brainstorming records
-├── dev/                   # Evolution layer: Dev guides, coding standards
-├── test/                  # Evolution layer: Test plans, cases, reports
-├── fixes/                 # Evolution layer: Changelog, fix records
-└── sql/                   # Database scripts
+├── dev/                   # Evolution layer
+├── test/                  # Evolution layer
+└── fixes/                 # Evolution layer
+
+tips/                      # 🆕 Reference guides & design resources
+├── Claude Code Skills功能指南.md
+└── UI设计风格/            # 60 brand design templates
+    ├── ui风格对照表.md     # Scenario ↔ Style mapping table
+    └── design-md/          # {style}/DESIGN.md per style
 ```
+
+### Skills Frontmatter Configuration
+
+| Skill | effort | paths | Special Config |
+|-------|--------|-------|----------------|
+| **design-context** | low | - | `user-invocable: false`, `disable-model-invocation: true`, `allowed-tools: Read Grep Glob` |
+| **react-best-practices** | - | `**/*.tsx,**/*.jsx` | `user-invocable: false` (auto-activate) |
+| **antfu** | - | `**/*.ts,**/*.tsx,**/*.js,**/*.jsx` | `user-invocable: false` (auto-activate) |
+| **ui-ux-pro-max** | - | `**/*.tsx,**/*.jsx,**/*.css,**/*.scss,...` | - |
+| **prisma-database-setup** | - | `**/*.prisma,prisma.config.ts` | - |
+| **code-review** | high | - | Deep multi-dimensional analysis |
+| **writing-plans** | high | - | Architecture trade-offs |
+| **product-requirements** | high | - | Business logic analysis |
+| **user-onboarding** | high | - | User psychology analysis |
+| **sprint-planning** | medium | - | Structured process |
+| **ui-style-selector** | high | - | 🆕 60 templates scenario matching |
+| **tdd** | - | - | Core TDD methodology |
+| **tdd-workflow** | low | - | Operation manual level |
 
 ### Agent Team Roles
 
-| Role | Responsibilities | Required Skills |
-|------|------------------|-----------------|
-| PM | Project management, task distribution | product-requirements, sprint-planning, **design-context** 🆕 |
-| PO | Requirements analysis, user stories | product-requirements, user-onboarding, **design-context** 🆕 |
-| Architect | System design, technical solutions | writing-plans 🔴, react-best-practices 🔴, code-review, **design-context** 🆕 |
-| UI Designer | Interface design, interaction | ui-ux-pro-max, **design-context** 🆕 |
-| Frontend | Frontend development | tdd, antfu, ui-ux-pro-max, **design-context** 🆕 |
-| Backend | Backend development | tdd, prisma-database-setup, **design-context** 🆕 |
-| QA | Testing, verification | tdd, code-review, **design-context** 🆕 |
-| DevOps | Deployment, CI/CD | code-review, **design-context** 🆕 |
-| Product Experience | User perspective testing | user-onboarding, ui-ux-pro-max, **design-context** 🆕 |
+| Role | Responsibilities | Core Skills | Agent Type |
+|------|------------------|-------------|------------|
+| PM | Project management, task distribution | product-requirements, sprint-planning | planner |
+| PO | Requirements analysis, user stories | product-requirements, user-onboarding | general-purpose |
+| Architect | System design, technical solutions | writing-plans 🔴, ui-style-selector 🆕, code-review | architect |
+| UI Designer | Interface design, interaction | ui-ux-pro-max 🔴, ui-style-selector 🆕 | general-purpose |
+| Frontend | Frontend development | tdd 🔴, antfu 🔴, ui-ux-pro-max | typescript-reviewer |
+| Backend | Backend development | tdd 🔴, prisma-database-setup 🔴 | python-reviewer |
+| QA | Testing, verification | tdd, code-review | tdd-guide |
+| DevOps | Deployment, CI/CD | code-review | general-purpose |
+| Product Experience | User perspective testing | user-onboarding 🔴, ui-ux-pro-max | planner |
+
+### Frontend Tech Stack (Fixed)
+
+| Technology | Choice | Alternative Prohibited |
+|-----------|--------|----------------------|
+| Framework | React 19+ | Vue, Angular, Svelte |
+| Language | TypeScript (strict) | - |
+| Build Tool | Vite | Webpack |
+| Package Manager | pnpm | npm, yarn |
+| Test Runner | Vitest | Jest |
+| Lint | ESLint flat config (antfu) | - |
+
+### UI Style Selection Flow
+
+```
+Project Scenario Description
+  → Read ui风格对照表.md (60 brand styles × 7 categories)
+  → Brainstorm matching (2-3 candidates)
+  → User confirms selection
+  → Load design-md/{style}/DESIGN.md
+  → Output as UI design constraints
+```
+
+### Global Phase Flowchart
+
+```
+Phase 1: Requirements → PM/PO/Architect parallel → Freeze docs
+Phase 2: Development  → Frontend×3/Backend×3 parallel → TDD + Review
+Phase 3: Testing      → QA verification → Coverage >80%
+Phase 4: UX Review    → Product Experience evaluation
+Phase 5: Deployment   → DevOps → GitHub push
+```
 
 ### Rage Mode Features
 
@@ -109,6 +173,9 @@ docs/                      # 🆕 Project documentation (from templates)
 
 # Start with Agent Team
 /plan Implement user authentication system
+
+# UI style selection (before frontend development)
+/ui-style-selector
 
 # Manual agent start
 Agent --name "Backend-1" \
@@ -140,11 +207,16 @@ Agent --name "Backend-1" \
 | **狂暴模式** 🔴 | 全自动开发 - 自动 GitHub 推送、Agent 监控、阶段推进 |
 | **TDD 工作流** | 强制测试驱动开发，Red-Green-Refactor 循环 |
 | **质量门禁** | 4 阶段验证：功能、代码审查、测试、文档 |
-| **技能系统** | 10+ 集成技能：TDD、UI/UX、Prisma、React 最佳实践、design-context |
-| **文档体系** 🆕 | 冻结层/演化层/ADR 三层文档体系，design-context 技能自动加载 |
-| **技能触发** 🆕 | 四层技能触发机制（Rules + Skill + Task + Dynamic） |
+| **技能系统** | 13 个集成技能，全部配置高级 Frontmatter |
+| **Frontmatter 配置** 🆕 | `effort`、`paths`、`allowed-tools`、`user-invocable` 精准控制技能调用 |
+| **UI 风格选择** 🆕 | 60 个品牌设计模板，基于场景自动匹配 |
+| **技术栈固化** 🆕 | React + TypeScript + Vite，禁止替代方案 |
+| **内置 Skills** 🆕 | `/batch`（并行重构）、`/simplify`（代码质量审查） |
+| **SSOT 架构** 🆕 | `automation/agent-orchestration.json` 单一真相源 |
+| **角色 SOP** 🆕 | 全部 9 个角色标准化操作流程 |
+| **文档体系** | 冻结层/演化层/ADR 三层文档体系 |
+| **技能触发** | 全局阶段流程图（Phase 1-5）+ 动态触发规则 |
 | **命令系统** | 自定义斜杠命令：`/commit`、`/pr`、`/review` |
-| **输出风格** | 3 种输出模式：简洁、详细、企业级 |
 
 ### 快速开始
 
@@ -167,36 +239,88 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 ├── CLAUDE.md              # 核心指令文件
 ├── settings.json          # 权限、钩子、配置
 ├── rules/                 # 模块化规则（8 个文件）
-│   ├── 06_document_lifecycle.md  # 🆕 文档生命周期（冻结/演化/ADR）
-│   └── 07_skill_triggers.md      # 🆕 技能触发规则
-├── skills/                # 自定义技能（10+ 技能）
-│   ├── design-context/    # 🆕 按角色自动加载设计文档
+│   ├── 01_development.md  # 开发约束 + 技术栈固化
+│   ├── 04_agent_team.md   # Agent Team 规则（引用 SSOT）
+│   ├── 06_document_lifecycle.md  # 文档生命周期
+│   └── 07_skill_triggers.md      # 技能触发 + 全局流程图
+├── skills/                # 自定义技能（13 个）
+│   ├── ui-style-selector/ # 🆕 UI 风格自动选择（60 模板）
+│   ├── design-context/    # 按角色自动加载设计文档
+│   ├── react-best-practices/ # paths: **/*.tsx 自动激活
 │   └── ...
-├── agents/                # 代理定义（9 个角色）
-└── ...
+├── agents/                # 代理定义（9 个角色，各含 SOP）
+└── automation/            # SSOT: agent-orchestration.json
 
-docs/                      # 🆕 项目文档（来自模板）
-├── requirements/          # 冻结层：PRD、用户故事、验收标准
-├── design/                # 冻结层：架构、数据库、API、UI 设计
-├── superpowers/           # ADR + 脑暴记录
-├── dev/                   # 演化层：开发指南、编码规范
-├── test/                  # 演化层：测试计划、用例、报告
-└── ...
+tips/                      # 🆕 参考指南与设计资源
+├── Claude Code Skills功能指南.md
+└── UI设计风格/            # 60 个品牌设计模板
+    ├── ui风格对照表.md     # 场景 ↔ 风格对照表
+    └── design-md/          # {style}/DESIGN.md
 ```
 
 ### Agent Team 角色
 
-| 角色 | 职责 | 必用技能 |
+| 角色 | 职责 | 核心技能 | Agent 类型 |
+|------|------|---------|-----------|
+| PM | 项目管理、任务分配 | product-requirements, sprint-planning | planner |
+| PO | 需求分析、用户故事 | product-requirements, user-onboarding | general-purpose |
+| 架构师 | 系统设计、技术方案 | writing-plans 🔴, ui-style-selector 🆕, code-review | architect |
+| UI 设计师 | 界面设计、交互规范 | ui-ux-pro-max 🔴, ui-style-selector 🆕 | general-purpose |
+| 前端开发 | 前端开发 | tdd 🔴, antfu 🔴, ui-ux-pro-max | typescript-reviewer |
+| 后端开发 | 后端开发 | tdd 🔴, prisma-database-setup 🔴 | python-reviewer |
+| QA | 测试验证 | tdd, code-review | tdd-guide |
+| DevOps | 部署运维 | code-review | general-purpose |
+| 产品体验师 | 用户视角测试 | user-onboarding 🔴, ui-ux-pro-max | planner |
+
+### 技能 Frontmatter 高级配置
+
+| 技能 | effort | paths | 特殊配置 |
+|------|--------|-------|---------|
+| **design-context** | low | - | `user-invocable: false`、只读权限、禁用模型调用 |
+| **react-best-practices** | - | `**/*.tsx,**/*.jsx` | `user-invocable: false`（自动激活） |
+| **antfu** | - | `**/*.ts,**/*.tsx,**/*.js,**/*.jsx` | `user-invocable: false`（自动激活） |
+| **ui-ux-pro-max** | - | `**/*.tsx,**/*.jsx,**/*.css,**/*.scss,...` | - |
+| **prisma-database-setup** | - | `**/*.prisma,prisma.config.ts` | - |
+| **code-review** | high | - | 深度多维度分析 |
+| **writing-plans** | high | - | 架构选型权衡 |
+| **product-requirements** | high | - | 业务逻辑分析 |
+| **user-onboarding** | high | - | 用户心理分析 |
+| **sprint-planning** | medium | - | 结构化流程 |
+| **ui-style-selector** | high | - | 🆕 60 模板场景匹配 |
+| **tdd** | - | - | 核心 TDD 方法论 |
+| **tdd-workflow** | low | - | 操作手册级别 |
+
+### 前端技术栈（固化）
+
+| 技术 | 选择 | 禁止替代 |
 |------|------|---------|
-| PM | 项目管理、任务分配 | product-requirements, sprint-planning, **design-context** 🆕 |
-| PO | 需求分析、用户故事 | product-requirements, user-onboarding, **design-context** 🆕 |
-| 架构师 | 系统设计、技术方案 | writing-plans 🔴, react-best-practices 🔴, code-review, **design-context** 🆕 |
-| UI 设计师 | 界面设计、交互规范 | ui-ux-pro-max, **design-context** 🆕 |
-| 前端开发 | 前端开发 | tdd, antfu, ui-ux-pro-max, **design-context** 🆕 |
-| 后端开发 | 后端开发 | tdd, prisma-database-setup, **design-context** 🆕 |
-| QA | 测试验证 | tdd, code-review, **design-context** 🆕 |
-| DevOps | 部署运维 | code-review, **design-context** 🆕 |
-| 产品体验师 | 用户视角测试 | user-onboarding, ui-ux-pro-max, **design-context** 🆕 |
+| 框架 | React 19+ | Vue、Angular、Svelte |
+| 语言 | TypeScript (strict) | - |
+| 构建工具 | Vite | Webpack |
+| 包管理 | pnpm | npm、yarn |
+| 测试 | Vitest | Jest |
+| Lint | ESLint flat config (antfu) | - |
+
+### UI 风格选择流程
+
+```
+项目场景描述
+  → 读取 ui风格对照表.md（60 个品牌风格 × 7 大分类）
+  → 脑暴匹配（2-3 个候选风格）
+  → 用户确认选择
+  → 加载 design-md/{style}/DESIGN.md
+  → 输出为 UI 设计约束
+```
+
+### 全局阶段流程图
+
+```
+Phase 1: 需求分析 → PM/PO/Architect 并行 → 冻结层文档
+Phase 2: 开发实现 → Frontend×3/Backend×3 并行 → TDD + 代码审查
+Phase 3: 测试验证 → QA 验证 → 覆盖率 >80%
+Phase 4: 产品体验 → 产品体验师评估
+Phase 5: 部署发布 → DevOps → GitHub 推送
+```
 
 ### 狂暴模式功能
 
@@ -217,21 +341,14 @@ docs/                      # 🆕 项目文档（来自模板）
 # 使用 Agent Team
 /plan 实现用户认证系统
 
+# UI 风格选择（前端开发前）
+/ui-style-selector
+
 # 手动启动 Agent
 Agent --name "Backend-1" \
   --subagent-type "everything-claude-code:python-reviewer" \
   --prompt "先调用 Skill tdd，然后实现登录 API"
 ```
-
-### 验证命令
-
-| 命令 | 用途 |
-|------|------|
-| `/doctor` | 诊断配置 |
-| `/context` | 查看上下文使用 |
-| `/memory` | 查看加载的文件 |
-| `/skills` | 列出可用技能 |
-| `/agents` | 查看配置的代理 |
 
 ---
 
@@ -248,6 +365,7 @@ Agent --name "Backend-1" \
 ### Development Workflow
 
 - [ ] Use `/plan` to enter plan mode
+- [ ] Select UI style with `/ui-style-selector` (before frontend work)
 - [ ] Follow TDD cycle (Red → Green → Refactor)
 - [ ] Pass code review
 - [ ] Test coverage >80%
@@ -271,5 +389,5 @@ MIT License
 
 ---
 
-*Template Version: 2.0.0*
-*Last Updated: 2026-04-08*
+*Template Version: 2.1.0*
+*Last Updated: 2026-04-09*
