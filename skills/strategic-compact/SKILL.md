@@ -1,86 +1,131 @@
 ---
 name: strategic-compact
-description: |
-  战略性上下文压缩 — 在逻辑节点建议压缩，而非等待自动压缩。
-  TRIGGER when: 阶段切换、上下文使用率 >50%、长会话。
+description: Suggests manual context compaction at logical intervals to preserve context through task phases rather than arbitrary auto-compaction.
 origin: ECC
-effort: low
 ---
 
-# Strategic Compact（战略压缩）
+# Strategic Compact Skill
 
-在逻辑任务边界进行上下文压缩，而非等待自动压缩。
+Suggests manual `/compact` at strategic points in your workflow rather than relying on arbitrary auto-compaction.
 
-## 问题
+## When to Activate
 
-自动压缩在任意时间点触发（通常在任务中间），导致关键上下文丢失。
+- Running long sessions that approach context limits (200K+ tokens)
+- Working on multi-phase tasks (research → plan → implement → test)
+- Switching between unrelated tasks within the same session
+- After completing a major milestone and starting new work
+- When responses slow down or become less coherent (context pressure)
 
-## 压缩决策指南
+## Why Strategic Compaction?
 
-| 阶段转换 | 是否压缩 | 原因 |
-|---------|---------|------|
-| 研究 → 规划 | ✅ 是 | 研究内容冗余；规划是精炼输出 |
-| 规划 → 实现 | ✅ 是 | 规划已在文件/Task 中；释放上下文给代码 |
-| 实现 → 测试 | ⚠️ 视情况 | 如测试引用近期代码则保留 |
-| 调试 → 新功能 | ✅ 是 | 调试痕迹污染上下文 |
-| 实现过程中 | ❌ 否 | 丢失变量名/状态代价太高 |
-| 失败方案后 | ✅ 是 | 清除死胡同推理 |
+Auto-compaction triggers at arbitrary points:
+- Often mid-task, losing important context
+- No awareness of logical task boundaries
+- Can interrupt complex multi-step operations
 
-## 压缩后保留的内容
+Strategic compaction at logical boundaries:
+- **After exploration, before execution** — Compact research context, keep implementation plan
+- **After completing a milestone** — Fresh start for next phase
+- **Before major context shifts** — Clear exploration context before different task
 
-| 保留 | 丢失 |
-|------|------|
-| CLAUDE.md 指令 | 中间推理过程 |
-| Task 任务列表 | 已读文件内容 |
-| Memory 文件 | 多步对话上下文 |
-| Git 状态 | 工具调用历史 |
-| 磁盘上的文件 | 细微的口头偏好 |
+## How It Works
 
-## 使用方式
+The `suggest-compact.js` script runs on PreToolUse (Edit/Write) and:
 
-### 自动触发（通过 suggest-compact hook）
+1. **Tracks tool calls** — Counts tool invocations in session
+2. **Threshold detection** — Suggests at configurable threshold (default: 50 calls)
+3. **Periodic reminders** — Reminds every 25 calls after threshold
 
-hook 在工具调用达到阈值（默认 50 次）时自动提醒。
+## Hook Setup
 
-### 手动触发
+Add to your `~/.claude/settings.json`:
 
-```
-/compact          — Claude Code 内置压缩
-```
-
-### 环境变量配置
-
-```bash
-COMPACT_THRESHOLD=50      # 触发提醒的工具调用次数
-COMPACT_REMIND_INTERVAL=25  # 后续提醒间隔
-```
-
-## Token 优化策略
-
-### 触发表惰性加载
-
-将技能关键词映射到文件路径，只在匹配时加载：
-
-```
-关键词: "测试" → skills/tdd/SKILL.md
-关键词: "安全" → skills/security-review/SKILL.md
-关键词: "Spring" → skills/springboot-patterns/SKILL.md
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [{ "type": "command", "command": "node ~/.claude/skills/strategic-compact/suggest-compact.js" }]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [{ "type": "command", "command": "node ~/.claude/skills/strategic-compact/suggest-compact.js" }]
+      }
+    ]
+  }
+}
 ```
 
-### 减少重复指令
+## Configuration
 
-检查 CLAUDE.md、rules/、skills/ 是否有重复规则。同一规则只保留一份，其他引用。
+Environment variables:
+- `COMPACT_THRESHOLD` — Tool calls before first suggestion (default: 50)
 
-### 上下文组成感知
+## Compaction Decision Guide
 
-监控 4 个上下文来源：
-1. CLAUDE.md + rules/（~10-20%）
-2. 已加载的 Skills（~5-15%）
-3. 对话历史（~40-60%）
-4. 工具调用结果（~20-30%）
+Use this table to decide when to compact:
 
-在 50% 上下文时开始考虑压缩，70% 时必须压缩。
+| Phase Transition | Compact? | Why |
+|-----------------|----------|-----|
+| Research → Planning | Yes | Research context is bulky; plan is the distilled output |
+| Planning → Implementation | Yes | Plan is in TodoWrite or a file; free up context for code |
+| Implementation → Testing | Maybe | Keep if tests reference recent code; compact if switching focus |
+| Debugging → Next feature | Yes | Debug traces pollute context for unrelated work |
+| Mid-implementation | No | Losing variable names, file paths, and partial state is costly |
+| After a failed approach | Yes | Clear the dead-end reasoning before trying a new approach |
 
-## 配合 Hook
+## What Survives Compaction
 
-`suggest-compact.js` hook 自动跟踪工具调用次数并在阈值时提醒。
+Understanding what persists helps you compact with confidence:
+
+| Persists | Lost |
+|----------|------|
+| CLAUDE.md instructions | Intermediate reasoning and analysis |
+| TodoWrite task list | File contents you previously read |
+| Memory files (`~/.claude/memory/`) | Multi-step conversation context |
+| Git state (commits, branches) | Tool call history and counts |
+| Files on disk | Nuanced user preferences stated verbally |
+
+## Best Practices
+
+1. **Compact after planning** — Once plan is finalized in TodoWrite, compact to start fresh
+2. **Compact after debugging** — Clear error-resolution context before continuing
+3. **Don't compact mid-implementation** — Preserve context for related changes
+4. **Read the suggestion** — The hook tells you *when*, you decide *if*
+5. **Write before compacting** — Save important context to files or memory before compacting
+6. **Use `/compact` with a summary** — Add a custom message: `/compact Focus on implementing auth middleware next`
+
+## Token Optimization Patterns
+
+### Trigger-Table Lazy Loading
+Instead of loading full skill content at session start, use a trigger table that maps keywords to skill paths. Skills load only when triggered, reducing baseline context by 50%+:
+
+| Trigger | Skill | Load When |
+|---------|-------|-----------|
+| "test", "tdd", "coverage" | tdd-workflow | User mentions testing |
+| "security", "auth", "xss" | security-review | Security-related work |
+| "deploy", "ci/cd" | deployment-patterns | Deployment context |
+
+### Context Composition Awareness
+Monitor what's consuming your context window:
+- **CLAUDE.md files** — Always loaded, keep lean
+- **Loaded skills** — Each skill adds 1-5K tokens
+- **Conversation history** — Grows with each exchange
+- **Tool results** — File reads, search results add bulk
+
+### Duplicate Instruction Detection
+Common sources of duplicate context:
+- Same rules in both `~/.claude/rules/` and project `.claude/rules/`
+- Skills that repeat CLAUDE.md instructions
+- Multiple skills covering overlapping domains
+
+### Context Optimization Tools
+- `token-optimizer` MCP — Automated 95%+ token reduction via content deduplication
+- `context-mode` — Context virtualization (315KB to 5.4KB demonstrated)
+
+## Related
+
+- [The Longform Guide](https://x.com/affaanmustafa/status/2014040193557471352) — Token optimization section
+- Memory persistence hooks — For state that survives compaction
+- `continuous-learning` skill — Extracts patterns before session ends

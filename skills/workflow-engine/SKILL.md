@@ -1,173 +1,191 @@
 ---
-name: workflow-engine
-origin: custom
-description: |
-  Workflow 编排模式 — 状态机、DAG 工作流、审批流、任务调度。
-  TRIGGER when: 实现审批流、任务编排、异步工作流、定时任务。
-paths: "**/workflow/**,**/engine/**"
-effort: high
+name: dmux-workflows
+description: Multi-agent orchestration using dmux (tmux pane manager for AI agents). Patterns for parallel agent workflows across Claude Code, Codex, OpenCode, and other harnesses. Use when running multiple agent sessions in parallel or coordinating multi-agent development workflows.
+origin: ECC
 ---
 
-# Workflow 编排模式
+# dmux Workflows
 
-工作流引擎集成的生产级模式。
+Orchestrate parallel AI agent sessions using dmux, a tmux pane manager for agent harnesses.
 
-## 触发场景
+## When to Activate
 
-- 审批流程（多级审批、条件分支）
-- 任务编排（DAG 依赖、并行执行）
-- 异步工作流（长时间运行任务）
-- 定时任务调度
-- 状态机管理（订单状态、文档状态）
+- Running multiple agent sessions in parallel
+- Coordinating work across Claude Code, Codex, and other harnesses
+- Complex tasks that benefit from divide-and-conquer parallelism
+- User says "run in parallel", "split this work", "use dmux", or "multi-agent"
 
-## 技术选型
+## What is dmux
 
-| 场景 | Java 方案 | Python 方案 |
-|------|-----------|-------------|
-| 状态机 | Spring Statemachine | `transitions` / `python-statemachine` |
-| 工作流引擎 | Camunda / Flowable | `prefect` / `temporal` / `n8n` |
-| DAG 编排 | Airflow (Python) | Airflow / Prefect / Dagster |
-| 审批流 | Flowable BPMN | `spiffworkflow` |
-| 定时任务 | Quartz / Spring @Scheduled | `celery-beat` / APScheduler |
-| 消息驱动 | Kafka + Spring Streams | Celery + Redis/RabbitMQ |
+dmux is a tmux-based orchestration tool that manages AI agent panes:
+- Press `n` to create a new pane with a prompt
+- Press `m` to merge pane output back to the main session
+- Supports: Claude Code, Codex, OpenCode, Cline, Gemini, Qwen
 
-## 状态机模式
+**Install:** Install dmux from its repository after reviewing the package. See [github.com/standardagents/dmux](https://github.com/standardagents/dmux)
 
-```java
-// Spring Statemachine 配置
-@Configuration
-@EnableStateMachineFactory
-public class OrderStateMachineConfig extends EnumStateMachineConfigurerAdapter<OrderState, OrderEvent> {
+## Quick Start
 
-    @Override
-    public void configure(StateMachineStateConfigurer<OrderState, OrderEvent> states) throws Exception {
-        states.withStates()
-            .initial(OrderState.CREATED)
-            .states(EnumSet.allOf(OrderState.class))
-            .end(OrderState.COMPLETED)
-            .end(OrderState.CANCELLED);
-    }
+```bash
+# Start dmux session
+dmux
 
-    @Override
-    public void configure(StateMachineTransitionConfigurer<OrderState, OrderEvent> transitions) throws Exception {
-        transitions
-            .withExternal().source(CREATED).target(PENDING_PAYMENT).event(SUBMIT)
-            .and()
-            .withExternal().source(PENDING_PAYMENT).target(PROCESSING).event(PAY)
-            .and()
-            .withExternal().source(PROCESSING).target(COMPLETED).event(COMPLETE)
-            .and()
-            .withExternal().source(CREATED).target(CANCELLED).event(CANCEL)
-            .and()
-            .withExternal().source(PENDING_PAYMENT).target(CANCELLED).event(CANCEL);
-    }
+# Create agent panes (press 'n' in dmux, then type prompt)
+# Pane 1: "Implement the auth middleware in src/auth/"
+# Pane 2: "Write tests for the user service"
+# Pane 3: "Update API documentation"
+
+# Each pane runs its own agent session
+# Press 'm' to merge results back
+```
+
+## Workflow Patterns
+
+### Pattern 1: Research + Implement
+
+Split research and implementation into parallel tracks:
+
+```
+Pane 1 (Research): "Research best practices for rate limiting in Node.js.
+  Check current libraries, compare approaches, and write findings to
+  /tmp/rate-limit-research.md"
+
+Pane 2 (Implement): "Implement rate limiting middleware for our Express API.
+  Start with a basic token bucket, we'll refine after research completes."
+
+# After Pane 1 completes, merge findings into Pane 2's context
+```
+
+### Pattern 2: Multi-File Feature
+
+Parallelize work across independent files:
+
+```
+Pane 1: "Create the database schema and migrations for the billing feature"
+Pane 2: "Build the billing API endpoints in src/api/billing/"
+Pane 3: "Create the billing dashboard UI components"
+
+# Merge all, then do integration in main pane
+```
+
+### Pattern 3: Test + Fix Loop
+
+Run tests in one pane, fix in another:
+
+```
+Pane 1 (Watcher): "Run the test suite in watch mode. When tests fail,
+  summarize the failures."
+
+Pane 2 (Fixer): "Fix failing tests based on the error output from pane 1"
+```
+
+### Pattern 4: Cross-Harness
+
+Use different AI tools for different tasks:
+
+```
+Pane 1 (Claude Code): "Review the security of the auth module"
+Pane 2 (Codex): "Refactor the utility functions for performance"
+Pane 3 (Claude Code): "Write E2E tests for the checkout flow"
+```
+
+### Pattern 5: Code Review Pipeline
+
+Parallel review perspectives:
+
+```
+Pane 1: "Review src/api/ for security vulnerabilities"
+Pane 2: "Review src/api/ for performance issues"
+Pane 3: "Review src/api/ for test coverage gaps"
+
+# Merge all reviews into a single report
+```
+
+## Best Practices
+
+1. **Independent tasks only.** Don't parallelize tasks that depend on each other's output.
+2. **Clear boundaries.** Each pane should work on distinct files or concerns.
+3. **Merge strategically.** Review pane output before merging to avoid conflicts.
+4. **Use git worktrees.** For file-conflict-prone work, use separate worktrees per pane.
+5. **Resource awareness.** Each pane uses API tokens — keep total panes under 5-6.
+
+## Git Worktree Integration
+
+For tasks that touch overlapping files:
+
+```bash
+# Create worktrees for isolation
+git worktree add -b feat/auth ../feature-auth HEAD
+git worktree add -b feat/billing ../feature-billing HEAD
+
+# Run agents in separate worktrees
+# Pane 1: cd ../feature-auth && claude
+# Pane 2: cd ../feature-billing && claude
+
+# Merge branches when done
+git merge feat/auth
+git merge feat/billing
+```
+
+## Complementary Tools
+
+| Tool | What It Does | When to Use |
+|------|-------------|-------------|
+| **dmux** | tmux pane management for agents | Parallel agent sessions |
+| **Superset** | Terminal IDE for 10+ parallel agents | Large-scale orchestration |
+| **Claude Code Task tool** | In-process subagent spawning | Programmatic parallelism within a session |
+| **Codex multi-agent** | Built-in agent roles | Codex-specific parallel work |
+
+## ECC Helper
+
+ECC now includes a helper for external tmux-pane orchestration with separate git worktrees:
+
+```bash
+node scripts/orchestrate-worktrees.js plan.json --execute
+```
+
+Example `plan.json`:
+
+```json
+{
+  "sessionName": "skill-audit",
+  "baseRef": "HEAD",
+  "launcherCommand": "codex exec --cwd {worktree_path} --task-file {task_file}",
+  "workers": [
+    { "name": "docs-a", "task": "Fix skills 1-4 and write handoff notes." },
+    { "name": "docs-b", "task": "Fix skills 5-8 and write handoff notes." }
+  ]
 }
 ```
 
-```python
-# Python: 简单状态机
-from enum import Enum
-from typing import Callable
+The helper:
+- Creates one branch-backed git worktree per worker
+- Optionally overlays selected `seedPaths` from the main checkout into each worker worktree
+- Writes per-worker `task.md`, `handoff.md`, and `status.md` files under `.orchestration/<session>/`
+- Starts a tmux session with one pane per worker
+- Launches each worker command in its own pane
+- Leaves the main pane free for the orchestrator
 
-class OrderState(Enum):
-    CREATED = "created"
-    PENDING_PAYMENT = "pending_payment"
-    PROCESSING = "processing"
-    COMPLETED = "completed"
-    CANCELLED = "cancelled"
+Use `seedPaths` when workers need access to dirty or untracked local files that are not yet part of `HEAD`, such as local orchestration scripts, draft plans, or docs:
 
-TRANSITIONS = {
-    (OrderState.CREATED, "submit"): OrderState.PENDING_PAYMENT,
-    (OrderState.PENDING_PAYMENT, "pay"): OrderState.PROCESSING,
-    (OrderState.PROCESSING, "complete"): OrderState.COMPLETED,
-    (OrderState.CREATED, "cancel"): OrderState.CANCELLED,
-    (OrderState.PENDING_PAYMENT, "cancel"): OrderState.CANCELLED,
-}
-
-class OrderWorkflow:
-    def __init__(self, state: OrderState = OrderState.CREATED):
-        self.state = state
-        self._listeners: list[Callable] = []
-
-    def transition(self, event: str) -> OrderState:
-        key = (self.state, event)
-        if key not in TRANSITIONS:
-            raise InvalidTransitionError(self.state, event)
-        old_state = self.state
-        self.state = TRANSITIONS[key]
-        self._notify(old_state, self.state, event)
-        return self.state
-```
-
-## 审批流模式
-
-```java
-// 多级审批
-@Service
-public class ApprovalWorkflow {
-    private final ApprovalRepository repo;
-
-    @Transactional
-    public Approval submit(ApprovalRequest request) {
-        Approval approval = new Approval();
-        approval.setStatus(PENDING);
-        approval.setRequiredApprovers(determineApprovers(request));
-        approval.setCurrentLevel(1);
-        return repo.save(approval);
-    }
-
-    @Transactional
-    public Approval approve(Long approvalId, Long userId, String comment) {
-        Approval approval = repo.findById(approvalId).orElseThrow();
-        validateApprover(approval, userId);
-
-        approval.addDecision(userId, APPROVED, comment);
-        approval.setCurrentLevel(approval.getCurrentLevel() + 1);
-
-        if (approval.getCurrentLevel() > approval.getRequiredApprovers().size()) {
-            approval.setStatus(APPROVED);
-        }
-        return repo.save(approval);
-    }
+```json
+{
+  "sessionName": "workflow-e2e",
+  "seedPaths": [
+    "scripts/orchestrate-worktrees.js",
+    "scripts/lib/tmux-worktree-orchestrator.js",
+    ".claude/plan/workflow-e2e-test.json"
+  ],
+  "launcherCommand": "bash {repo_root}/scripts/orchestrate-codex-worker.sh {task_file} {handoff_file} {status_file}",
+  "workers": [
+    { "name": "seed-check", "task": "Verify seeded files are present before starting work." }
+  ]
 }
 ```
 
-## DAG 工作流
+## Troubleshooting
 
-```python
-# Prefect DAG
-from prefect import flow, task
-
-@task(retries=3, retry_delay_seconds=60)
-def extract_data(source: str) -> dict:
-    ...
-
-@task
-def transform_data(raw: dict) -> dict:
-    ...
-
-@task
-def load_data(processed: dict) -> None:
-    ...
-
-@flow(name="etl-pipeline")
-def etl_pipeline(source: str):
-    raw = extract_data(source)
-    processed = transform_data(raw)
-    load_data(processed)
-```
-
-## 关键设计原则
-
-1. **幂等性**: 每个步骤可安全重试
-2. **可观测性**: 每个状态变更都记录日志和事件
-3. **超时保护**: 所有步骤设置超时
-4. **补偿事务**: 失败时支持回滚/补偿
-5. **持久化**: 状态持久化到数据库，不依赖内存
-
-## 反模式（禁止）
-
-- ❌ 状态转换无验证（任何人可触发任何状态）
-- ❌ 无超时的异步任务（可能永远阻塞）
-- ❌ 状态仅存在内存（重启丢失）
-- ❌ 循环依赖的 DAG（死锁）
+- **Pane not responding:** Switch to the pane directly or inspect it with `tmux capture-pane -pt <session>:0.<pane-index>`.
+- **Merge conflicts:** Use git worktrees to isolate file changes per pane.
+- **High token usage:** Reduce number of parallel panes. Each pane is a full agent session.
+- **tmux not found:** Install with `brew install tmux` (macOS) or `apt install tmux` (Linux).

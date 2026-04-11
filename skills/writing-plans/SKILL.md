@@ -1,249 +1,152 @@
 ---
 name: writing-plans
-description: 環境架构设计和功能拆解 - 用于设计系统架构、分解功能模块、制定技术方案
-origin: superpowers
-effort: high
+description: Use when you have a spec or requirements for a multi-step task, before touching code
 ---
 
-# Writing Plans（架构规划技能）
+# Writing Plans
 
-## 觍色定位
+## Overview
 
-此技能专为 **Architect（架构师）** 角色设计，是架构师进行系统设计和功能拆解的核心技能。
+Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD. Frequent commits.
 
----
+Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
 
-## 核心职责
+**Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
-1. **系统架构设计** - 设计整体系统架构
-2. **功能模块拆解** - 将需求拆解为可执行的功能模块
-3. **技术方案制定** - 确定技术选型和实现路径
-4. **接口设计** - 定义模块间的接口契约
+**Context:** This should be run in a dedicated worktree (created by brainstorming skill).
 
----
+**Save plans to:** `docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md`
+- (User preferences for plan location override this default)
 
-## 工作流程
+## Scope Check
 
-### Phase 1: 需求理解
+If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
 
-```
-1. 阅读需求文档
-2. 理解业务目标
-3. 识别技术约束
-4. 确认非功能需求
-```
+## File Structure
 
-### Phase 2: 架构设计
+Before defining tasks, map out which files will be created or modified and what each one is responsible for. This is where decomposition decisions get locked in.
 
-```
-1. 设计系统架构图
-2. 确定技术栈
-3. 规划数据流
-4. 定义部署架构
-```
+- Design units with clear boundaries and well-defined interfaces. Each file should have one clear responsibility.
+- You reason best about code you can hold in context at once, and your edits are more reliable when files are focused. Prefer smaller, focused files over large ones that do too much.
+- Files that change together should live together. Split by responsibility, not by technical layer.
+- In existing codebases, follow established patterns. If the codebase uses large files, don't unilaterally restructure - but if a file you're modifying has grown unwieldy, including a split in the plan is reasonable.
 
-### Phase 3: 功能拆解
+This structure informs the task decomposition. Each task should produce self-contained changes that make sense independently.
 
-```
-1. 识别核心功能
-2. 拆分为模块
-3. 定义模块边界
-4. 设计模块接口
-```
+## Bite-Sized Task Granularity
 
-### Phase 4: 技术方案
+**Each step is one action (2-5 minutes):**
+- "Write the failing test" - step
+- "Run it to make sure it fails" - step
+- "Implement the minimal code to make the test pass" - step
+- "Run the tests and make sure they pass" - step
+- "Commit" - step
 
-```
-1. 技术选型论证
-2. API 设计
-3. 数据库设计
-4. 安全方案
-```
+## Plan Document Header
 
----
-
-## 架构文档模板
-
-### 系统架构图
+**Every plan MUST start with this header:**
 
 ```markdown
-# 系统架构
+# [Feature Name] Implementation Plan
 
-## 整体架构
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-```mermaid
-graph TB
-    subgraph Frontend
-        A[UI Components]
-        A[State Management]
-        A[API Client]
-    end
-    
-    subgraph Backend
-        B[API Gateway]
-        B[Business Logic]
-        B[Data Access]
-    end
-    
-    subgraph Data
-        C[(Database)]
-        C[(Cache)]
-    end
-    
-    A --> B
-    B --> C
+**Goal:** [One sentence describing what this builds]
+
+**Architecture:** [2-3 sentences about approach]
+
+**Tech Stack:** [Key technologies/libraries]
+
+---
 ```
 
-## 技术栈
+## Task Structure
 
-| 层级 | 技术 | 版本 |
-|------|------|------|
-| 前端 | React | 18.x |
-| 后端 | FastAPI | 0.100+ |
-| 数据库 | PostgreSQL | 15.x |
-| 缓存 | Redis | 7.x |
-```
+````markdown
+### Task N: [Component Name]
 
-### 功能模块拆分
+**Files:**
+- Create: `exact/path/to/file.py`
+- Modify: `exact/path/to/existing.py:123-145`
+- Test: `tests/exact/path/to/test.py`
 
-```markdown
-# 功能模块拆分
+- [ ] **Step 1: Write the failing test**
 
-## Module: 用户认证
-
-### 功能列表
-- 用户注册
-- 用户登录
-- 密码重置
-- Token 刷新
-
-### 接口定义
-```typescript
-interface AuthService {
-  register(data: RegisterDTO): Promise<User>;
-  login(credentials: LoginDTO): Promise<Token>;
-  logout(): Promise<void>;
-  refreshToken(): Promise<Token>;
-}
-```
-
-### 依赖关系
-- 依赖: 数据库模块
-- 依赖: 缓存模块
-
-## Module: 订单管理
-
-...
-```
-
-### 技术方案
-
-```markdown
-# 技术方案
-
-## 1. 认证方案
-
-### 选型: JWT + Refresh Token
-
-**原因:**
-- 无状态认证
-- 支持多端
-- 易于扩展
-
-**实现:**
 ```python
-from datetime import datetime, timedelta
-import jwt
-
-class AuthService:
-    def create_tokens(self, user_id: str) -> tuple[str, str]:
-        access_token = jwt.encode({
-            "sub": user_id,
-            "exp": datetime.utcnow() + timedelta(minutes=15)
-        }, settings.JWT_SECRET)
-        
-        refresh_token = jwt.encode({
-            "sub": user_id,
-            "type": "refresh",
-            "exp": datetime.utcnow() + timedelta(days=7)
-        }, settings.JWT_SECRET)
-        
-        return access_token, refresh_token
+def test_specific_behavior():
+    result = function(input)
+    assert result == expected
 ```
 
-## 2. 数据库方案
+- [ ] **Step 2: Run test to verify it fails**
 
-...
+Run: `pytest tests/path/test.py::test_name -v`
+Expected: FAIL with "function not defined"
+
+- [ ] **Step 3: Write minimal implementation**
+
+```python
+def function(input):
+    return expected
 ```
 
----
+- [ ] **Step 4: Run test to verify it passes**
 
-## 质量检查清单
+Run: `pytest tests/path/test.py::test_name -v`
+Expected: PASS
 
-### 架构设计检查
+- [ ] **Step 5: Commit**
 
-- [ ] 架构图清晰易懂
-- [ ] 技术选型有理有据
-- [ ] 模块边界明确
-- [ ] 接口定义完整
-- [ ] 扩展性考虑充分
+```bash
+git add tests/path/test.py src/path/file.py
+git commit -m "feat: add specific feature"
+```
+````
 
-### 功能拆分检查
+## No Placeholders
 
-- [ ] 功能粒度适当
-- [ ] 依赖关系清晰
-- [ ] 接口契约完整
-- [ ] 可独立开发
-- [ ] 可独立测试
+Every step must contain the actual content an engineer needs. These are **plan failures** — never write them:
+- "TBD", "TODO", "implement later", "fill in details"
+- "Add appropriate error handling" / "add validation" / "handle edge cases"
+- "Write tests for the above" (without actual test code)
+- "Similar to Task N" (repeat the code — the engineer may be reading tasks out of order)
+- Steps that describe what to do without showing how (code blocks required for code steps)
+- References to types, functions, or methods not defined in any task
 
-### 技术方案检查
+## Remember
+- Exact file paths always
+- Complete code in every step — if a step changes code, show the code
+- Exact commands with expected output
+- DRY, YAGNI, TDD, frequent commits
 
-- [ ] 方案可行性验证
-- [ ] 性能考量
-- [ ] 安全考量
-- [ ] 成本考量
-- [ ] 运维考量
+## Self-Review
 
----
+After writing the complete plan, look at the spec with fresh eyes and check the plan against it. This is a checklist you run yourself — not a subagent dispatch.
 
-## 输出规范
+**1. Spec coverage:** Skim each section/requirement in the spec. Can you point to a task that implements it? List any gaps.
 
-### 必须输出
+**2. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" section above. Fix them.
 
-1. **系统架构图** - Mermaid 或 PlantUML 格式
-2. **技术栈清单** - 包含版本和选型理由
-3. **功能模块列表** - 包含接口和依赖
-4. **技术方案文档** - 包含实现细节
+**3. Type consistency:** Do the types, method signatures, and property names you used in later tasks match what you defined in earlier tasks? A function called `clearLayers()` in Task 3 but `clearFullLayers()` in Task 7 is a bug.
 
-### 建议输出
+If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
 
-1. API 接口文档
-2. 数据库设计
-3. 部署架构
-4. 风险评估
+## Execution Handoff
 
----
+After saving the plan, offer execution choice:
 
-## 与其他技能协作
+**"Plan complete and saved to `docs/superpowers/plans/<filename>.md`. Two execution options:**
 
-| 技能 | 协作点 |
-|------|--------|
-| `product-requirements` | 接收 PRD，转化为技术方案 |
-| `react-best-practices` | 前端架构设计 |
-| `prisma-database-setup` | 数据库架构设计 |
-| `tdd` | 接口设计支持测试 |
-| `code-review` | 架构方案审查 |
+**1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
 
----
+**2. Inline Execution** - Execute tasks in this session using executing-plans, batch execution with checkpoints
 
-## 注意事项
+**Which approach?"**
 
-1. **保持一致性** - 架构设计需与现有系统保持一致
-2. **考虑扩展** - 设计需考虑未来扩展可能
-3. **权衡取舍** - 记录架构决策的权衡过程
-4. **文档同步** - 架构变更时同步更新文档
+**If Subagent-Driven chosen:**
+- **REQUIRED SUB-SKILL:** Use superpowers:subagent-driven-development
+- Fresh subagent per task + two-stage review
 
----
-
-*技能版本: 1.0.0*
-*适用于: Architect 角色*
+**If Inline Execution chosen:**
+- **REQUIRED SUB-SKILL:** Use superpowers:executing-plans
+- Batch execution with checkpoints for review

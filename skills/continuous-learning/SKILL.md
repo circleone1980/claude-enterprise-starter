@@ -1,106 +1,123 @@
 ---
 name: continuous-learning
-description: |
-  持续学习系统 — 从会话中自动提取"本能"（instinct），置信度评分，进化为技能。
-  TRIGGER when: 会话结束、模式识别、本能管理。
+description: Automatically extract reusable patterns from Claude Code sessions and save them as learned skills for future use.
 origin: ECC
-version: 1.0.0
-effort: high
 ---
 
-# Continuous Learning（持续学习）
+# Continuous Learning Skill
 
-从日常会话中自动提取模式，积累为可复用的"本能"。
+Automatically evaluates Claude Code sessions on end to extract reusable patterns that can be saved as learned skills.
 
-## 核心概念: Instinct（本能）
+## When to Activate
 
-本能是一个**原子化的学习行为**，从会话中提取：
+- Setting up automatic pattern extraction from Claude Code sessions
+- Configuring the Stop hook for session evaluation
+- Reviewing or curating learned skills in `~/.claude/skills/learned/`
+- Adjusting extraction thresholds or pattern categories
+- Comparing v1 (this) vs v2 (instinct-based) approaches
 
-```yaml
-id: "prefer-readonly-queries"
-trigger: "编写数据库查询时"
-action: "默认使用 @Transactional(readOnly = true)"
-confidence: 0.7
-domain: "database"
-source: "session-2026-04-09"
-scope: "project"  # project 或 global
-evidence:
-  - "用户纠正了 3 次忘记加 readOnly"
+## Status
+
+This v1 skill is still supported, but `continuous-learning-v2` is the preferred path for new installs. Keep v1 when you explicitly want the simpler Stop-hook extraction flow or need compatibility with older learned-skill workflows.
+
+## How It Works
+
+This skill runs as a **Stop hook** at the end of each session:
+
+1. **Session Evaluation**: Checks if session has enough messages (default: 10+)
+2. **Pattern Detection**: Identifies extractable patterns from the session
+3. **Skill Extraction**: Saves useful patterns to `~/.claude/skills/learned/`
+
+## Configuration
+
+Edit `config.json` to customize:
+
+```json
+{
+  "min_session_length": 10,
+  "extraction_threshold": "medium",
+  "auto_approve": false,
+  "learned_skills_path": "~/.claude/skills/learned/",
+  "patterns_to_detect": [
+    "error_resolution",
+    "user_corrections",
+    "workarounds",
+    "debugging_techniques",
+    "project_specific"
+  ],
+  "ignore_patterns": [
+    "simple_typos",
+    "one_time_fixes",
+    "external_api_issues"
+  ]
+}
 ```
 
-## 置信度体系
+## Pattern Types
 
-| 置信度 | 含义 | 行为 |
-|--------|------|------|
-| 0.3 | 试探性 | 建议但不强制 |
-| 0.5 | 中等 | 相关时自动应用 |
-| 0.7 | 强 | 自动批准执行 |
-| 0.9 | 近确定 | 核心行为，始终执行 |
+| Pattern | Description |
+|---------|-------------|
+| `error_resolution` | How specific errors were resolved |
+| `user_corrections` | Patterns from user corrections |
+| `workarounds` | Solutions to framework/library quirks |
+| `debugging_techniques` | Effective debugging approaches |
+| `project_specific` | Project-specific conventions |
 
-## 学习来源
+## Hook Setup
 
-### 通过 Hooks 100% 捕获（非概率性）
+Add to your `~/.claude/settings.json`:
 
-- 用户纠正（"不对"、"不要这样做"）
-- 用户确认（"对"、"就是这样"、"完美"）
-- 重复出现的模式
-- 错误和修复模式
-
-### 本能文件结构
-
-```
-.claude/instincts/
-  personal/
-    prefer-readonly-queries.yaml
-    no-console-log-in-prod.yaml
-    ...
-  inherited/
-    ...
+```json
+{
+  "hooks": {
+    "Stop": [{
+      "matcher": "*",
+      "hooks": [{
+        "type": "command",
+        "command": "~/.claude/skills/continuous-learning/evaluate-session.sh"
+      }]
+    }]
+  }
+}
 ```
 
-## 管理命令
+## Why Stop Hook?
 
-### 查看本能状态
-```
-查看当前已学习的本能和置信度
-```
+- **Lightweight**: Runs once at session end
+- **Non-blocking**: Doesn't add latency to every message
+- **Complete context**: Has access to full session transcript
 
-### 进化（将相关本能聚类为新技能）
-```
-将相关本能聚合成一个新的 Skill 文件
-```
+## Related
 
-### 修剪（删除过期本能）
-```
-删除超过 30 天未触发的本能（TTL 机制）
-```
+- [The Longform Guide](https://x.com/affaanmustafa/status/2014040193557471352) - Section on continuous learning
+- `/learn` command - Manual pattern extraction mid-session
 
-## 自动晋升规则
+---
 
-当一个本能同时满足以下条件时，自动从 project 晋升为 global：
+## Comparison Notes (Research: Jan 2025)
 
-1. 在 2+ 个项目中出现相同 ID 的本能
-2. 平均置信度 ≥ 0.8
+### vs Homunculus
 
-## 与 Hooks 的协作
+Homunculus v2 takes a more sophisticated approach:
 
-```
-会话活动
-  → Hooks 100% 捕获所有工具调用
-  → 观察记录写入 .claude/logs/observations.jsonl
-  → 后台分析：模式检测
-  → 创建/更新本能
-  → /evolve 聚类 → 进化为 Skill
-```
+| Feature | Our Approach | Homunculus v2 |
+|---------|--------------|---------------|
+| Observation | Stop hook (end of session) | PreToolUse/PostToolUse hooks (100% reliable) |
+| Analysis | Main context | Background agent (Haiku) |
+| Granularity | Full skills | Atomic "instincts" |
+| Confidence | None | 0.3-0.9 weighted |
+| Evolution | Direct to skill | Instincts → cluster → skill/command/agent |
+| Sharing | None | Export/import instincts |
 
-## 为什么用 Hooks 而非 Skills？
+**Key insight from homunculus:**
+> "v1 relied on skills to observe. Skills are probabilistic—they fire ~50-80% of the time. v2 uses hooks for observation (100% reliable) and instincts as the atomic unit of learned behavior."
 
-> Skills 是概率性的（50-80% 触发率，取决于 Claude 的判断）。
-> Hooks 是**确定性的**（100% 触发，不受 Claude 判断影响）。
-> 因此，观察和捕获用 Hooks，指导和执行用 Skills。
+### Potential v2 Enhancements
 
-## 反模式
+1. **Instinct-based learning** - Smaller, atomic behaviors with confidence scoring
+2. **Background observer** - Haiku agent analyzing in parallel
+3. **Confidence decay** - Instincts lose confidence if contradicted
+4. **Domain tagging** - code-style, testing, git, debugging, etc.
+5. **Evolution path** - Cluster related instincts into skills/commands
 
-- ❌ 不在 Skills 中实现观察（触发率不稳定）
-- ❌ 不存储具体代码（只存模式和规则）
-- ❌ 不存储临时状态（本能是持久化的学习）
+See: `docs/continuous-learning-v2-spec.md` for full spec.

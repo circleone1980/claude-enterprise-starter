@@ -2,7 +2,6 @@
 name: springboot-tdd
 description: Test-driven development for Spring Boot using JUnit 5, Mockito, MockMvc, Testcontainers, and JaCoCo. Use when adding features, fixing bugs, or refactoring.
 origin: ECC
-paths: "**/*Test.java,**/*Tests.java"
 ---
 
 # Spring Boot TDD Workflow
@@ -140,6 +139,16 @@ Maven snippet:
 - Prefer AssertJ (`assertThat`) for readability
 - For JSON responses, use `jsonPath`
 - For exceptions: `assertThatThrownBy(...)`
+
+## Test Data Builders
+
+```java
+class MarketBuilder {
+  private String name = "Test";
+  MarketBuilder withName(String name) { this.name = name; return this; }
+  Market build() { return new Market(null, name, MarketStatus.ACTIVE); }
+}
+```
 
 ## CI Commands
 

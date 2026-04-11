@@ -1,186 +1,92 @@
 ---
-name: code-review
-description: |
-  Systematic code review for quality, security, performance, and maintainability.
-
-  TRIGGER when: user asks for code review, PR review, mentions "代码审查", "code review", "review", "check my code", "审查代码", "PR review", "merge review", or after completing any feature implementation.
-
-  Use this skill after completing development work and before merging to main branch. Code review is mandatory - all code changes must be reviewed before commit.
-origin: ECC
-effort: high
+allowed-tools: Bash(gh issue view:*), Bash(gh search:*), Bash(gh issue list:*), Bash(gh pr comment:*), Bash(gh pr diff:*), Bash(gh pr view:*), Bash(gh pr list:*)
+description: Code review a pull request
+disable-model-invocation: false
 ---
 
-# Code Review Checklist
+Provide a code review for the given pull request.
 
-A comprehensive framework for reviewing code changes.
+To do this, follow these steps precisely:
 
-## Review Dimensions
+1. Use a Haiku agent to check if the pull request (a) is closed, (b) is a draft, (c) does not need a code review (eg. because it is an automated pull request, or is very simple and obviously ok), or (d) already has a code review from you from earlier. If so, do not proceed.
+2. Use another Haiku agent to give you a list of file paths to (but not the contents of) any relevant CLAUDE.md files from the codebase: the root CLAUDE.md file (if one exists), as well as any CLAUDE.md files in the directories whose files the pull request modified
+3. Use a Haiku agent to view the pull request, and ask the agent to return a summary of the change
+4. Then, launch 5 parallel Sonnet agents to independently code review the change. The agents should do the following, then return a list of issues and the reason each issue was flagged (eg. CLAUDE.md adherence, bug, historical git context, etc.):
+   a. Agent #1: Audit the changes to make sure they compily with the CLAUDE.md. Note that CLAUDE.md is guidance for Claude as it writes code, so not all instructions will be applicable during code review.
+   b. Agent #2: Read the file changes in the pull request, then do a shallow scan for obvious bugs. Avoid reading extra context beyond the changes, focusing just on the changes themselves. Focus on large bugs, and avoid small issues and nitpicks. Ignore likely false positives.
+   c. Agent #3: Read the git blame and history of the code modified, to identify any bugs in light of that historical context
+   d. Agent #4: Read previous pull requests that touched these files, and check for any comments on those pull requests that may also apply to the current pull request.
+   e. Agent #5: Read code comments in the modified files, and make sure the changes in the pull request comply with any guidance in the comments.
+5. For each issue found in #4, launch a parallel Haiku agent that takes the PR, issue description, and list of CLAUDE.md files (from step 2), and returns a score to indicate the agent's level of confidence for whether the issue is real or false positive. To do that, the agent should score each issue on a scale from 0-100, indicating its level of confidence. For issues that were flagged due to CLAUDE.md instructions, the agent should double check that the CLAUDE.md actually calls out that issue specifically. The scale is (give this rubric to the agent verbatim):
+   a. 0: Not confident at all. This is a false positive that doesn't stand up to light scrutiny, or is a pre-existing issue.
+   b. 25: Somewhat confident. This might be a real issue, but may also be a false positive. The agent wasn't able to verify that it's a real issue. If the issue is stylistic, it is one that was not explicitly called out in the relevant CLAUDE.md.
+   c. 50: Moderately confident. The agent was able to verify this is a real issue, but it might be a nitpick or not happen very often in practice. Relative to the rest of the PR, it's not very important.
+   d. 75: Highly confident. The agent double checked the issue, and verified that it is very likely it is a real issue that will be hit in practice. The existing approach in the PR is insufficient. The issue is very important and will directly impact the code's functionality, or it is an issue that is directly mentioned in the relevant CLAUDE.md.
+   e. 100: Absolutely certain. The agent double checked the issue, and confirmed that it is definitely a real issue, that will happen frequently in practice. The evidence directly confirms this.
+6. Filter out any issues with a score less than 80. If there are no issues that meet this criteria, do not proceed.
+7. Use a Haiku agent to repeat the eligibility check from #1, to make sure that the pull request is still eligible for code review.
+8. Finally, use the gh bash command to comment back on the pull request with the result. When writing your comment, keep in mind to:
+   a. Keep your output brief
+   b. Avoid emojis
+   c. Link and cite relevant code, files, and URLs
 
-### 1. Code Quality
+Examples of false positives, for steps 4 and 5:
 
-Evaluate structural and stylistic aspects:
+- Pre-existing issues
+- Something that looks like a bug but is not actually a bug
+- Pedantic nitpicks that a senior engineer wouldn't call out
+- Issues that a linter, typechecker, or compiler would catch (eg. missing or incorrect imports, type errors, broken tests, formatting issues, pedantic style issues like newlines). No need to run these build steps yourself -- it is safe to assume that they will be run separately as part of CI.
+- General code quality issues (eg. lack of test coverage, general security issues, poor documentation), unless explicitly required in CLAUDE.md
+- Issues that are called out in CLAUDE.md, but explicitly silenced in the code (eg. due to a lint ignore comment)
+- Changes in functionality that are likely intentional or are directly related to the broader change
+- Real issues, but on lines that the user did not modify in their pull request
 
-- [ ] **Naming**: Variables, functions, classes have clear, descriptive names
-- [ ] **Single Responsibility**: Each function/class does one thing well
-- [ ] **DRY**: No duplicated code or logic
-- [ ] **Comments**: Complex logic is explained, not obvious code
-- [ ] **Formatting**: Consistent with project style guide
-- [ ] **File Organization**: Related code grouped logically
+Notes:
 
-### 2. Security
+- Do not check build signal or attempt to build or typecheck the app. These will run separately, and are not relevant to your code review.
+- Use `gh` to interact with Github (eg. to fetch a pull request, or to create inline comments), rather than web fetch
+- Make a todo list first
+- You must cite and link each bug (eg. if referring to a CLAUDE.md, you must link it)
+- For your final comment, follow the following format precisely (assuming for this example that you found 3 issues):
 
-Check for common vulnerabilities:
+---
 
-- [ ] **Input Validation**: All user inputs are sanitized and validated
-- [ ] **SQL Injection**: Using parameterized queries, not string concatenation
-- [ ] **XSS Protection**: Output properly escaped/encoded
-- [ ] **Authentication**: Proper session management
-- [ ] **Authorization**: Permission checks in place
-- [ ] **Sensitive Data**: No hardcoded credentials, proper encryption
-- [ ] **Dependencies**: No known vulnerable packages
+### Code review
 
-### 3. Performance
+Found 3 issues:
 
-Identify potential bottlenecks:
+1. <brief description of bug> (CLAUDE.md says "<...>")
 
-- [ ] **Database Queries**: No N+1 problems, proper indexing
-- [ ] **Caching**: Appropriate use of caching
-- [ ] **Async Operations**: Long-running tasks are async
-- [ ] **Resource Management**: Connections, files properly closed
-- [ ] **Memory**: No memory leaks, efficient data structures
-- [ ] **API Calls**: Batched where possible, proper timeout handling
+<link to file and line with full sha1 + line range for context, note that you MUST provide the full sha and not use bash here, eg. https://github.com/anthropics/claude-code/blob/1d54823877c4de72b2316a64032a54afc404e619/README.md#L13-L17>
 
-### 4. Testing
+2. <brief description of bug> (some/other/CLAUDE.md says "<...>")
 
-Verify test coverage:
+<link to file and line with full sha1 + line range for context>
 
-- [ ] **Unit Tests**: All new functions/methods tested
-- [ ] **Integration Tests**: Component interactions tested
-- [ ] **Edge Cases**: Boundary conditions covered
-- [ ] **Error Paths**: Exception handling tested
-- [ ] **Coverage**: Meets project threshold (>80%)
-- [ ] **Test Quality**: Tests are meaningful, not just for coverage
+3. <brief description of bug> (bug due to <file and code snippet>)
 
-### 5. Documentation
+<link to file and line with full sha1 + line range for context>
 
-Ensure maintainability:
+🤖 Generated with [Claude Code](https://claude.ai/code)
 
-- [ ] **API Documentation**: Endpoints documented (OpenAPI/Swagger)
-- [ ] **Code Comments**: Complex logic explained
-- [ ] **README**: Updated if setup/usage changed
-- [ ] **Changelog**: Breaking changes noted
-- [ ] **Type Hints**: TypeScript/Python type annotations present
+<sub>- If this code review was useful, please react with 👍. Otherwise, react with 👎.</sub>
 
-### 6. AC Coverage（验收标准覆盖）
+---
 
-验证代码变更是否满足验收标准：
+- Or, if you found no issues:
 
-- [ ] **AC Mapping**: 每个变更关联到具体 AC ID（`AC-F{NNN}-{MM}`）
-- [ ] **AC Test Coverage**: 每个 AC 有对应测试文件且测试通过
-- [ ] **AC Status**: 所有 P0 AC 状态为 `passed`，P1 AC 至少为 `verified`
-- [ ] **Gherkin Alignment**: 实现逻辑与 AC 的 Given-When-Then 一致
-- [ ] **No Orphan Code**: 没有不关联任何 AC 的功能代码（排除工具类/配置）
-- [ ] **Tracker Updated**: `ac-tracker.json` 中 AC 状态已更新
+---
 
-**检查命令**:
-```bash
-# 查看变更文件关联的 AC 覆盖
-node scripts/ac-coverage-report.js --changed-files
+### Code review
 
-# 检查特定 Feature 的 AC 状态
-node hooks/scripts/ac-gate-check.js --feat-id=FEAT-001
-```
+No issues found. Checked for bugs and CLAUDE.md compliance.
 
-**判断标准**:
-| 情况 | 严重性 | 处理 |
-|------|--------|------|
-| P0 AC 未 passed | 🔴 Critical | 必须修复后才能合并 |
-| P1 AC 未 verified | 🟡 Major | 建议补充测试 |
-| 无 AC 关联的功能代码 | 🟡 Major | 确认是否遗漏 AC 映射 |
-| Gherkin 不一致 | 🟡 Major | 对齐实现与 AC 定义 |
+🤖 Generated with [Claude Code](https://claude.ai/code)
 
-### 7. Code Comment Standards（代码注释标准）
-
-验证代码注释符合规范（详见 `rules/08_code_comments.md`）:
-
-- [ ] **Module Header**: 每个源文件有模块头注释（@module, @version, @since, @description, Changelog）
-- [ ] **Function Comments**: 每个公开函数有中文 JSDoc/Javadoc/docstring 注释
-- [ ] **Parameters**: 所有参数有中文说明
-- [ ] **Return Values**: 返回值有中文说明
-- [ ] **Exceptions**: 异常有中文触发条件说明
-- [ ] **Changelog Updated**: 文件变更时 Changelog 已更新
-
-**判断标准**:
-| 情况 | 严重性 | 处理 |
-|------|--------|------|
-| 缺少模块头注释 | 🟡 Major | 合并前必须补全 |
-| 模块头缺少必填字段 | 🟡 Major | 合并前必须补全 |
-| 公开函数缺少注释 | 🟡 Major | 合并前必须补全 |
-| 函数注释缺少参数说明 | 🟢 Minor | 建议补全 |
-| Changelog 未更新 | 🟢 Minor | 建议补全 |
-
-**注释模板**: `templates/code-headers/` 目录下有 TypeScript/Java/Python 三种语言模板。
-
-## Review Report Template
-
-```markdown
-# 代码审查报告
-
-## 基本信息
-- 审查人: [Reviewer]
-- 审查时间: [Date]
-- 审查范围: [Files/Modules]
-- PR/Commit: [Reference]
-
-## 总体评价
-- 代码质量评分: X/10
-- 建议合并: ✅ 是 / ⚠️ 需修改 / ❌ 否
-
-## 问题列表
-
-### 🔴 Critical (必须修复)
-| # | 问题 | 位置 | 建议 |
-|---|------|------|------|
-| 1 | ... | file.py:123 | ... |
-
-### 🟡 Major (建议修复)
-| # | 问题 | 位置 | 建议 |
-|---|------|------|------|
-| 1 | ... | file.py:456 | ... |
-
-### 🟢 Minor (可选修复)
-| # | 问题 | 位置 | 建议 |
-|---|------|------|------|
-| 1 | ... | file.py:789 | ... |
-
-## 亮点
-- [Good practices observed]
-
-## 建议改进
-- [General improvement suggestions]
-```
-
-## Severity Guidelines
-
-| Level | Criteria | Action |
-|-------|----------|--------|
-| 🔴 Critical | Security issue, data loss risk, crash | Must fix before merge |
-| 🟡 Major | Performance issue, maintainability | Should fix before merge |
-| 🟢 Minor | Style, minor optimization | Can be addressed later |
-
-## Review Workflow
-
-1. **Understand Context** - Read PR description, related issues
-2. **Check Tests** - Verify tests pass and cover changes
-3. **Review Code** - Go through each dimension systematically
-4. **Document Findings** - Use report template
-5. **Provide Feedback** - Be constructive, explain reasoning
-6. **Verify Fixes** - Re-review after changes
-
-## Tips for Effective Reviews
-
-- Review in small batches (<400 lines)
-- Focus on logic, not preferences
-- Explain the "why" behind suggestions
-- Acknowledge good practices
-- Be respectful and constructive
+- When linking to code, follow the following format precisely, otherwise the Markdown preview won't render correctly: https://github.com/anthropics/claude-cli-internal/blob/c21d3c10bc8e898b7ac1a2d745bdc9bc4e423afe/package.json#L10-L15
+  - Requires full git sha
+  - You must provide the full sha. Commands like `https://github.com/owner/repo/blob/$(git rev-parse HEAD)/foo/bar` will not work, since your comment will be directly rendered in Markdown.
+  - Repo name must match the repo you're code reviewing
+  - # sign after the file name
+  - Line range format is L[start]-L[end]
+  - Provide at least 1 line of context before and after, centered on the line you are commenting about (eg. if you are commenting about lines 5-6, you should link to `L4-7`)

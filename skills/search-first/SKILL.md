@@ -1,101 +1,161 @@
 ---
 name: search-first
-description: |
-  编码前强制研究流程 — 搜索已有工具、库和模式后再决定是否自建。
-  TRIGGER when: 开始新功能、需要新依赖、遇到不熟悉的问题。
+description: Research-before-coding workflow. Search for existing tools, libraries, and patterns before writing custom code. Invokes the researcher agent.
 origin: ECC
-effort: medium
 ---
 
-# Search First（编码前先研究）
+# /search-first — Research Before You Code
 
-编码前强制研究流程，避免重复造轮子。
+Systematizes the "search for existing solutions before implementing" workflow.
 
-## 触发场景
+## Trigger
 
-- 开始新功能开发
-- 需要引入新依赖/库
-- 遇到不熟悉的技术领域
-- "我需要实现 X 功能"
+Use this skill when:
+- Starting a new feature that likely has existing solutions
+- Adding a dependency or integration
+- The user asks "add X functionality" and you're about to write code
+- Before creating a new utility, helper, or abstraction
 
-## 核心原则
-
-**永远不要在搜索之前写代码。** 99% 的问题已经有解决方案。
-
-## 5 步流程
-
-### Step 1: Need Analysis（需求分析）
-
-明确需要什么：
-- 具体功能需求是什么？
-- 有什么约束条件？（性能、安全、许可证）
-- 是否跨项目可复用？
-
-### Step 2: Parallel Search（并行搜索）
-
-**快速模式清单**（0 = 先检查本地）：
-
-| # | 搜索位置 | 方法 |
-|---|---------|------|
-| 0 | 本地仓库 | `rg` 搜索已有实现 |
-| 1 | 常见问题 | npm / PyPI / Maven Central |
-| 2 | MCP 服务器 | 检查已配置的 MCP 工具 |
-| 3 | Skills 库 | 检查 `skills/` 目录 |
-| 4 | GitHub | 搜索开源实现 |
-
-**详细搜索**（复杂问题）：
-- 使用 `researcher` agent 进行深度搜索
-- 搜索 ECC skills 库中的相关技能
-- 搜索技术博客和文档
-
-### Step 3: Evaluate（评估候选人）
-
-评分维度（1-5 分）：
-
-| 维度 | 权重 | 说明 |
-|------|------|------|
-| 功能匹配 | 30% | 是否满足需求 |
-| 维护状态 | 25% | 最近更新时间、issue 响应速度 |
-| 社区规模 | 15% | Stars、Downloads、Contributors |
-| 文档质量 | 15% | API 文档、示例、教程 |
-| 许可证 | 10% | MIT/Apache 友好 |
-| 依赖量 | 5% | 最小依赖原则 |
-
-### Step 4: Decide（决策）
-
-| 信号 | 决策 |
-|------|------|
-| 完美匹配，维护良好，MIT/Apache | **Adopt** 直接采用 |
-| 部分匹配，好的基础 | **Extend** 封装扩展 |
-| 多个弱匹配 | **Compose** 组合多个包 |
-| 无合适方案 | **Build** 自建（但基于研究结果） |
-
-### Step 5: Implement（实施）
-
-| 决策 | 行动 |
-|------|------|
-| Adopt | 安装包，配置使用 |
-| Extend | 安装包 + 编写薄封装层 |
-| Compose | 安装 2-3 个小包 + 编写组合层 |
-| Build | 编写最小实现，参考搜索中的设计模式 |
-
-## 反模式（禁止）
-
-- ❌ 不搜索直接写代码
-- ❌ 忽略已有的 MCP 服务器
-- ❌ 过度封装第三方库
-- ❌ 为小功能引入重型依赖
-- ❌ "我知道怎么实现"（但你可能不知道最佳实践）
-
-## 输出格式
+## Workflow
 
 ```
-═══ SEARCH FIRST REPORT ═══
-需求: [具体需求]
-搜索结果:
-  1. [库名] — 匹配度 4.2/5 — 决策: Adopt
-  2. [库名] — 匹配度 3.8/5 — 决策: Extend
-决策: [Adopt/Extend/Compose/Build]
-理由: [一句话说明]
-════════════════════════════
+┌─────────────────────────────────────────────┐
+│  1. NEED ANALYSIS                           │
+│     Define what functionality is needed      │
+│     Identify language/framework constraints  │
+├─────────────────────────────────────────────┤
+│  2. PARALLEL SEARCH (researcher agent)      │
+│     ┌──────────┐ ┌──────────┐ ┌──────────┐  │
+│     │  npm /   │ │  MCP /   │ │  GitHub / │  │
+│     │  PyPI    │ │  Skills  │ │  Web      │  │
+│     └──────────┘ └──────────┘ └──────────┘  │
+├─────────────────────────────────────────────┤
+│  3. EVALUATE                                │
+│     Score candidates (functionality, maint, │
+│     community, docs, license, deps)         │
+├─────────────────────────────────────────────┤
+│  4. DECIDE                                  │
+│     ┌─────────┐  ┌──────────┐  ┌─────────┐  │
+│     │  Adopt  │  │  Extend  │  │  Build   │  │
+│     │ as-is   │  │  /Wrap   │  │  Custom  │  │
+│     └─────────┘  └──────────┘  └─────────┘  │
+├─────────────────────────────────────────────┤
+│  5. IMPLEMENT                               │
+│     Install package / Configure MCP /       │
+│     Write minimal custom code               │
+└─────────────────────────────────────────────┘
 ```
+
+## Decision Matrix
+
+| Signal | Action |
+|--------|--------|
+| Exact match, well-maintained, MIT/Apache | **Adopt** — install and use directly |
+| Partial match, good foundation | **Extend** — install + write thin wrapper |
+| Multiple weak matches | **Compose** — combine 2-3 small packages |
+| Nothing suitable found | **Build** — write custom, but informed by research |
+
+## How to Use
+
+### Quick Mode (inline)
+
+Before writing a utility or adding functionality, mentally run through:
+
+0. Does this already exist in the repo? → `rg` through relevant modules/tests first
+1. Is this a common problem? → Search npm/PyPI
+2. Is there an MCP for this? → Check `~/.claude/settings.json` and search
+3. Is there a skill for this? → Check `~/.claude/skills/`
+4. Is there a GitHub implementation/template? → Run GitHub code search for maintained OSS before writing net-new code
+
+### Full Mode (agent)
+
+For non-trivial functionality, launch the researcher agent:
+
+```
+Task(subagent_type="general-purpose", prompt="
+  Research existing tools for: [DESCRIPTION]
+  Language/framework: [LANG]
+  Constraints: [ANY]
+
+  Search: npm/PyPI, MCP servers, Claude Code skills, GitHub
+  Return: Structured comparison with recommendation
+")
+```
+
+## Search Shortcuts by Category
+
+### Development Tooling
+- Linting → `eslint`, `ruff`, `textlint`, `markdownlint`
+- Formatting → `prettier`, `black`, `gofmt`
+- Testing → `jest`, `pytest`, `go test`
+- Pre-commit → `husky`, `lint-staged`, `pre-commit`
+
+### AI/LLM Integration
+- Claude SDK → Context7 for latest docs
+- Prompt management → Check MCP servers
+- Document processing → `unstructured`, `pdfplumber`, `mammoth`
+
+### Data & APIs
+- HTTP clients → `httpx` (Python), `ky`/`got` (Node)
+- Validation → `zod` (TS), `pydantic` (Python)
+- Database → Check for MCP servers first
+
+### Content & Publishing
+- Markdown processing → `remark`, `unified`, `markdown-it`
+- Image optimization → `sharp`, `imagemin`
+
+## Integration Points
+
+### With planner agent
+The planner should invoke researcher before Phase 1 (Architecture Review):
+- Researcher identifies available tools
+- Planner incorporates them into the implementation plan
+- Avoids "reinventing the wheel" in the plan
+
+### With architect agent
+The architect should consult researcher for:
+- Technology stack decisions
+- Integration pattern discovery
+- Existing reference architectures
+
+### With iterative-retrieval skill
+Combine for progressive discovery:
+- Cycle 1: Broad search (npm, PyPI, MCP)
+- Cycle 2: Evaluate top candidates in detail
+- Cycle 3: Test compatibility with project constraints
+
+## Examples
+
+### Example 1: "Add dead link checking"
+```
+Need: Check markdown files for broken links
+Search: npm "markdown dead link checker"
+Found: textlint-rule-no-dead-link (score: 9/10)
+Action: ADOPT — npm install textlint-rule-no-dead-link
+Result: Zero custom code, battle-tested solution
+```
+
+### Example 2: "Add HTTP client wrapper"
+```
+Need: Resilient HTTP client with retries and timeout handling
+Search: npm "http client retry", PyPI "httpx retry"
+Found: got (Node) with retry plugin, httpx (Python) with built-in retry
+Action: ADOPT — use got/httpx directly with retry config
+Result: Zero custom code, production-proven libraries
+```
+
+### Example 3: "Add config file linter"
+```
+Need: Validate project config files against a schema
+Search: npm "config linter schema", "json schema validator cli"
+Found: ajv-cli (score: 8/10)
+Action: ADOPT + EXTEND — install ajv-cli, write project-specific schema
+Result: 1 package + 1 schema file, no custom validation logic
+```
+
+## Anti-Patterns
+
+- **Jumping to code**: Writing a utility without checking if one exists
+- **Ignoring MCP**: Not checking if an MCP server already provides the capability
+- **Over-customizing**: Wrapping a library so heavily it loses its benefits
+- **Dependency bloat**: Installing a massive package for one small feature
