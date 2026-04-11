@@ -36,6 +36,9 @@ cd my-project
 #    java = Spring Boot
 #    python = FastAPI / Django
 bash scripts/init.sh --workspace --type node
+
+# 3. [可选] 启用 GStack 产品设计层（Phase 0.5）
+node scripts/gstack-toggle.js --enable
 ```
 
 Windows 用 PowerShell:
@@ -43,6 +46,7 @@ Windows 用 PowerShell:
 git clone https://github.com/circleone1980/claude-enterprise-starter.git my-project
 cd my-project
 .\scripts\init.ps1 -Workspace -ProjectType node
+node scripts\gstack-toggle.js --enable  # [可选] 启用 GStack
 ```
 
 初始化后你会得到:
@@ -55,23 +59,24 @@ my-project/
 │   ├── src/                       ← 空的，等你写代码
 │   ├── docs/                      ← 空的文档模板
 │   │   ├── requirements/          ← 需求文档（Phase 1 填写）
-│   │   ├── design/                ← 设计文档（Phase 1 填写）
+│   │   ├── design/                ← 设计文档（Phase 0.5/1 填写）
 │   │   ├── test/                  ← 测试文档
 │   │   └── ...
 │   ├── package.json               ← 项目依赖（node 类型）
 │   └── .gitignore
 ├── CLAUDE.md                      ← Claude 行为指令（引擎核心）
-├── agents/                        ← 13 个 AI 角色定义（PM/前端/后端/QA...）
-├── skills/                        ← 27 个技能（TDD/代码审查/UI设计...）
-├── rules/                         ← 9 条开发规则（注释/安全/质量门禁...）
+├── agents/                        ← 15 个 AI 角色定义（含 GStack 2 个）
+├── skills/                        ← 38 个技能（含 GStack 10 个）
+├── rules/                         ← 10 条开发规则（含 GStack 集成规则）
 ├── hooks/                         ← 自动钩子（安全检查/门禁/格式化...）
-│   └── scripts/                   ← 钩子脚本（16 个）
+│   └── scripts/                   ← 钩子脚本（18 个）
 ├── automation/                    ← 自动化配置
 │   ├── workspace.json             ← 告诉引擎 workspace/ 在哪
-│   ├── phase-gates.json           ← 5 阶段质量门禁条件
+│   ├── phase-gates.json           ← 质量门禁条件（含 Phase 0.5）
 │   └── ac-tracker.json            ← 验收标准追踪器
 ├── scripts/                       ← 工具脚本
 │   ├── init.sh / init.ps1         ← 初始化脚本
+│   ├── gstack-toggle.js           ← [新增] GStack 开关
 │   └── validate-config.js         ← 配置验证
 ├── templates/code-headers/        ← 代码注释模板（TS/Java/Python）
 └── docs/GUIDE.md                  ← 完整使用手册
@@ -92,7 +97,27 @@ claude
 
 ## 第三步：告诉 Claude 你要做什么
 
-启动后直接用自然语言描述你的项目。以下是三种开发模式：
+启动后直接用自然语言描述你的项目。以下是四种开发模式：
+
+### 模式 D：GStack 产品设计（推荐新产品）
+
+> **需要先启用 GStack**: `node scripts/gstack-toggle.js --enable`
+
+先做产品构思，再进入开发。从模糊想法到可视化原型，然后交给 Agent 团队开发：
+
+```
+/office-hours 我要做一个在线教育平台
+```
+
+Claude 会自动:
+1. 挑战你的产品假设 (office-hours) — 6 个 YC 强制问题
+2. 研究竞品并构建设计系统 (design-consultation)
+3. 生成多个 UI 方案让你选择 (design-shotgun)
+4. 将选择转化为生产级原型 (design-html)
+5. 自动审查架构可行性 (autoplan) — CEO→设计→工程→DX 四维审查
+6. 无缝衔接到 Phase 1-5 开发流程
+
+**这是从"我有一个想法"到"可发布产品"最完整的路径。**
 
 ### 模式 A：全自动（推荐新手）
 
@@ -144,6 +169,11 @@ ls workspace/src/
 ls workspace/docs/requirements/
 ls workspace/docs/design/
 
+# GStack 产品设计输出（如启用了 GStack）
+ls workspace/docs/design/OFFICE_HOURS.md
+ls workspace/docs/design/DESIGN.md
+ls workspace/docs/design/IMPLEMENTATION_PLAN.md
+
 # 测试文档
 ls workspace/docs/test/
 ```
@@ -152,23 +182,30 @@ ls workspace/docs/test/
 
 ## 开发阶段说明
 
-全自动模式下，项目经历 5 个阶段自动推进:
+全自动模式下，项目经历以下阶段自动推进:
 
 ```
-Phase 0: 项目初始化 ← git repo + 目录结构
+Phase 0:   项目初始化    ← git repo + 目录结构
     ↓
-Phase 1: 需求分析   ← PM + PO + Architect 并行
-    ↓                 产出: PRD.md, 设计文档, 验收标准
-Phase 2: 开发实现   ← Frontend + Backend 并行 (TDD)
-    ↓                 产出: workspace/src/ 中的代码
-Phase 3: 测试验证   ← QA + 代码审查
-    ↓                 产出: 测试报告
-Phase 4: 产品体验   ← 体验师审查
+Phase 0.5: 产品设计 [可选] ← GStack (需启用)
+    │                      0.5a: office-hours → design-consultation → design-shotgun → design-html
+    │                      0.5b: autoplan (CEO → 设计 → 工程 → DX 审查)
+    │                      bridge: 转换输出为 PRD 格式
     ↓
-Phase 5: 部署发布   ← DevOps 自动部署
+Phase 1:   需求分析      ← PM + PO + Architect 并行
+    ↓                      产出: PRD.md, 设计文档, 验收标准
+Phase 2:   开发实现      ← Frontend + Backend 并行 (TDD)
+    ↓                      产出: workspace/src/ 中的代码
+Phase 3:   测试验证      ← QA + 代码审查
+    ↓                      产出: 测试报告
+Phase 4:   产品体验      ← 体验师审查
+    ↓
+Phase 5:   部署发布      ← DevOps 自动部署
 ```
 
 **每个阶段有质量门禁**，上一阶段不达标不会进入下一阶段。
+
+**GStack 默认禁用**，通过 `node scripts/gstack-toggle.js --enable` 启用。禁用时 Phase 0 → Phase 1 直接衔接，与 v2.5.0 完全一致。
 
 ---
 
@@ -203,6 +240,8 @@ Phase 5: 部署发布   ← DevOps 自动部署
 
 | 命令 | 功能 |
 |------|------|
+| `/office-hours` | [GStack] 产品构思，6 个 YC 强制问题 |
+| `/autoplan` | [GStack] 自动四维审查流水线 |
 | `/plan` | 进入计划模式，规划实现方案 |
 | `/commit` | 提交代码 |
 | `/pr` | 创建 Pull Request |
@@ -238,11 +277,14 @@ A: 仓库根目录（有 CLAUDE.md 的那个目录），不是 workspace/ 里。
 **Q: 如何选择技术栈？**
 A: 初始化时通过 `--type` 参数选择: `node`、`java`、`python`。
 
+**Q: GStack 是什么？我需要启用吗？**
+A: GStack 是 YC CEO Garry Tan 的开源产品设计框架。它帮你在写代码前先想清楚产品。如果你已经知道要做什么（有现成 PRD），不需要启用。如果你只有一个模糊想法，建议启用模式 D。
+
 **Q: 如何更新引擎？**
 A: `git pull origin main` 拉取最新模板。`workspace/` 内的代码不会受影响。
 
 **Q: 想换一种开发模式？**
-A: 直接在对话中切换。模式 A/B/C 只是交互方式不同，底层引擎一样。
+A: 直接在对话中切换。模式 A/B/C/D 只是交互方式不同，底层引擎一样。
 
 ---
 
