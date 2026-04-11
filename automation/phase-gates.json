@@ -1,8 +1,45 @@
 {
   "name": "phase-gates",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "enabled": true,
   "gates": {
+    "phase0_to_phase0.5": {
+      "conditions": [
+        {
+          "description": "GStack 已启用",
+          "check": "node -e \"try{const c=require('./automation/agent-orchestration.json');process.exit(c.gstackConfig&&c.gstackConfig.enabled?0:1)}catch(e){process.exit(1)}\"",
+          "checkType": "command_succeeds"
+        }
+      ],
+      "autoAdvance": true,
+      "gatedByFeature": "gstack.enabled"
+    },
+    "phase0.5_to_phase1": {
+      "conditions": [
+        {
+          "description": "DESIGN.md 已生成",
+          "check": "test -f workspace/docs/design/DESIGN.md",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "IMPLEMENTATION_PLAN.md 已生成",
+          "check": "test -f workspace/docs/design/IMPLEMENTATION_PLAN.md",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "OFFICE_HOURS.md 已生成",
+          "check": "test -f workspace/docs/design/OFFICE_HOURS.md",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "设计审查评分 >= 7.0",
+          "check": "node -e \"try{const p=require('./workspace/docs/design/IMPLEMENTATION_PLAN.json');process.exit(p&&p.overallScore>=7.0?0:1)}catch(e){process.exit(1)}\"",
+          "checkType": "command_succeeds"
+        }
+      ],
+      "autoAdvance": true,
+      "gatedByFeature": "gstack.enabled"
+    },
     "phase0_to_phase1": {
       "conditions": [
         {
@@ -192,5 +229,5 @@
     "escalateOnFailure": true,
     "notificationChannel": "console"
   },
-  "_comment": "v2.0.0 - Updated 2026-04-11 - 机器可检查条件 (check + checkType)"
+  "_comment": "v2.1.0 - Added phase0_to_phase0.5 and phase0.5_to_phase1 gates for GStack"
 }

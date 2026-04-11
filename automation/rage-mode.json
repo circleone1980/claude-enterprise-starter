@@ -1,6 +1,6 @@
 {
   "name": "rage-mode",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "enabled": true,
   "description": "狂暴模式 - Claude Code 全权接管开发任务",
   "features": {
@@ -30,6 +30,22 @@
       "name": "项目初始化",
       "autoAdvance": true,
       "actions": ["初始化目录结构", "配置开发环境", "创建 GitHub 仓库"]
+    },
+    {
+      "id": "0.5a",
+      "name": "产品设计 - 构思",
+      "autoAdvance": true,
+      "requiredAgents": ["Product-Designer"],
+      "qualityGates": ["DESIGN.md 已生成", "HTML 原型已生成"],
+      "gstackOnly": true
+    },
+    {
+      "id": "0.5b",
+      "name": "产品设计 - 规划审查",
+      "autoAdvance": true,
+      "requiredAgents": ["Design-Reviewer"],
+      "qualityGates": ["IMPLEMENTATION_PLAN.md 已生成", "各维度评分 >= 7.0"],
+      "gstackOnly": true
     },
     {
       "id": 1,
@@ -94,5 +110,5 @@
     "onAgentFailure": true,
     "onAllComplete": true
   },
-  "_comment": "v2.0.0 - Updated 2026-04-11 - 修正 agent 名称 (Backend→Backend-Java/Python) + GAN phase"
+  "_comment": "v2.1.0 - Added GStack Phase 0.5a/0.5b entries (gstackOnly: true)"
 }

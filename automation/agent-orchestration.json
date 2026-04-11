@@ -1,8 +1,42 @@
 {
   "name": "agent-orchestration",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "enabled": true,
   "agents": {
+    "Product-Designer": {
+      "subagentType": "general-purpose",
+      "requiredSkills": ["office-hours", "design-consultation", "design-shotgun", "design-html"],
+      "parallelizable": false,
+      "dependencies": [],
+      "count": 1,
+      "phase": "0.5a",
+      "modeSelection": {
+        "communicationNeed": 0,
+        "crossLayerDependency": 0,
+        "contextPressure": 1,
+        "roleCount": 0,
+        "writeConflictRisk": 0
+      },
+      "agentMd": "agents/product-designer.md",
+      "gstackOnly": true
+    },
+    "Design-Reviewer": {
+      "subagentType": "general-purpose",
+      "requiredSkills": ["autoplan", "plan-ceo-review", "plan-design-review", "plan-eng-review", "plan-devex-review"],
+      "parallelizable": false,
+      "dependencies": ["Product-Designer"],
+      "count": 1,
+      "phase": "0.5b",
+      "modeSelection": {
+        "communicationNeed": 0,
+        "crossLayerDependency": 0,
+        "contextPressure": 1,
+        "roleCount": 0,
+        "writeConflictRisk": 0
+      },
+      "agentMd": "agents/design-reviewer.md",
+      "gstackOnly": true
+    },
     "PM": {
       "subagentType": "everything-claude-code:planner",
       "requiredSkills": ["product-requirements", "sprint-planning"],
@@ -264,6 +298,18 @@
     "subagentSequential": 0,
     "_comment": "总分 >= team → TeamCreate; 3-5 → Subagent 并行; < 3 → Subagent 顺序"
   },
+  "gstackConfig": {
+    "enabled": false,
+    "version": "0.4.1",
+    "phasePrefix": "0.5",
+    "threshold": 7.0,
+    "requiredOutputs": [
+      "workspace/docs/design/DESIGN.md",
+      "workspace/docs/design/IMPLEMENTATION_PLAN.md"
+    ],
+    "bridgeSkill": "gstack-bridge",
+    "_comment": "GStack 产品设计层配置。enabled=false 时跳过 Phase 0.5"
+  },
   "ganConfig": {
     "enabled": true,
     "threshold": 7.0,
@@ -277,6 +323,6 @@
     "restartDelay": 10000,
     "alertOnFailure": true
   },
-  "_comment": "SSOT v3.0.0 - Updated 2026-04-11 - modeSelection 评分引擎 + GAN agents + codexIntegration",
+  "_comment": "SSOT v3.1.0 - Updated 2026-04-11 - GStack Phase 0.5 + Product-Designer + Design-Reviewer",
   "_ssot_note": "CLAUDE.md 第七节、rules/04、rules/07、agents/*.md 均引用此文件，不重复定义"
 }
