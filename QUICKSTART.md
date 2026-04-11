@@ -1,188 +1,235 @@
 # 快速开始指南
 
-## 5 分钟快速上手
+> 从零开始，用本模板开发你的第一个项目
 
-### 第一步：复制模板
+---
 
-**方式 A: workspace 模式（推荐 — 目标项目代码在 workspace/ 目录）**
+## 本项目是什么
 
-**Windows (PowerShell):**
-```powershell
-# 进入你的项目目录
-cd C:\Projects\my-project
+`claude-enterprise-starter` 是 Claude Code 的**企业级开发引擎模板**。你 clone 它，然后在 `workspace/` 里开发你的实际项目。
 
-# 复制模板
-.\init.ps1 -Workspace -ProjectType node
+```
+claude-enterprise-starter/         ← 你 clone 下来的仓库（开发引擎）
+├── agents/ skills/ hooks/         ← 引擎配置（不用动）
+├── rules/                         ← 开发规则（不用动）
+├── automation/                    ← 自动化配置（不用动）
+├── workspace/                     ← 你的项目代码写在这里
+│   ├── src/                       ← 你写的代码
+│   └── docs/                      ← 你的项目文档
+├── CLAUDE.md                      ← Claude 的行为指令
+└── scripts/init.sh                ← 初始化脚本
 ```
 
-**macOS / Linux (Bash):**
-```bash
-# 进入你的项目目录
-cd ~/Projects/my-project
+**简单理解**: 引擎在外层，你的项目在 `workspace/` 里。
 
-# 复制模板
+---
+
+## 第一步：Clone 并初始化
+
+```bash
+# 1. Clone 仓库
+git clone https://github.com/circleone1980/claude-enterprise-starter.git my-project
+cd my-project
+
+# 2. 初始化 workspace（选择你的技术栈）
+#    node = React + TypeScript + Vite
+#    java = Spring Boot
+#    python = FastAPI / Django
 bash scripts/init.sh --workspace --type node
 ```
 
-> **项目类型**: `node` (React+Vite) | `java` (Spring Boot) | `python` (FastAPI/Django)
-
-**方式 B: 传统模式（复制到已有项目根目录）**
-
-**Windows (PowerShell):**
+Windows 用 PowerShell:
 ```powershell
-# 进入你的项目目录
-cd C:\Projects\my-project
-
-# 复制模板
-Copy-Item -Recurse F:\Agr\.claude-template\.claude .claude
-Copy-Item F:\Agr\.claude-template\.mcp.json .
-Copy-Item F:\Agr\.claude-template\CLAUDE.local.md.example CLAUDE.local.md
-Copy-Item F:\Agr\.claude-template\settings.local.json.example .claude\settings.local.json
+git clone https://github.com/circleone1980/claude-enterprise-starter.git my-project
+cd my-project
+.\scripts\init.ps1 -Workspace -ProjectType node
 ```
 
-**macOS / Linux (Bash):**
-```bash
-# 进入你的项目目录
-cd ~/Projects/my-project
+初始化后你会得到:
 
-# 复制模板
-cp -r F:/Agr/.claude-template/.claude .
-cp F:/Agr/.claude-template/.mcp.json .
-cp F:/Agr/.claude-template/CLAUDE.local.md.example CLAUDE.local.md
-cp F:/Agr/.claude-template/settings.local.json.example .claude/settings.local.json
 ```
-
-### 第二步：更新 .gitignore
-
-```bash
-echo "CLAUDE.local.md" >> .gitignore
-echo ".claude/settings.local.json" >> .gitignore
-```
-
-### 第三步：验证安装
-
-在 Claude Code 中运行：
-```
-/doctor
-```
-
-### 第四步：开始使用
-
-**方式一：手动开发**
-```
-请帮我实现用户登录功能
-```
-
-**方式二：使用 Agent Team**
-```
-/plan 实现一个完整的用户认证系统
-```
-
-**方式三：狂暴模式（全自动）**
-```
-启用狂暴模式，创建一个博客系统
+my-project/
+├── .claude/                       ← Claude 配置
+├── workspace/                     ← 你的项目（已创建好骨架）
+│   ├── src/                       ← 空的，等你写代码
+│   ├── docs/                      ← 空的文档模板
+│   │   ├── requirements/          ← 需求文档（Phase 1 填写）
+│   │   ├── design/                ← 设计文档（Phase 1 填写）
+│   │   ├── test/                  ← 测试文档
+│   │   └── ...
+│   ├── package.json               ← 项目依赖（node 类型）
+│   └── .gitignore
+├── automation/workspace.json      ← 告诉引擎 workspace/ 在哪
+└── ...引擎文件...
 ```
 
 ---
 
-## 常用命令速查
+## 第二步：在项目根目录启动 Claude Code
+
+```bash
+# 在 my-project/ 根目录启动（不是 workspace/ 里）
+claude
+```
+
+> **重要**: 必须在仓库根目录启动 Claude Code，不是在 workspace/ 里。引擎需要读取外层的配置文件。
+
+---
+
+## 第三步：告诉 Claude 你要做什么
+
+启动后直接用自然语言描述你的项目。以下是三种开发模式：
+
+### 模式 A：全自动（推荐新手）
+
+直接告诉 Claude 你要做什么，它自动完成从需求到代码的全流程：
+
+```
+启用狂暴模式，创建一个博客系统，支持文章发布、评论、用户注册登录
+```
+
+Claude 会自动:
+1. PM 分析需求 → 产出 PRD
+2. Architect 设计架构 → 产出设计文档
+3. 前端/后端并行开发 → 产出代码到 `workspace/src/`
+4. QA 测试验证
+5. 代码推送到 GitHub
+
+### 模式 B：分阶段手动控制
+
+逐步推进，每个阶段你来确认：
+
+```
+Phase 1: 分析需求 — 创建一个在线商城，需要商品管理、购物车、订单功能
+```
+
+完成后确认无误再推进:
+```
+Phase 2: 开始开发
+```
+
+### 模式 C：单功能开发
+
+只做一个小功能，不启动全流程：
+
+```
+请帮我实现用户登录功能，包含 JWT 认证
+```
+
+---
+
+## 第四步：查看产出
+
+Claude 工作结束后，检查产出:
+
+```bash
+# 项目代码
+ls workspace/src/
+
+# 需求和设计文档
+ls workspace/docs/requirements/
+ls workspace/docs/design/
+
+# 测试文档
+ls workspace/docs/test/
+```
+
+---
+
+## 开发阶段说明
+
+全自动模式下，项目经历 5 个阶段自动推进:
+
+```
+Phase 0: 项目初始化 ← git repo + 目录结构
+    ↓
+Phase 1: 需求分析   ← PM + PO + Architect 并行
+    ↓                 产出: PRD.md, 设计文档, 验收标准
+Phase 2: 开发实现   ← Frontend + Backend 并行 (TDD)
+    ↓                 产出: workspace/src/ 中的代码
+Phase 3: 测试验证   ← QA + 代码审查
+    ↓                 产出: 测试报告
+Phase 4: 产品体验   ← 体验师审查
+    ↓
+Phase 5: 部署发布   ← DevOps 自动部署
+```
+
+**每个阶段有质量门禁**，上一阶段不达标不会进入下一阶段。
+
+---
+
+## 代码注释规范
+
+所有生成的代码自动遵循中文注释 + 版本控制标准:
+
+```typescript
+/**
+ * @module services/auth
+ * @version 1.0.0
+ * @since 2026-04-11
+ * @description 用户认证服务
+ *
+ * Changelog:
+ * - 1.0.0 (2026-04-11): 初始实现
+ */
+
+/**
+ * 用户登录
+ *
+ * @param {LoginRequest} req - 登录请求参数
+ * @returns {Promise<AuthResult>} 认证结果
+ */
+```
+
+你不需要手动加注释，Claude 会自动遵循。详见 `rules/08_code_comments.md`。
+
+---
+
+## 常用命令
 
 | 命令 | 功能 |
 |------|------|
-| `/doctor` | 验证配置 |
-| `/context` | 查看上下文使用 |
-| `/memory` | 查看加载的文件 |
-| `/skills` | 查看可用技能 |
-| `/agents` | 查看配置的代理 |
-| `/plan` | 进入计划模式 |
-| `/commit` | 创建提交 |
-| `/pr` | 创建 PR |
+| `/plan` | 进入计划模式，规划实现方案 |
+| `/commit` | 提交代码 |
+| `/pr` | 创建 Pull Request |
 | `/review` | 代码审查 |
-| `/compact` | 压缩上下文 |
-| `/clear` | 清空对话 |
+| `/compact` | 压缩上下文（对话太长时用） |
+| `/clear` | 清空对话重新开始 |
 
 ---
 
-## 开发工作流示例
+## 技术栈
 
-### 新功能开发
+| 类型 | 默认选项 |
+|------|---------|
+| **前端** | React 19 + TypeScript + Vite 6 + Tailwind CSS |
+| **后端 (Java)** | Spring Boot 3.x + JPA |
+| **后端 (Python)** | Python 3.12+ |
+| **测试 (前端)** | Vitest + React Testing Library |
+| **测试 (后端 Java)** | JUnit 5 + Mockito |
+| **包管理 (前端)** | pnpm |
 
-```
-1. /plan 实现用户注册功能
-   ↓
-2. PM 分解需求 → 创建任务列表
-   ↓
-3. Architect 设计架构 → 技术方案
-   ↓
-4. Backend (TDD) → API 实现
-   ↓
-5. Frontend (TDD) → UI 组件
-   ↓
-6. QA 测试验证
-   ↓
-7. /review 代码审查
-   ↓
-8. /commit → /pr
-```
-
-### Bug 修复
-
-```
-1. 描述 Bug 现象
-   ↓
-2. 使用 Skill tdd 启动 TDD
-   ↓
-3. Red: 写失败测试
-   ↓
-4. Green: 修复代码
-   ↓
-5. Refactor: 优化代码
-   ↓
-6. /commit 修复: xxx
-```
+> 技术栈在 CLAUDE.md 中固定，变更需通过 ADR 审批。
 
 ---
 
-## 技能使用示例
+## 常见问题
 
-### TDD 开发
+**Q: 代码写在哪？**
+A: `workspace/src/` 目录。文档在 `workspace/docs/`。
 
-```
-Skill tdd
+**Q: 在哪个目录启动 Claude Code？**
+A: 仓库根目录（有 CLAUDE.md 的那个目录），不是 workspace/ 里。
 
-# Claude 会引导你：
-# 1. 先写测试
-# 2. 实现功能
-# 3. 重构代码
-```
+**Q: 如何选择技术栈？**
+A: 初始化时通过 `--type` 参数选择: `node`、`java`、`python`。
 
-### UI/UX 设计
+**Q: 如何更新引擎？**
+A: `git pull origin main` 拉取最新模板。`workspace/` 内的代码不会受影响。
 
-```
-Skill ui-ux-pro-max --stack react
-
-# 获取 React 最佳实践
-# 搜索: python3 skills/ui-ux-pro-max/scripts/search.py "performance"
-```
-
-### 数据库配置
-
-```
-Skill prisma-database-setup
-
-# 获取 PostgreSQL/MySQL/SQLite 配置指导
-```
+**Q: 想换一种开发模式？**
+A: 直接在对话中切换。模式 A/B/C 只是交互方式不同，底层引擎一样。
 
 ---
 
-## 下一步
-
-1. 📖 阅读 [完整 README.md](README.md)
-2. 📚 查看 [规则文件](rules/)
-3. 🎯 探索 [可用技能](skills/)
-4. 🤖 了解 [Agent Team](agents/)
-5. 🔥 启用 [狂暴模式](automation/rage-mode.json)
-
----
-
-*有问题？查看 [常见问题](README.md#-常见问题)*
+*更多细节见 [完整使用手册](docs/GUIDE.md) 和 [README.md](README.md)*
