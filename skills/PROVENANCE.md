@@ -13,6 +13,7 @@
 | `antfu` | [Anthony Fu's Skills](https://github.com/antfu/skills) | MIT |
 | `vercel` | [Vercel Engineering](https://vercel.com) | MIT |
 | `prisma` | [Prisma](https://www.prisma.io) | MIT |
+| `gstack` | [GStack](https://github.com/garrytan/gstack) by Garry Tan | MIT |
 | `custom` | 本项目自建 | 本项目许可 |
 
 ---
@@ -44,10 +45,25 @@
 |-------|--------|--------|---------|------|
 | writing-plans | superpowers | ❌→✅ | ✅ | 架构设计 + 功能拆解 |
 
+### GStack 来源
+
+| Skill | Origin | 已标注 | Adapted | 说明 |
+|-------|--------|--------|---------|------|
+| office-hours | gstack | ✅ | ✅ | YC 6 问挑战假设，输出 OFFICE_HOURS.md |
+| design-consultation | gstack | ✅ | ✅ | 竞品研究+设计系统，输出 DESIGN.md |
+| design-shotgun | gstack | ✅ | ✅ | 4-6 UI 变体+品味记忆 |
+| design-html | gstack | ✅ | ✅ | 模型转生产级 HTML/CSS |
+| autoplan | gstack | ✅ | ✅ | 自动 CEO→设计→工程→DX 审查 |
+| plan-ceo-review | gstack | ✅ | ✅ | CEO 范围挑战（4 种模式） |
+| plan-design-review | gstack | ✅ | ✅ | 设计评分 6 维度 0-10 |
+| plan-eng-review | gstack | ✅ | ✅ | 工程架构审查 |
+| plan-devex-review | gstack | ✅ | ✅ | 开发者体验审查 |
+| gstack-bridge | custom | ✅ | ✅ | Phase 0.5→1 交接协议（本项目自建，受 gstack 启发） |
+
 ### 外部来源（有明确作者）
 
 | Skill | Origin | Author | Source | License | Adapted |
-|-------|--------|--------|--------|---------|---------|
+|-------|--------|--------|--------|---------|----------| 
 | antfu | antfu | Anthony Fu | [GitHub](https://github.com/antfu/skills/tree/main/skills/antfu) | MIT | ✅ |
 | react-best-practices | vercel | Vercel Engineering | — | MIT | ✅ |
 | prisma-database-setup | prisma | Prisma | — | MIT | ✅ |
@@ -68,5 +84,5 @@
 
 ---
 
-*最后更新: 2026-04-09*
+*最后更新: 2026-04-11*
 *用途: 合规审计、上游更新追踪、技能来源溯源*
