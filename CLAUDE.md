@@ -76,7 +76,7 @@ node scripts/gstack-toggle.js --status
 
 ### 规则3：问题处理
 
-所有开发遇到的问题进行记录和总结，每次遇到问题先查询 `docx/fixed/` 文件夹下的错误记录
+所有开发遇到的问题进行记录和总结，每次遇到问题先查询 `docs/fixed/` 文件夹下的错误记录
 **Why**: 知识复用，避免重复踩坑
 
 ### 规则4：开发约束
@@ -94,7 +94,7 @@ node scripts/gstack-toggle.js --status
 
 ### 规则5：数据库变更
 
-统一使用 Python 构建脚本插入，脚本统一放在 `docx/sql/` 文件夹下
+统一使用 Python 构建脚本插入，脚本统一放在 `docs/sql/` 文件夹下
 **Why**: 版本可控、可审计、可回滚
 
 ### 规则6：退出前文档同步 🔴
@@ -506,7 +506,7 @@ GitHub 推送 → 完成报告
 |------|------|
 | `templates/code-headers/typescript.ts.template` | TypeScript / JavaScript |
 | `templates/code-headers/java.java.template` | Java |
-| `templates/code-headers/python.py.template` Python |
+| `templates/code-headers/python.py.template` | Python |
 
 ---
 

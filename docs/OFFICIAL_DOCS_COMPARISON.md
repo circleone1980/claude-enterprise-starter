@@ -1,7 +1,7 @@
 # Claude Code 官方文档对比分析报告
 
 > 对比日期: 2026-04-11
-> 版本: v2.5.0
+> 版本: v2.6.0
 > 官方文档: https://code.claude.com/docs/en/claude-directory
 
 ---
@@ -207,4 +207,4 @@ CLAUDE.local.md
 ---
 
 *报告更新时间: 2026-04-11*
-*版本: v2.5.0*
+*版本: v2.6.0*

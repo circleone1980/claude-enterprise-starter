@@ -1,6 +1,6 @@
 # {项目名称}
 
-> 基于 [claude-enterprise-starter](https://github.com/circleone1980/claude-enterprise-starter) v2.5.0 模板开发
+> 基于 [claude-enterprise-starter](https://github.com/circleone1980/claude-enterprise-starter) v2.6.0 模板开发
 
 ---
 
