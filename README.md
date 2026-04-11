@@ -717,7 +717,7 @@ graph TB
 | MCP 工具 | GitHub / Figma / Playwright / Context7 | `.mcp.json` |
 | Hook 运行时 | Node.js | `hooks/scripts/*.js` |
 | 配置验证 | Node.js | `scripts/validate-config.js` |
-| 代码审查 | GLM-5（开发）+ GPT-5.4 via Codex（审查） | `CLAUDE.md` 十三-C 节 |
+| 代码审查 | GLM-5（开发）+ GPT-5.4 via Codex（审查） | `CLAUDE.md` 十六节 |
 | Lint / 格式化 | ESLint flat config (antfu 风格) | `CLAUDE.md` 一-B 节 |
 
 ### 导航指南
@@ -739,7 +739,7 @@ graph TB
 | 调整 AC 验收流程 | `automation/feature-gates.json` + `automation/ac-tracker.json` + `scripts/ac-*.js` |
 | 修改 UI 设计流程 | `skills/ui-style-selector/` + `tips/UI设计风格/` |
 | 工作区路径配置 | `automation/workspace.json` + `hooks/scripts/lib/workspace-resolver.js` |
-| Codex 双模型集成 | `CLAUDE.md` 十三-C 节 + Codex 插件钩子 |
+| Codex 双模型集成 | `CLAUDE.md` 十六节 + Codex 插件钩子 |
 
 ### 快速开始
 

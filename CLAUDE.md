@@ -4,7 +4,7 @@
 
 ---
 
-## 零-B、GStack 产品设计层 (Phase 0.5) 🔴
+## 零、GStack 产品设计层 (Phase 0.5) 🔴
 
 > **状态**: 可选功能，通过 `automation/agent-orchestration.json` 的 `gstackConfig.enabled` 控制
 > **定位**: 产品构思与设计验证，在需求分析（Phase 1）之前
@@ -235,7 +235,7 @@ Business Capability
 
 ---
 
-## 五、系统设计粒度要求
+## 六、系统设计粒度要求
 
 所有功能必须拆解为完整 **功能树结构**：
 
@@ -251,7 +251,7 @@ Module
 
 ---
 
-## 六、开发质量流程（Quality Gates）
+## 七、开发质量流程（Quality Gates）
 
 每完成一个 Feature 必须执行四项检查：
 
@@ -267,7 +267,7 @@ Module
 
 ---
 
-## 七、Agent Team Skills 强制规则 🔴
+## 八、Agent Team Skills 强制规则 🔴
 
 > **角色-技能映射的定义源**: `automation/agent-orchestration.json`
 > 以下为简化视图，完整配置含 subagentType、dependencies、count 等字段详见上述文件
@@ -372,7 +372,7 @@ Agent --name "Frontend-1" \
 
 ---
 
-## 八、狂暴模式（Rage Mode）🔴
+## 九、狂暴模式（Rage Mode）🔴
 
 > **全自动开发模式**: Claude Code 全权接管开发任务，无需人为介入确认各阶段推进
 
@@ -417,7 +417,7 @@ GitHub 推送 → 完成报告
 
 ---
 
-## 九、模组化规则加载
+## 十、模组化规则加载
 
 此项目使用模块化规则系统，按需加载：
 
@@ -436,7 +436,7 @@ GitHub 推送 → 完成报告
 
 ---
 
-## 十、代理定义文件
+## 十一、代理定义文件
 
 | 角色           | 路径                             |
 | -------------- | -------------------------------- |
@@ -458,7 +458,7 @@ GitHub 推送 → 完成报告
 
 ---
 
-## 十一、技能文件位置
+## 十二、技能文件位置
 
 | 技能                             | 路径                                      |
 | -------------------------------- | ----------------------------------------- |
@@ -510,7 +510,7 @@ GitHub 推送 → 完成报告
 
 ---
 
-## 十二、验证与信任 🔴
+## 十三、验证与信任 🔴
 
 > **Why**: Claude Code 生成的代码可能比人工代码多 1.75x 逻辑错误 (ACM 2025)
 
@@ -531,7 +531,7 @@ GitHub 推送 → 完成报告
 
 ---
 
-## 十三-A、Agent Team 清理机制 🔴
+## 十四、Agent Team 清理机制 🔴
 
 > **已知 Bug**: TeamDelete 在 Agent 上下文耗尽/僵尸化后永久失败（5 个已确认 Bug）
 >
@@ -563,7 +563,7 @@ bash scripts/team-manager.sh nuke     # 清除所有非 default 团队
 
 ---
 
-## 十三-B、智能模式选择引擎 🔴
+## 十五、智能模式选择引擎 🔴
 
 > **定义源**: `automation/agent-orchestration.json` → `modeSelection` + `modeThresholds`
 
@@ -599,7 +599,7 @@ bash scripts/team-manager.sh nuke     # 清除所有非 default 团队
 
 ---
 
-## 十三-C、双模型协作策略
+## 十六、双模型协作策略
 
 ### 模型分工
 
