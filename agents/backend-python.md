@@ -39,7 +39,7 @@ Skill design-context --role backend-python
 | **涉及 LLM** | `Skill llm-integration` |
 | **涉及 VLM** | `Skill vlm-integration` |
 | **涉及工作流** | `Skill workflow-engine` |
-| **涉及数据库变更** | `Skill database-migrations` |
+| **涉及数据库变更** | `Skill prisma-database-setup` |
 | **完成代码** | `Skill code-review` |
 
 ---

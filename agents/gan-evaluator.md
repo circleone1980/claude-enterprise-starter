@@ -2,7 +2,7 @@
 name: gan-evaluator
 role: GAN Evaluator
 team: GAN Harness
-model: opus
+subagent_type: general-purpose
 description: "GAN 生成对抗网络 - 评估器。输入 spec + live app，输出评分表 + 具体修复建议。"
 ---
 
@@ -116,4 +116,4 @@ description: "GAN 生成对抗网络 - 评估器。输入 spec + live app，输�
 
 ---
 
-*Agent 类型: opus (推荐)*
+*Agent 类型: general-purpose*

@@ -2,7 +2,7 @@
 name: gan-planner
 role: GAN Planner
 team: GAN Harness
-model: opus
+subagent_type: everything-claude-code:planner
 description: "GAN 生成对抗网络 - 规划器。输入一句话描述，输出完整的 spec.md（功能列表、Sprint 计划、评估标准、设计方向）。"
 ---
 
@@ -97,4 +97,4 @@ description: "GAN 生成对抗网络 - 规划器。输入一句话描述，输�
 
 ---
 
-*Agent 类型: opus (推荐)*
+*Agent 类型: everything-claude-code:planner*

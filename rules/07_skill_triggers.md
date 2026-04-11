@@ -214,7 +214,7 @@ Agent --name "{角色名称}" \
 当多个技能可能同时适用时，按以下顺序调用：
 
 1. **Process skills**（流程技能）: `brainstorming`, `systematic-debugging` — 决定 HOW to approach
-2. **Implementation skills**（实现技能）: `tdd`, `backend-patterns` — 指导 execution
+2. **Implementation skills**（实现技能）: `tdd`, `springboot-patterns` — 指导 execution
 
 **示例**：
 - "Let's build X" → `brainstorming` first, then `tdd`
@@ -227,7 +227,7 @@ Agent --name "{角色名称}" \
 | 类型 | 技能 | 使用方式 |
 |------|------|---------|
 | **Rigid（刚性）** | `tdd`, `systematic-debugging` | 严格遵循，不要跳过步骤 |
-| **Flexible（灵活）** | `brainstorming`, `backend-patterns` | 根据上下文适配原则 |
+| **Flexible（灵活）** | `brainstorming`, `springboot-patterns` | 根据上下文适配原则 |
 
 ---
 

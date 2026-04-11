@@ -15,8 +15,8 @@
 
 - `office-hours` 🔴 - **入口技能**，YC 6 问挑战假设
 - `design-consultation` 🔴 - 竞品研究+设计系统构建
-- `design-shotgun` 🔴 - 4-6 UI 变体+品味记忆
-- `design-html` 🔴 - 模型转生产级 HTML/CSS
+- `design-shotgun` - 4-6 UI 变体+品味记忆
+- `design-html` - 模型转生产级 HTML/CSS
 - Superpowers `brainstorming` - 创意探索
 
 **SOP**: `office-hours` → `design-consultation` → `design-shotgun` → `design-html`

@@ -22,7 +22,7 @@
     },
     "Design-Reviewer": {
       "subagentType": "general-purpose",
-      "requiredSkills": ["autoplan", "plan-ceo-review", "plan-design-review", "plan-eng-review", "plan-devex-review"],
+      "requiredSkills": ["autoplan", "plan-ceo-review", "plan-design-review", "plan-eng-review", "plan-devex-review", "gstack-bridge"],
       "parallelizable": false,
       "dependencies": ["Product-Designer"],
       "count": 1,
@@ -184,7 +184,7 @@
     },
     "QA": {
       "subagentType": "everything-claude-code:tdd-guide",
-      "requiredSkills": ["tdd", "verification-loop", "code-review"],
+      "requiredSkills": ["tdd", "verification-loop", "code-review", "security-review"],
       "parallelizable": false,
       "dependencies": ["Frontend", "Backend-Java", "Backend-Python"],
       "count": 1,
@@ -229,7 +229,7 @@
       "subagentType": "everything-claude-code:planner",
       "requiredSkills": ["user-onboarding", "product-requirements", "ui-ux-pro-max"],
       "parallelizable": false,
-      "dependencies": ["DevOps"],
+      "dependencies": ["QA"],
       "count": 1,
       "phase": 4,
       "mcpServers": ["playwright"],
@@ -243,7 +243,7 @@
       "agentMd": "agents/product-experience.md"
     },
     "GAN-Planner": {
-      "subagentType": "general-purpose",
+      "subagentType": "everything-claude-code:planner",
       "requiredSkills": ["gan-harness", "writing-plans", "product-requirements"],
       "parallelizable": false,
       "dependencies": [],
@@ -260,7 +260,7 @@
     },
     "GAN-Generator": {
       "subagentType": "general-purpose",
-      "requiredSkills": ["gan-harness", "tdd", "code-review"],
+      "requiredSkills": ["gan-harness", "tdd", "code-review", "springboot-patterns", "antfu"],
       "parallelizable": false,
       "dependencies": ["GAN-Planner"],
       "count": 1,
@@ -276,7 +276,7 @@
     },
     "GAN-Evaluator": {
       "subagentType": "general-purpose",
-      "requiredSkills": ["gan-harness", "code-review"],
+      "requiredSkills": ["gan-harness", "code-review", "verification-loop", "security-review"],
       "parallelizable": false,
       "dependencies": ["GAN-Generator"],
       "count": 1,

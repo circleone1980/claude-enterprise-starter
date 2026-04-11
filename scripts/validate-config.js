@@ -374,11 +374,11 @@ if (fs.existsSync(toggleScript)) {
 }
 
 // 检查 feature-gates.json 中 gstack 开关
-if (featureGates && featureGates.features && featureGates.features.gstack) {
-  log_ok(`feature-gates.json 中 gstack 开关存在: enabled=${featureGates.features.gstack.enabled}`);
+if (featureGates && featureGates.gstack) {
+  log_ok(`feature-gates.json 中 gstack 开关存在: enabled=${featureGates.gstack.enabled}`);
   // 一致性：agent-orchestration.json 和 feature-gates.json 应该同步
-  if (gstackEnabled !== featureGates.features.gstack.enabled) {
-    log_fail(`gstackConfig.enabled (${gstackEnabled}) 与 feature-gates.gstack.enabled (${featureGates.features.gstack.enabled}) 不一致`);
+  if (gstackEnabled !== featureGates.gstack.enabled) {
+    log_fail(`gstackConfig.enabled (${gstackEnabled}) 与 feature-gates.gstack.enabled (${featureGates.gstack.enabled}) 不一致`);
   } else {
     log_ok('agent-orchestration.json 和 feature-gates.json 的 gstack 状态一致');
   }

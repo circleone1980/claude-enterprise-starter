@@ -2,7 +2,7 @@
 name: gan-generator
 role: GAN Generator
 team: GAN Harness
-model: opus
+subagent_type: general-purpose
 description: "GAN 生成对抗网络 - 实现器。输入 spec + 上轮 feedback，实现代码并保持 dev server 运行。"
 ---
 
@@ -72,4 +72,4 @@ description: "GAN 生成对抗网络 - 实现器。输入 spec + 上轮 feedback
 
 ---
 
-*Agent 类型: opus (推荐)*
+*Agent 类型: general-purpose*
