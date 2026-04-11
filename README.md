@@ -67,7 +67,8 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── 04_agent_team.md             # Agent Team rules (references SSOT)
 │   ├── 05_security.md               # Security standards
 │   ├── 06_document_lifecycle.md     # Document lifecycle (Frozen/Evolution/ADR)
-│   └── 07_skill_triggers.md         # Skill triggers + global phase flowchart
+│   ├── 07_skill_triggers.md         # Skill triggers + global phase flowchart
+│   └── 08_code_comments.md          # Code comment standards (Chinese + versioning) 🆕
 ├── skills/                          # Custom skills (27 skills)
 │   ├── ui-style-selector/           # UI style auto-selection (60 templates)
 │   ├── design-context/              # Auto-load design docs by role
@@ -114,15 +115,21 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── agent-orchestration.json     # SSOT: role-skill mapping
 │   ├── rage-mode.json               # Rage mode phases & features
 │   ├── phase-gates.json             # Quality gate conditions
+│   ├── feature-gates.json           # Feature-level AC gates 🆕
+│   ├── ac-tracker.json              # AC status machine-readable index 🆕
+│   ├── workspace.json               # Workspace path config 🆕
 │   └── github-integration.json      # GitHub auto-push config
 ├── hooks/                           # Hook system
 │   ├── hooks.json                   # Hook definitions
-│   └── scripts/                     # Hook scripts (14 scripts)
+│   └── scripts/                     # Hook scripts (16 scripts)
+│       ├── lib/workspace-resolver.js # Workspace path resolver 🆕
 │       ├── safety-guard.js          # Pre-tool safety check
 │       ├── phase-controller.js      # Phase gate validator
 │       ├── auto-github-push.js      # Auto push (every 30min)
 │       ├── agent-health-monitor.js  # Agent health check (every 5min)
 │       ├── auto-start-agents.js     # Auto-start agents on team create
+│       ├── ac-gate-check.js         # Feature AC gate checker 🆕
+│       ├── ac-status-update.js      # AC status auto-update on task complete 🆕
 │       ├── block-no-verify.js       # Block git push --no-verify 🆕
 │       ├── commit-quality.js        # Pre-commit: console.log + secrets detection 🆕
 │       ├── suggest-compact.js       # Suggest /compact at logical boundaries 🆕
@@ -143,14 +150,25 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 ├── agent-memory/                    # Persistent agent memory
 │   └── {role}/MEMORY.md             # Per-agent memory files
 └── scripts/                         # Setup scripts
-    ├── init.sh                      # Unix setup script
-    ├── init.ps1                     # Windows setup script
+    ├── init.sh                      # Unix setup script (supports --workspace)
+    ├── init.ps1                     # Windows setup script (supports -Workspace)
     ├── team-manager.sh              # Team cleanup (resolves 5 TeamDelete bugs) 🆕
     ├── orchestrate.sh               # Agent orchestration launcher 🆕
     ├── gan-harness.sh               # GAN harness runner 🆕
+    ├── ac-tracker-sync.js           # AC markdown → JSON sync 🆕
+    ├── ac-coverage-report.js        # AC coverage report generator 🆕
     └── validate-config.js           # Configuration validator 🆕
 
-docs/                                # Project documentation (from templates)
+templates/
+└── code-headers/                    # Code comment templates 🆕
+    ├── typescript.ts.template       # TS/JS module header + JSDoc
+    ├── java.java.template           # Java module header + Javadoc
+    ├── python.py.template           # Python module header + docstring
+    └── README.md                    # Template usage guide
+
+workspace/                           # Target project directory 🆕
+├── src/                             # Actual application code
+├── docs/                            # Project documentation (from templates)
 ├── requirements/                    # Frozen layer: PRD, user stories
 │   ├── PRD.md                       # Product Requirements Document
 │   ├── user-stories.md              # User stories
@@ -482,7 +500,8 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── 04_agent_team.md             # Agent Team 规则（引用 SSOT）
 │   ├── 05_security.md               # 安全规范
 │   ├── 06_document_lifecycle.md     # 文档生命周期（冻结/演化/ADR）
-│   └── 07_skill_triggers.md         # 技能触发 + 全局流程图
+│   ├── 07_skill_triggers.md         # 技能触发 + 全局流程图
+│   └── 08_code_comments.md          # 代码注释规范（中文注释 + 版本控制） 🆕
 ├── skills/                          # 自定义技能（27 个）
 │   ├── ui-style-selector/           # UI 风格自动选择（60 模板）
 │   ├── design-context/              # 按角色自动加载设计文档
@@ -529,15 +548,21 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── agent-orchestration.json     # SSOT：角色-技能映射唯一真相源
 │   ├── rage-mode.json               # 狂暴模式阶段与功能
 │   ├── phase-gates.json             # 质量门禁条件
+│   ├── feature-gates.json           # 功能点级 AC 门禁 🆕
+│   ├── ac-tracker.json              # AC 状态机器可读索引 🆕
+│   ├── workspace.json               # 工作区路径配置 🆕
 │   └── github-integration.json      # GitHub 自动推送配置
 ├── hooks/                           # 钩子系统
 │   ├── hooks.json                   # 钩子定义
-│   └── scripts/                     # 钩子脚本（14 个）
+│   └── scripts/                     # 钩子脚本（16 个）
+│       ├── lib/workspace-resolver.js # 工作区路径解析模块 🆕
 │       ├── safety-guard.js          # 工具调用前安全检查
 │       ├── phase-controller.js      # 阶段门禁验证
 │       ├── auto-github-push.js      # 自动推送（每 30 分钟）
 │       ├── agent-health-monitor.js  # Agent 健康监控（每 5 分钟）
 │       ├── auto-start-agents.js     # 团队创建时自动启动 Agent
+│       ├── ac-gate-check.js         # 功能点 AC 门禁检查 🆕
+│       ├── ac-status-update.js      # 任务完成时 AC 状态自动更新 🆕
 │       ├── block-no-verify.js       # 阻止 git push --no-verify 🆕
 │       ├── commit-quality.js        # 提交前 console.log + 密钥检测 🆕
 │       ├── suggest-compact.js       # 建议压缩上下文 🆕
@@ -558,12 +583,25 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 ├── agent-memory/                    # Agent 持久化记忆
 │   └── {role}/MEMORY.md             # 各角色记忆文件
 └── scripts/                         # 安装脚本
-    ├── init.sh                      # Unix 安装脚本
-    ├── init.ps1                     # Windows 安装脚本
+    ├── init.sh                      # Unix 安装脚本（支持 --workspace）
+    ├── init.ps1                     # Windows 安装脚本（支持 -Workspace）
     ├── team-manager.sh              # Team 清理（解决 5 个 TeamDelete Bug） 🆕
     ├── orchestrate.sh               # Agent 编排启动器 🆕
     ├── gan-harness.sh               # GAN Harness 运行器 🆕
+    ├── ac-tracker-sync.js           # AC markdown → JSON 同步 🆕
+    ├── ac-coverage-report.js        # AC 覆盖率报告生成 🆕
     └── validate-config.js           # 配置验证器 🆕
+
+templates/
+└── code-headers/                    # 代码注释模板 🆕
+    ├── typescript.ts.template       # TS/JS 模块头 + JSDoc
+    ├── java.java.template           # Java 模块头 + Javadoc
+    ├── python.py.template           # Python 模块头 + docstring
+    └── README.md                    # 模板使用说明
+
+workspace/                           # 目标项目目录 🆕
+├── src/                             # 实际开发代码
+├── docs/                            # 项目文档（来自模板）
 
 docs/                                # 项目文档（来自模板）
 ├── requirements/                    # 冻结层：PRD、用户故事
@@ -865,5 +903,5 @@ MIT License
 
 ---
 
-*Template Version: 2.3.0*
+*Template Version: 2.5.0*
 *Last Updated: 2026-04-11*

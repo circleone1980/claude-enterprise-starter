@@ -15,6 +15,8 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
+const { resolveWorkspaceRoot } = require('./lib/workspace-resolver');
+
 const PROJECT_ROOT = process.cwd();
 const GATES_PATH = path.join(PROJECT_ROOT, 'automation', 'phase-gates.json');
 const RAGE_MODE_PATH = path.join(PROJECT_ROOT, 'automation', 'rage-mode.json');
@@ -74,7 +76,7 @@ function checkCondition(condition) {
 
   try {
     execSync(condition.check, {
-      cwd: PROJECT_ROOT,
+      cwd: condition.cwd === 'project_root' ? PROJECT_ROOT : resolveWorkspaceRoot(),
       timeout: 5000,
       stdio: 'pipe',
       shell: '/bin/bash'

@@ -4,6 +4,30 @@
 
 ### 第一步：复制模板
 
+**方式 A: workspace 模式（推荐 — 目标项目代码在 workspace/ 目录）**
+
+**Windows (PowerShell):**
+```powershell
+# 进入你的项目目录
+cd C:\Projects\my-project
+
+# 复制模板
+.\init.ps1 -Workspace -ProjectType node
+```
+
+**macOS / Linux (Bash):**
+```bash
+# 进入你的项目目录
+cd ~/Projects/my-project
+
+# 复制模板
+bash scripts/init.sh --workspace --type node
+```
+
+> **项目类型**: `node` (React+Vite) | `java` (Spring Boot) | `python` (FastAPI/Django)
+
+**方式 B: 传统模式（复制到已有项目根目录）**
+
 **Windows (PowerShell):**
 ```powershell
 # 进入你的项目目录

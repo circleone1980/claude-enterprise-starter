@@ -144,10 +144,12 @@ Agent --name "Frontend-1" \
   - IF 编辑 .tsx/.jsx → react-best-practices + antfu + ui-ux-pro-max 自动激活（paths 配置）
   - IF 设计困惑 → `Skill brainstorming`
   - IF 遇到 Bug → `Skill systematic-debugging`
+- **代码注释**: 每个源文件必须有模块头注释和函数中文注释（详见 rules/08_code_comments.md）
 
 ### 3. 完成阶段
 - 必调: `Skill code-review` → 审查代码质量
 - 内置: `/simplify` → 并行代码质量优化
+- 代码注释标准已遵守（模块头 + 函数注释）
 - 验证: 测试覆盖率 >80% + 编译通过
 
 ### 动态触发决策树

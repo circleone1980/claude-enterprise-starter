@@ -99,6 +99,28 @@ node hooks/scripts/ac-gate-check.js --feat-id=FEAT-001
 | 无 AC 关联的功能代码 | 🟡 Major | 确认是否遗漏 AC 映射 |
 | Gherkin 不一致 | 🟡 Major | 对齐实现与 AC 定义 |
 
+### 7. Code Comment Standards（代码注释标准）
+
+验证代码注释符合规范（详见 `rules/08_code_comments.md`）:
+
+- [ ] **Module Header**: 每个源文件有模块头注释（@module, @version, @since, @description, Changelog）
+- [ ] **Function Comments**: 每个公开函数有中文 JSDoc/Javadoc/docstring 注释
+- [ ] **Parameters**: 所有参数有中文说明
+- [ ] **Return Values**: 返回值有中文说明
+- [ ] **Exceptions**: 异常有中文触发条件说明
+- [ ] **Changelog Updated**: 文件变更时 Changelog 已更新
+
+**判断标准**:
+| 情况 | 严重性 | 处理 |
+|------|--------|------|
+| 缺少模块头注释 | 🟡 Major | 合并前必须补全 |
+| 模块头缺少必填字段 | 🟡 Major | 合并前必须补全 |
+| 公开函数缺少注释 | 🟡 Major | 合并前必须补全 |
+| 函数注释缺少参数说明 | 🟢 Minor | 建议补全 |
+| Changelog 未更新 | 🟢 Minor | 建议补全 |
+
+**注释模板**: `templates/code-headers/` 目录下有 TypeScript/Java/Python 三种语言模板。
+
 ## Review Report Template
 
 ```markdown

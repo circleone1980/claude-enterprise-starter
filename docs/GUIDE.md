@@ -1,6 +1,6 @@
 # Claude Enterprise Starter 使用手册
 
-> 版本: 2.3.0 | 最后更新: 2026-04-11
+> 版本: 2.5.0 | 最后更新: 2026-04-11
 
 本手册帮助团队成员快速上手 Claude Enterprise Starter 模板项目。
 
@@ -1015,4 +1015,4 @@ Skill content and instructions here...
 
 ---
 
-*使用手册版本: 2.3.0 | 项目模板: [GitHub](https://github.com/circleone1980/claude-enterprise-starter)*
+*使用手册版本: 2.5.0 | 项目模板: [GitHub](https://github.com/circleone1980/claude-enterprise-starter)*

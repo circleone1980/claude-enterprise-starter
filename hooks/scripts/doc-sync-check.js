@@ -28,6 +28,8 @@ const docTriggerPatterns = [
   /^commands\/.*\.md$/,
   /^rules\/.*\.md$/,
   /^CLAUDE\.md$/,
+  /^workspace\/docs\/.*\.md$/,
+  /^workspace\/src\/.*\.(ts|tsx|js|jsx|java|py)$/,
 ];
 
 const needsSync = editedFiles.filter(f =>

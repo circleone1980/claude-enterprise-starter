@@ -177,7 +177,8 @@
         {
           "description": "代码已推送到 GitHub",
           "check": "git log origin/main..HEAD --oneline 2>/dev/null | wc -l | grep -q '^0$'",
-          "checkType": "command_succeeds"
+          "checkType": "command_succeeds",
+          "cwd": "project_root"
         }
       ],
       "autoAdvance": true,

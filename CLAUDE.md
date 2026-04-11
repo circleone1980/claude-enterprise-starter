@@ -200,6 +200,7 @@ Module
 2. **代码评审** - 检查代码结构、规范、异常处理、日志、并发安全
 3. **编译与测试** - 确保编译通过并完成基础测试
 4. **及时更新** - 完成或者修改功能时，必须及时更新文档
+5. **注释合规** - 每个源文件有模块头注释（@version, @since, @module, Changelog），每个公开函数有中文注释（详见 [rules/08_code_comments.md](rules/08_code_comments.md)）
 
 **任何检查未通过，禁止进入下一阶段。**
 
@@ -341,6 +342,7 @@ GitHub 推送 → 完成报告
 - [安全规范](rules/05_security.md) - 安全边界、敏感数据处理
 - [文档生命周期规则](rules/06_document_lifecycle.md) - 文档分层、冻结/演化规则、ADR 流程 🔴
 - [技能触发规则](rules/07_skill_triggers.md) - 技能触发时机、动态调用指令 🔴
+- [代码注释规范](rules/08_code_comments.md) - 模块头注释、中文函数注释、版本控制 🔴
 
 **Why**: 模块化减少主文件大小，提高规则可维护性和可发现性
 
@@ -397,6 +399,14 @@ GitHub 推送 → 完成报告
 | **strategic-compact**      | `skills/strategic-compact/SKILL.md`     |
 | **gan-harness**            | `skills/gan-harness/SKILL.md`           |
 | **continuous-learning**    | `skills/continuous-learning/SKILL.md`   |
+
+### 代码注释模板
+
+| 文件 | 语言 |
+|------|------|
+| `templates/code-headers/typescript.ts.template` | TypeScript / JavaScript |
+| `templates/code-headers/java.java.template` | Java |
+| `templates/code-headers/python.py.template` Python |
 
 ---
 
@@ -545,7 +555,7 @@ bash scripts/team-manager.sh nuke     # 清除所有非 default 团队
 
 ---
 
-*模板版本: 2.3.0*
+*模板版本: 2.5.0*
 *最后更新: 2026-04-11*
-*重大变更: 智能模式选择引擎 + Team 清除机制 + Codex 双模型集成 + 环境变量优化*
+*重大变更: workspace/ 目标项目目录 + 代码中文注释与版本控制标准*
 *基于: [DataCamp CLAUDE.md Guide](https://www.datacamp.com/tutorial/writing-the-best-claude-md), [eesel AI Best Practices](https://www.eesel.ai/blog/claude-code-best-practices), [FlorianBruniaux Ultimate Guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide)*

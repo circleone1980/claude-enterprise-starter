@@ -17,6 +17,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { isWorkspaceMode, resolveWorkspaceRoot } = require('./lib/workspace-resolver');
 
 // 项目根目录
 const PROJECT_ROOT = process.cwd();
@@ -187,8 +188,31 @@ ${acList}
     } catch (e) { /* tracker 解析失败不影响正常启动 */ }
   }
 
+  // Workspace 上下文注入
+  let workspaceSection = '';
+  if (isWorkspaceMode()) {
+    workspaceSection = `
+
+    工作区路径: 目标项目代码在 ${resolveWorkspaceRoot()}
+    - 源代码目录: workspace/src/
+    - 项目文档目录: workspace/docs/
+    - 模板配置在项目根目录`;
+  }
+
+  // 代码注释标准注入
+  let commentSection = '';
+  const commentRulePath = path.join(PROJECT_ROOT, 'rules', '08_code_comments.md');
+  if (fs.existsSync(commentRulePath)) {
+    commentSection = `
+
+    代码注释标准（强制）:
+    - 每个源文件必须有模块头注释（@version, @since, @module, Changelog）
+    - 每个公开函数必须有中文 JSDoc/Javadoc/docstring 注释
+    - 注释模板见 templates/code-headers/`;
+  }
+
   return `你是 ${name}。必须遵循以下流程：
-${skillCalls}${tddSection}${reviewSection}${codexSection}${acSection}
+${skillCalls}${tddSection}${reviewSection}${codexSection}${acSection}${workspaceSection}${commentSection}
 
     任务：等待分配具体任务`;
 }

@@ -1,0 +1,7 @@
+{
+  "version": "1.0.0",
+  "workspaceDir": "workspace",
+  "docsDir": "docs",
+  "srcDir": "src",
+  "_comment": "工作区路径配置。workspaceDir='.' 时回退到传统模式（无 workspace 目录）"
+}

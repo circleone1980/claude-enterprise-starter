@@ -36,6 +36,13 @@
 
 **覆盖率要求**: > 80%
 
+## 代码注释标准（强制）
+
+- 每个源文件必须有**模块头注释**（@version, @since, @module, Changelog）
+- 每个公开函数必须有**中文注释**（JSDoc/Javadoc/docstring）
+- 注释模板见 `templates/code-headers/`
+- 详细规范见 [rules/08_code_comments.md](08_code_comments.md)
+
 ---
 
 *加载顺序: 01*
