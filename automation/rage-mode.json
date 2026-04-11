@@ -1,6 +1,6 @@
 {
   "name": "rage-mode",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "enabled": true,
   "description": "狂暴模式 - Claude Code 全权接管开发任务",
   "features": {
@@ -35,7 +35,7 @@
       "id": 1,
       "name": "需求分析",
       "autoAdvance": true,
-      "requiredAgents": ["PM", "PO", "Architect", "UI Designer"],
+      "requiredAgents": ["PM", "PO", "Architect"],
       "qualityGates": [
         "PRD 完成",
         "用户故事完成",
@@ -52,7 +52,7 @@
       "id": 2,
       "name": "开发实现",
       "autoAdvance": true,
-      "requiredAgents": ["Frontend", "Backend", "UI Designer"],
+      "requiredAgents": ["UI-Designer", "Frontend", "Backend-Java", "Backend-Python"],
       "qualityGates": ["代码实现完成", "单元测试通过", "代码审查通过"]
     },
     {
@@ -77,9 +77,22 @@
       "qualityGates": ["部署成功", "健康检查通过"]
     }
   ],
+  "ganPhase": {
+    "id": "gan",
+    "name": "GAN Harness",
+    "autoAdvance": false,
+    "requiredAgents": ["GAN-Planner", "GAN-Generator", "GAN-Evaluator"],
+    "qualityGates": ["评分 >= threshold"],
+    "config": {
+      "threshold": 7.0,
+      "maxIterations": 3,
+      "outputDir": "output"
+    }
+  },
   "notifications": {
     "onPhaseComplete": true,
     "onAgentFailure": true,
     "onAllComplete": true
-  }
+  },
+  "_comment": "v2.0.0 - Updated 2026-04-11 - 修正 agent 名称 (Backend→Backend-Java/Python) + GAN phase"
 }

@@ -1,39 +1,94 @@
 {
   "name": "agent-orchestration",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "enabled": true,
   "agents": {
     "PM": {
       "subagentType": "everything-claude-code:planner",
       "requiredSkills": ["product-requirements", "sprint-planning"],
       "parallelizable": false,
-      "dependencies": []
+      "dependencies": [],
+      "count": 1,
+      "phase": 1,
+      "modeSelection": {
+        "communicationNeed": 3,
+        "crossLayerDependency": 3,
+        "contextPressure": 1,
+        "roleCount": 1,
+        "writeConflictRisk": -1
+      },
+      "agentMd": "agents/pm.md"
     },
     "PO": {
       "subagentType": "general-purpose",
       "requiredSkills": ["product-requirements", "sprint-planning", "user-onboarding"],
       "parallelizable": true,
-      "dependencies": []
+      "dependencies": [],
+      "count": 1,
+      "phase": 1,
+      "modeSelection": {
+        "communicationNeed": 3,
+        "crossLayerDependency": 2,
+        "contextPressure": 1,
+        "roleCount": 1,
+        "writeConflictRisk": -1
+      },
+      "agentMd": "agents/po.md"
     },
     "Architect": {
       "subagentType": "everything-claude-code:architect",
       "requiredSkills": ["writing-plans", "product-requirements", "react-best-practices", "ui-ux-pro-max", "ui-style-selector", "code-review"],
       "parallelizable": true,
-      "dependencies": []
+      "dependencies": [],
+      "count": 1,
+      "phase": 1,
+      "modeSelection": {
+        "communicationNeed": 3,
+        "crossLayerDependency": 3,
+        "contextPressure": 1,
+        "roleCount": 1,
+        "writeConflictRisk": -1
+      },
+      "agentMd": "agents/architect.md"
     },
     "UI-Designer": {
       "subagentType": "general-purpose",
       "requiredSkills": ["ui-ux-pro-max", "ui-style-selector"],
       "parallelizable": true,
       "dependencies": [],
-      "mcpServers": ["figma"]
+      "count": 1,
+      "phase": 2,
+      "mcpServers": ["figma"],
+      "modeSelection": {
+        "communicationNeed": 1,
+        "crossLayerDependency": 1,
+        "contextPressure": 0,
+        "roleCount": 0,
+        "writeConflictRisk": 0
+      },
+      "agentMd": "agents/ui-designer.md"
     },
     "Frontend": {
       "subagentType": "everything-claude-code:typescript-reviewer",
       "requiredSkills": ["tdd", "antfu", "ui-ux-pro-max", "code-review"],
       "parallelizable": true,
       "dependencies": ["PM", "Architect"],
-      "count": 3
+      "count": 3,
+      "phase": 2,
+      "modeSelection": {
+        "communicationNeed": 1,
+        "crossLayerDependency": 0,
+        "contextPressure": 1,
+        "roleCount": 1,
+        "writeConflictRisk": -1
+      },
+      "agentMd": "agents/frontend.md",
+      "codexIntegration": {
+        "reviewCommand": "/codex:review",
+        "rescueCommand": "/codex:rescue",
+        "triggerAfterFeature": true,
+        "triggerAfterPhase": true
+      }
     },
     "Backend-Java": {
       "subagentType": "everything-claude-code:java-reviewer",
@@ -41,6 +96,21 @@
       "parallelizable": true,
       "dependencies": ["PM", "Architect"],
       "count": 2,
+      "phase": 2,
+      "modeSelection": {
+        "communicationNeed": 1,
+        "crossLayerDependency": 0,
+        "contextPressure": 1,
+        "roleCount": 1,
+        "writeConflictRisk": -1
+      },
+      "agentMd": "agents/backend-java.md",
+      "codexIntegration": {
+        "reviewCommand": "/codex:review",
+        "rescueCommand": "/codex:rescue",
+        "triggerAfterFeature": true,
+        "triggerAfterPhase": true
+      },
       "techStack": {
         "language": "Java 17+",
         "framework": "Spring Boot 3.x",
@@ -55,6 +125,21 @@
       "parallelizable": true,
       "dependencies": ["PM", "Architect"],
       "count": 1,
+      "phase": 2,
+      "modeSelection": {
+        "communicationNeed": 0,
+        "crossLayerDependency": 0,
+        "contextPressure": 0,
+        "roleCount": 0,
+        "writeConflictRisk": 0
+      },
+      "agentMd": "agents/backend-python.md",
+      "codexIntegration": {
+        "reviewCommand": "/codex:review",
+        "rescueCommand": "/codex:rescue",
+        "triggerAfterFeature": true,
+        "triggerAfterPhase": true
+      },
       "techStack": {
         "language": "Python 3.12+",
         "framework": "FastAPI / Flask",
@@ -65,25 +150,125 @@
     },
     "QA": {
       "subagentType": "everything-claude-code:tdd-guide",
-      "requiredSkills": ["tdd", "code-review"],
+      "requiredSkills": ["tdd", "verification-loop", "code-review"],
       "parallelizable": false,
       "dependencies": ["Frontend", "Backend-Java", "Backend-Python"],
-      "mcpServers": ["playwright"]
+      "count": 1,
+      "phase": 3,
+      "mcpServers": ["playwright"],
+      "modeSelection": {
+        "communicationNeed": 0,
+        "crossLayerDependency": 0,
+        "contextPressure": 1,
+        "roleCount": 0,
+        "writeConflictRisk": 0
+      },
+      "agentMd": "agents/qa.md",
+      "codexIntegration": {
+        "reviewCommand": "/codex:review",
+        "rescueCommand": "/codex:rescue",
+        "triggerAfterFeature": true
+      }
     },
     "DevOps": {
       "subagentType": "general-purpose",
-      "requiredSkills": ["code-review"],
+      "requiredSkills": ["code-review", "security-review"],
       "parallelizable": false,
       "dependencies": ["QA"],
-      "mcpServers": ["github"]
+      "count": 1,
+      "phase": 5,
+      "mcpServers": ["github"],
+      "modeSelection": {
+        "communicationNeed": 0,
+        "crossLayerDependency": 0,
+        "contextPressure": 1,
+        "roleCount": 0,
+        "writeConflictRisk": 0
+      },
+      "agentMd": "agents/devops.md",
+      "codexIntegration": {
+        "reviewCommand": "/codex:adversarial-review",
+        "triggerAfterPhase": true
+      }
     },
     "产品体验师": {
       "subagentType": "everything-claude-code:planner",
       "requiredSkills": ["user-onboarding", "product-requirements", "ui-ux-pro-max"],
       "parallelizable": false,
       "dependencies": ["DevOps"],
-      "mcpServers": ["playwright"]
+      "count": 1,
+      "phase": 4,
+      "mcpServers": ["playwright"],
+      "modeSelection": {
+        "communicationNeed": 0,
+        "crossLayerDependency": 0,
+        "contextPressure": 0,
+        "roleCount": 0,
+        "writeConflictRisk": 0
+      },
+      "agentMd": "agents/product-experience.md"
+    },
+    "GAN-Planner": {
+      "subagentType": "general-purpose",
+      "requiredSkills": ["gan-harness", "writing-plans", "product-requirements"],
+      "parallelizable": false,
+      "dependencies": [],
+      "count": 1,
+      "phase": "gan",
+      "modeSelection": {
+        "communicationNeed": 0,
+        "crossLayerDependency": 0,
+        "contextPressure": 1,
+        "roleCount": 0,
+        "writeConflictRisk": 0
+      },
+      "agentMd": "agents/gan-planner.md"
+    },
+    "GAN-Generator": {
+      "subagentType": "general-purpose",
+      "requiredSkills": ["gan-harness", "tdd", "code-review"],
+      "parallelizable": false,
+      "dependencies": ["GAN-Planner"],
+      "count": 1,
+      "phase": "gan",
+      "modeSelection": {
+        "communicationNeed": 0,
+        "crossLayerDependency": 0,
+        "contextPressure": 1,
+        "roleCount": 0,
+        "writeConflictRisk": 0
+      },
+      "agentMd": "agents/gan-generator.md"
+    },
+    "GAN-Evaluator": {
+      "subagentType": "general-purpose",
+      "requiredSkills": ["gan-harness", "code-review"],
+      "parallelizable": false,
+      "dependencies": ["GAN-Generator"],
+      "count": 1,
+      "phase": "gan",
+      "mcpServers": ["playwright"],
+      "modeSelection": {
+        "communicationNeed": 0,
+        "crossLayerDependency": 0,
+        "contextPressure": 1,
+        "roleCount": 0,
+        "writeConflictRisk": 0
+      },
+      "agentMd": "agents/gan-evaluator.md"
     }
+  },
+  "modeThresholds": {
+    "team": 6,
+    "subagentParallel": 3,
+    "subagentSequential": 0,
+    "_comment": "总分 >= team → TeamCreate; 3-5 → Subagent 并行; < 3 → Subagent 顺序"
+  },
+  "ganConfig": {
+    "enabled": true,
+    "threshold": 7.0,
+    "maxIterations": 3,
+    "outputDir": "output"
   },
   "healthMonitoring": {
     "enabled": true,
@@ -92,6 +277,6 @@
     "restartDelay": 10000,
     "alertOnFailure": true
   },
-  "_comment": "SSOT v2.0.0 - Updated 2026-04-09 - Backend 拆分为 Java/Python 双角色 + 新增 AI/Workflow 技能栈",
+  "_comment": "SSOT v3.0.0 - Updated 2026-04-11 - modeSelection 评分引擎 + GAN agents + codexIntegration",
   "_ssot_note": "CLAUDE.md 第七节、rules/04、rules/07、agents/*.md 均引用此文件，不重复定义"
 }

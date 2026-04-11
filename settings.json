@@ -54,6 +54,11 @@
     ],
     "defaultMode": "bypassPermissions"
   },
+  "env": {
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80",
+    "MAX_THINKING_TOKENS": "16000",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
+  },
   "alwaysThinkingEnabled": true,
   "hasCompletedOnboarding": true,
   "hooks": {
@@ -210,5 +215,5 @@
       }
     }
   },
-  "_comment": "Updated 2026-04-09 - v2.2.0: ECC 集成 hooks 强化 + 后端技术栈拆分 (Java/Python)"
+  "_comment": "Updated 2026-04-11 - v2.3.0: 环境变量 (AUTOCOMPACT/THINKING/SUBAGENT_MODEL)"
 }

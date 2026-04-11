@@ -1,192 +1,262 @@
 #!/usr/bin/env node
 /**
- * Auto Start Agents - 自动启动 Agent Team（狂暴模式）
+ * Auto Start Agents v3.0 — SSOT + 智能模式评分引擎
  *
- * 功能：TeamCreate 后自动启动所有 Agent
- * Updated: 2026-04-05 - Unified skill mapping
+ * 核心变更（vs v1 硬编码版）:
+ *   1. 从 automation/agent-orchestration.json（SSOT）读取所有配置
+ *   2. 内置 modeSelection 评分引擎，自动决定 Team/Subagent 模式
+ *   3. 输出结构化 JSON 供主 Claude 进程解析执行
+ *
+ * 评分规则:
+ *   总分 >= modeThresholds.team (6)        → TeamCreate + SendMessage
+ *   总分 >= modeThresholds.subagentParallel (3) → Agent 并行 spawn
+ *   总分 < 3                                 → Agent 顺序 spawn
+ *
+ * Updated: 2026-04-11
  */
 
 const fs = require('fs');
 const path = require('path');
 
-// Agent 配置 - 统一技能映射
-const AGENTS = {
-  'PM': {
-    subagentType: 'everything-claude-code:planner',
-    skills: ['product-requirements', 'sprint-planning'],
-    phase: 1
-  },
-  'PO': {
-    subagentType: 'general-purpose',
-    skills: ['product-requirements', 'sprint-planning', 'user-onboarding'],
-    phase: 1
-  },
-  'Architect': {
-    subagentType: 'everything-claude-code:architect',
-    skills: ['writing-plans', 'product-requirements', 'react-best-practices', 'ui-ux-pro-max', 'code-review'],
-    phase: 1
-  },
-  'UI-Designer': {
-    subagentType: 'general-purpose',
-    skills: ['ui-ux-pro-max'],
-    mcpServers: ['figma'],
-    phase: 2
-  },
-  'Frontend-1': {
-    subagentType: 'everything-claude-code:typescript-reviewer',
-    skills: ['tdd', 'antfu', 'ui-ux-pro-max', 'code-review'],
-    phase: 2
-  },
-  'Frontend-2': {
-    subagentType: 'everything-claude-code:typescript-reviewer',
-    skills: ['tdd', 'antfu', 'ui-ux-pro-max', 'code-review'],
-    phase: 2
-  },
-  'Frontend-3': {
-    subagentType: 'everything-claude-code:typescript-reviewer',
-    skills: ['tdd', 'antfu', 'ui-ux-pro-max', 'code-review'],
-    phase: 2
-  },
-  'Backend-1': {
-    subagentType: 'everything-claude-code:python-reviewer',
-    skills: ['tdd', 'prisma-database-setup', 'code-review'],
-    phase: 2
-  },
-  'Backend-2': {
-    subagentType: 'everything-claude-code:python-reviewer',
-    skills: ['tdd', 'prisma-database-setup', 'code-review'],
-    phase: 2
-  },
-  'Backend-3': {
-    subagentType: 'everything-claude-code:python-reviewer',
-    skills: ['tdd', 'prisma-database-setup', 'code-review'],
-    phase: 2
-  },
-  'QA': {
-    subagentType: 'everything-claude-code:tdd-guide',
-    skills: ['tdd', 'code-review'],
-    mcpServers: ['playwright'],
-    phase: 3
-  },
-  'DevOps': {
-    subagentType: 'general-purpose',
-    skills: ['code-review'],
-    mcpServers: ['github'],
-    phase: 5
-  },
-  '产品体验师': {
-    subagentType: 'everything-claude-code:planner',
-    skills: ['user-onboarding', 'product-requirements', 'ui-ux-pro-max'],
-    mcpServers: ['playwright'],
-    phase: 4
-  }
-};
-
-// 状态文件路径
-const TEAM_FILE = path.join(process.cwd(), '.claude', 'logs', 'team-status.json');
+// 项目根目录
+const PROJECT_ROOT = process.cwd();
+const SSOT_PATH = path.join(PROJECT_ROOT, 'automation', 'agent-orchestration.json');
+const RAGE_MODE_PATH = path.join(PROJECT_ROOT, 'automation', 'rage-mode.json');
+const PHASE_LOG_DIR = path.join(PROJECT_ROOT, '.claude', 'logs');
 
 /**
- * 保存团队状态
+ * 加载 SSOT 配置
  */
-function saveTeamStatus(teamName, agents) {
-  try {
-    const dir = path.dirname(TEAM_FILE);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+function loadSSOT() {
+  if (!fs.existsSync(SSOT_PATH)) {
+    console.error('[auto-start-agents] SSOT not found:', SSOT_PATH);
+    process.exit(1);
+  }
+  return JSON.parse(fs.readFileSync(SSOT_PATH, 'utf-8'));
+}
+
+/**
+ * 加载 rage-mode 配置
+ */
+function loadRageMode() {
+  if (!fs.existsSync(RAGE_MODE_PATH)) {
+    return null;
+  }
+  return JSON.parse(fs.readFileSync(RAGE_MODE_PATH, 'utf-8'));
+}
+
+/**
+ * 获取当前阶段
+ */
+function getCurrentPhase() {
+  const phaseFile = path.join(PHASE_LOG_DIR, 'current-phase.json');
+  if (fs.existsSync(phaseFile)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(phaseFile, 'utf-8'));
+      return data.currentPhase || 0;
+    } catch { /* fallback to 0 */ }
+  }
+  return 0;
+}
+
+/**
+ * 模式评分引擎 — 计算 modeSelection 总分，决定 Team/Subagent
+ * @param {Object} agent - agent 配置（含 modeSelection）
+ * @param {Object} thresholds - modeThresholds 配置
+ * @param {string} subPhase - 子阶段标识（如 "2A" 接口对齐 / "2B" 独立开发）
+ * @returns {{ mode: string, score: number, reason: string }}
+ */
+function decideMode(agent, thresholds, subPhase) {
+  const scores = agent.modeSelection || {
+    communicationNeed: 0,
+    crossLayerDependency: 0,
+    contextPressure: 0,
+    roleCount: 0,
+    writeConflictRisk: 0
+  };
+
+  let total = Object.values(scores).reduce((a, b) => a + b, 0);
+
+  // Phase 2 子阶段特殊处理
+  if (subPhase === '2A') {
+    // Phase 2A（接口对齐）：所有开发角色强制提升通信和跨层分数
+    total = Math.max(total, 6); // 保证 >= team 阈值
+  }
+
+  let mode;
+  let reason;
+
+  if (total >= (thresholds.team || 6)) {
+    mode = 'team';
+    reason = `总分 ${total} >= ${thresholds.team}，需要协作通信`;
+  } else if (total >= (thresholds.subagentParallel || 3)) {
+    mode = 'subagent-parallel';
+    reason = `总分 ${total} 在 ${thresholds.subagentParallel}-${thresholds.team - 1} 之间，可并行独立执行`;
+  } else {
+    mode = 'subagent-sequential';
+    reason = `总分 ${total} < ${thresholds.subagentParallel}，顺序独立执行`;
+  }
+
+  return { mode, score: total, reason };
+}
+
+/**
+ * 生成 Agent 启动 prompt
+ */
+function generatePrompt(name, agent) {
+  const skills = agent.requiredSkills || [];
+  const skillCalls = skills.map(s => `    - 调用 Skill ${s}`).join('\n');
+
+  let tddSection = '';
+  if (skills.includes('tdd') || skills.includes('springboot-tdd')) {
+    tddSection = `
+    TDD 流程（强制）:
+    - 🔴 编写测试用例（Red 阶段）
+    - 🔴 实现代码（Green 阶段）
+    - 🔴 重构优化（Refactor 阶段）`;
+  }
+
+  let reviewSection = '';
+  if (skills.includes('code-review')) {
+    reviewSection = `
+    代码审查:
+    - 完成后必须调用 Skill code-review 审查代码质量
+    - 确保测试覆盖率 >80%`;
+  }
+
+  // L2 提醒层: Codex 双模型提醒
+  let codexSection = '';
+  if (agent.codexIntegration) {
+    const rescue = agent.codexIntegration.rescueCommand || '/codex:rescue';
+    codexSection = `
+
+    Codex 审查提醒（双模型协作）:
+    - 完成任务后，主进程会自动调用 Codex (GPT-5.4) 进行代码审查
+    - 如果遇到困难，建议主进程使用 ${rescue}
+    - 不要自行调用 Codex 命令`;
+  }
+
+  return `你是 ${name}。必须遵循以下流程：
+${skillCalls}${tddSection}${reviewSection}${codexSection}
+
+    任务：等待分配具体任务`;
+}
+
+/**
+ * 主函数 — 读取 SSOT + 评分 → 输出结构化 JSON
+ */
+function main() {
+  const ssot = loadSSOT();
+  const rageMode = loadRageMode();
+  const currentPhase = getCurrentPhase();
+  const thresholds = ssot.modeThresholds || { team: 6, subagentParallel: 3, subagentSequential: 0 };
+
+  // 如果有命令行参数指定 phase，优先使用
+  const cliPhase = process.argv.find(a => a.startsWith('--phase='));
+  const targetPhase = cliPhase ? cliPhase.split('=')[1] : currentPhase;
+
+  // 获取 rage-mode 中的 phase-agent 映射
+  const phaseAgentMap = {};
+  if (rageMode && rageMode.phases) {
+    for (const phase of rageMode.phases) {
+      phaseAgentMap[phase.id] = phase.requiredAgents || [];
     }
-    fs.writeFileSync(TEAM_FILE, JSON.stringify({
-      teamName,
-      agents,
-      createdAt: new Date().toISOString(),
-      status: 'active'
-    }, null, 2));
-  } catch (error) {
-    console.error('[Auto Start Agents] Error saving team status:', error.message);
-  }
-}
-
-/**
- * 生成 Agent 启动提示
- */
-function generateAgentPrompt(name, config) {
-  const skillCalls = config.skills.map(skill => `Skill ${skill}`).join('\n    ');
-  const mcpCalls = config.mcpServers
-    ? config.mcpServers.map(mcp => `Use ${mcp} MCP tools`).join('\n    ')
-    : '';
-
-  return `你是 ${name}。
-    必须执行：
-    ${skillCalls}
-    ${mcpCalls}
-
-    遵循 TDD 流程和代码审查要求。
-    任务：等待 PM 分配具体任务`;
-}
-
-/**
- * 主函数
- */
-async function autoStart() {
-  console.log('[Auto Start Agents] 🚀 RAGE MODE ACTIVATED!');
-  console.log('[Auto Start Agents] 📋 Starting all agents automatically...');
-
-  const teamName = process.env.TEAM_NAME || 'Dev-Team';
-  const agentStatus = {};
-
-  // 按阶段分组 Agent
-  const phases = {};
-  for (const [name, config] of Object.entries(AGENTS)) {
-    const phase = config.phase;
-    if (!phases[phase]) phases[phase] = [];
-    phases[phase].push({ name, config });
   }
 
-  // 输出启动计划
-  console.log('\n[Auto Start Agents] 📊 Agent Launch Plan:');
-  for (const [phase, agents] of Object.entries(phases)) {
-    console.log(`\n  Phase ${phase}:`);
-    agents.forEach(({ name }) => {
-      console.log(`    - ${name}`);
+  // 筛选当前阶段的 agents
+  const agentsToStart = [];
+  const phaseAgents = phaseAgentMap[targetPhase] || [];
+
+  // 如果 phaseAgentMap 为空（配置不一致），从 ssot.agents 按 phase 筛选
+  const targetAgents = phaseAgents.length > 0
+    ? phaseAgents.filter(name => ssot.agents[name])
+    : Object.entries(ssot.agents)
+        .filter(([_, a]) => String(a.phase) === String(targetPhase))
+        .map(([name]) => name);
+
+  // 决定子阶段（仅 Phase 2）
+  const subPhase = String(targetPhase) === '2' ? '2B' : null;
+
+  // 为每个角色构建启动指令
+  const modeDecisions = [];
+  const teamAgents = [];
+  const subagentTasks = [];
+
+  for (const agentName of targetAgents) {
+    const agent = ssot.agents[agentName];
+    if (!agent) continue;
+
+    const decision = decideMode(agent, thresholds, subPhase);
+    const count = agent.count || 1;
+
+    modeDecisions.push({
+      role: agentName,
+      score: decision.score,
+      decidedMode: decision.mode,
+      reason: decision.reason
     });
+
+    const prompt = generatePrompt(agentName, agent);
+
+    if (decision.mode === 'team') {
+      // Team 模式：生成 TeamCreate 所需的 agent 列表
+      for (let i = 1; i <= count; i++) {
+        teamAgents.push({
+          name: count > 1 ? `${agentName}-${i}` : agentName,
+          subagentType: agent.subagentType,
+          teamMode: true,
+          prompt,
+          skills: agent.requiredSkills || [],
+          mcpServers: agent.mcpServers || [],
+          codexIntegration: agent.codexIntegration || null
+        });
+      }
+    } else {
+      // Subagent 模式
+      for (let i = 1; i <= count; i++) {
+        subagentTasks.push({
+          name: count > 1 ? `${agentName}-${i}` : agentName,
+          subagentType: agent.subagentType,
+          teamMode: false,
+          prompt,
+          skills: agent.requiredSkills || [],
+          parallel: decision.mode === 'subagent-parallel',
+          mcpServers: agent.mcpServers || [],
+          codexIntegration: agent.codexIntegration || null
+        });
+      }
+    }
   }
 
-  // Phase 1 立即启动
-  console.log('\n[Auto Start Agents] 🔄 Starting Phase 1 agents...');
-  for (const { name, config } of phases[1] || []) {
-    console.log(`[Auto Start Agents] 🤖 Starting ${name}...`);
-    console.log(`    Subagent: ${config.subagentType}`);
-    console.log(`    Skills: ${config.skills.join(', ')}`);
+  // 构建输出
+  const output = {
+    type: 'agent-spawn-instructions',
+    version: '3.0.0',
+    currentPhase: targetPhase,
+    subPhase,
+    modeDecisions,
+    teamAgents,
+    subagentTasks,
+    summary: {
+      totalAgents: teamAgents.length + subagentTasks.length,
+      teamMode: teamAgents.length,
+      subagentMode: subagentTasks.length,
+      phaseDescription: getPhaseDescription(targetPhase, rageMode)
+    }
+  };
 
-    agentStatus[name] = {
-      status: 'starting',
-      subagentType: config.subagentType,
-      skills: config.skills,
-      phase: config.phase,
-      startedAt: new Date().toISOString()
-    };
-
-    // 这里实际启动 Agent 的逻辑会由 Claude Code 执行
-    // 当前脚本只是输出启动指令
-    console.log(`    Prompt: ${generateAgentPrompt(name, config).substring(0, 100)}...`);
-  }
-
-  // 保存状态
-  saveTeamStatus(teamName, agentStatus);
-
-  console.log('\n[Auto Start Agents] ✅ Phase 1 agents started');
-  console.log('[Auto Start Agents] ⏳ Other agents will start when their phase begins');
-
-  console.log('\n[Auto Start Agents] 📝 Next steps:');
-  console.log('  1. PM will create task list');
-  console.log('  2. PO will analyze requirements');
-  console.log('  3. Architect will design system');
-  console.log('  4. Development agents will start after Phase 1 completes');
-
-  return agentStatus;
+  // 输出 JSON 到 stdout
+  console.log(JSON.stringify(output, null, 2));
 }
 
-// 执行启动
-autoStart().catch(error => {
-  console.error('[Auto Start Agents] Fatal error:', error);
-  process.exit(1);
-});
+/**
+ * 获取阶段描述
+ */
+function getPhaseDescription(phase, rageMode) {
+  if (!rageMode || !rageMode.phases) return '';
+  const p = rageMode.phases.find(p => p.id === Number(phase));
+  return p ? p.name : '';
+}
+
+// 执行
+main();

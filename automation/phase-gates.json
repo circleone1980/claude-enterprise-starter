@@ -1,67 +1,179 @@
 {
   "name": "phase-gates",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "enabled": true,
   "gates": {
     "phase0_to_phase1": {
       "conditions": [
-        "目录结构已创建",
-        "开发环境已配置",
-        "GitHub 仓库已创建"
+        {
+          "description": "目录结构已创建",
+          "check": "test -d src || test -d docs",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "开发环境已配置",
+          "check": "test -f package.json || test -f pom.xml || test -f pyproject.toml",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "GitHub 仓库已创建",
+          "check": "git remote -v 2>/dev/null | grep -q origin",
+          "checkType": "command_succeeds"
+        }
       ],
       "autoAdvance": true
     },
     "phase1_to_phase2": {
       "conditions": [
-        "PRD 文档已完成",
-        "用户故事文档已完成",
-        "验收标准文档已完成",
-        "系统架构设计文档已完成",
-        "数据库设计文档已完成",
-        "API 接口设计文档已完成",
-        "UI 设计规范文档已完成",
-        "Architect 已审查所有设计文档",
-        "冻结层文档已锁定",
-        "任务已分配"
+        {
+          "description": "PRD 文档已完成",
+          "check": "test -f docs/requirements/PRD.md",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "用户故事文档已完成",
+          "check": "test -f docs/requirements/user-stories.md",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "验收标准文档已完成",
+          "check": "test -f docs/requirements/acceptance-criteria.md",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "系统架构设计文档已完成",
+          "check": "test -f docs/design/01_系统架构设计.md",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "数据库设计文档已完成",
+          "check": "test -f docs/design/02_数据库设计.md",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "API 接口设计文档已完成",
+          "check": "test -f docs/design/03_API接口设计.md",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "UI 设计规范文档已完成",
+          "check": "test -f docs/design/04_UI设计规范.md",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "Architect 已审查所有设计文档",
+          "check": "test -f docs/design/.architect-review-approved",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "冻结层文档已锁定",
+          "check": "test -f docs/requirements/.frozen",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "任务已分配",
+          "check": "test -f docs/requirements/sprint-plan.md",
+          "checkType": "file_exists"
+        }
       ],
       "autoAdvance": true,
       "requireApproval": false
     },
     "phase2_to_phase3": {
       "conditions": [
-        "所有代码已实现",
-        "单元测试覆盖率 > 80%",
-        "所有单元测试通过",
-        "代码审查已完成"
+        {
+          "description": "所有代码已实现",
+          "check": "test -f .phase2-code-complete",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "单元测试覆盖率 > 80%",
+          "check": "test -f .phase2-coverage-pass",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "所有单元测试通过",
+          "check": "test -f .phase2-tests-pass",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "代码审查已完成",
+          "check": "test -f .phase2-review-pass",
+          "checkType": "file_exists"
+        }
       ],
       "autoAdvance": true,
       "requireApproval": false
     },
     "phase3_to_phase4": {
       "conditions": [
-        "所有测试用例通过",
-        "集成测试通过",
-        "E2E 测试通过",
-        "测试报告已输出"
+        {
+          "description": "所有测试用例通过",
+          "check": "test -f .phase3-tests-pass",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "集成测试通过",
+          "check": "test -f .phase3-integration-pass",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "E2E 测试通过",
+          "check": "test -f .phase3-e2e-pass",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "测试报告已输出",
+          "check": "test -f docs/test/test-report.md",
+          "checkType": "file_exists"
+        }
       ],
       "autoAdvance": true,
       "requireApproval": false
     },
     "phase4_to_phase5": {
       "conditions": [
-        "产品体验测试已完成",
-        "体验报告已输出",
-        "关键体验问题已修复"
+        {
+          "description": "产品体验测试已完成",
+          "check": "test -f .phase4-ux-complete",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "体验报告已输出",
+          "check": "test -f docs/test/ux-report.md",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "关键体验问题已修复",
+          "check": "test -f .phase4-ux-fixes-complete",
+          "checkType": "file_exists"
+        }
       ],
       "autoAdvance": true,
       "requireApproval": false
     },
     "phase5_to_complete": {
       "conditions": [
-        "部署成功",
-        "健康检查通过",
-        "文档已更新",
-        "代码已推送到 GitHub"
+        {
+          "description": "部署成功",
+          "check": "test -f .phase5-deploy-success",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "健康检查通过",
+          "check": "test -f .phase5-health-check-pass",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "文档已更新",
+          "check": "test -f .phase5-docs-updated",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "代码已推送到 GitHub",
+          "check": "git log origin/main..HEAD --oneline 2>/dev/null | wc -l | grep -q '^0$'",
+          "checkType": "command_succeeds"
+        }
       ],
       "autoAdvance": true,
       "requireApproval": false,
@@ -73,5 +185,6 @@
     "retryDelay": 60000,
     "escalateOnFailure": true,
     "notificationChannel": "console"
-  }
+  },
+  "_comment": "v2.0.0 - Updated 2026-04-11 - 机器可检查条件 (check + checkType)"
 }

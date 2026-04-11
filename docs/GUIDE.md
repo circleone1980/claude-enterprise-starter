@@ -1,6 +1,6 @@
 # Claude Enterprise Starter 使用手册
 
-> 版本: 2.2.0 | 最后更新: 2026-04-09
+> 版本: 2.3.0 | 最后更新: 2026-04-11
 
 本手册帮助团队成员快速上手 Claude Enterprise Starter 模板项目。
 
@@ -374,21 +374,26 @@ Skill product-requirements --effort high
 
 ### 6.1 十三个角色
 
-| 角色 | 职责 | Agent 类型 | 可并行 |
-|------|------|-----------|--------|
-| **PM** | 需求拆解、任务分配、Sprint 规划 | planner | 否 |
-| **PO** | 需求分析、用户故事、用户引导 | general-purpose | 是 |
-| **Architect** | 系统设计、技术选型、架构规划 | architect | 是 |
-| **UI Designer** | 界面设计、交互规范、风格选择 | general-purpose | 是 |
-| **Frontend** | 前端开发（React + TS + Vite） | typescript-reviewer | 是 ×3 |
-| **Backend-Java** | Java 后端开发（SpringBoot + JPA） | java-reviewer | 是 ×2 |
-| **Backend-Python** | Python 后端开发（Prisma + LLM） | python-reviewer | 是 ×1 |
-| **QA** | 测试验证、Bug 追踪 | tdd-guide | 否 |
-| **DevOps** | 部署、CI/CD、GitHub 管理 | general-purpose | 否 |
-| **产品体验师** | 用户视角测试、体验评估 | planner | 否 |
-| **GAN Planner** | 产品规格设计、功能拆解 | general-purpose | 否 |
-| **GAN Generator** | 代码实现、开发服务器维护 | general-purpose | 是 |
-| **GAN Evaluator** | 质量评估、评分反馈 | general-purpose | 否 |
+| 角色 | 职责 | Agent 类型 | 可并行 | 模式 | 评分 |
+|------|------|-----------|--------|------|------|
+| **PM** | 需求拆解、任务分配、Sprint 规划 | planner | 否 | Team | 6-7 |
+| **PO** | 需求分析、用户故事、用户引导 | general-purpose | 是 | Team | 6-7 |
+| **Architect** | 系统设计、技术选型、架构规划 | architect | 是 | Team | 6-7 |
+| **UI Designer** | 界面设计、交互规范、风格选择 | general-purpose | 是 | Subagent | 0-2 |
+| **Frontend** | 前端开发（React + TS + Vite） | typescript-reviewer | 是 ×3 | Subagent | 0-2 |
+| **Backend-Java** | Java 后端开发（SpringBoot + JPA） | java-reviewer | 是 ×2 | Subagent | 0-2 |
+| **Backend-Python** | Python 后端开发（Prisma + LLM） | python-reviewer | 是 ×1 | Subagent | 0-2 |
+| **QA** | 测试验证、Bug 追踪 | tdd-guide | 否 | Subagent | 1 |
+| **DevOps** | 部署、CI/CD、GitHub 管理 | general-purpose | 否 | Subagent | 1 |
+| **产品体验师** | 用户视角测试、体验评估 | planner | 否 | Subagent | 0 |
+| **GAN Planner** | 产品规格设计、功能拆解 | general-purpose | 否 | Subagent | 1 |
+| **GAN Generator** | 代码实现、开发服务器维护 | general-purpose | 是 | Subagent | 1 |
+| **GAN Evaluator** | 质量评估、评分反馈 | general-purpose | 否 | Subagent | 1 |
+
+> **模式说明**：
+> - **Team**: 通过 `TeamCreate` 创建协作团队，Agent 之间可互相通信、共享任务列表
+> - **Subagent**: 通过 `Agent` 启动为子代理，适合独立执行明确任务
+> - **评分**: Agent 类型的复杂度评分，越高表示需要更强的协调能力
 
 ### 6.2 Agent 类型说明
 
@@ -474,6 +479,163 @@ Backend-Python-1 ─── ← 1 个 Python 后端 Agent
 使用 Git worktrees 实现并行开发隔离：
 ```bash
 # 参见 skills/using-git-worktrees
+```
+
+### 6.6 智能模式选择引擎
+
+系统根据 **5 个评分因子** 自动决定每个角色使用 Team 还是 Subagent 模式：
+
+| 评分因子 | 说明 | 权重 |
+|---------|------|------|
+| **任务复杂度** | 是否涉及多步骤、多文件变更 | 高 |
+| **协作需求** | 是否需要与其他角色实时通信 | 高 |
+| **决策自主性** | 是否需要独立决策能力 | 中 |
+| **上下文依赖** | 是否需要共享项目状态 | 高 |
+| **并行安全性** | 并行执行是否会引发冲突 | 中 |
+
+**3 个决策阈值**：
+
+| 总分范围 | 推荐模式 | 适用阶段 |
+|---------|---------|---------|
+| **0-2** | Subagent | Phase 2/3/4/5 — 独立执行明确任务 |
+| **3-5** | Subagent + 受控通信 | 需要轻量协调的任务 |
+| **6-7** | Team | Phase 1 — 需求分析、架构设计等需要深度协作的场景 |
+
+> **为什么 Phase 1 用 Team**：需求分析阶段 PM/PO/Architect 需要频繁讨论、交换意见、迭代文档，Team 模式的共享任务列表和消息机制是必不可少的。
+>
+> **为什么 Phase 2+ 用 Subagent**：开发阶段每个角色有明确的任务边界，Subagent 模式更轻量、启动更快、资源消耗更少。
+
+### 6.7 双模型协作策略
+
+项目支持 **GLM-5 + Codex GPT-5.4** 双模型协作：
+
+| 模型 | 定位 | 优势场景 |
+|------|------|---------|
+| **GLM-5**（主模型） | 代码开发、架构设计、复杂推理 | 所有 Agent 任务的默认模型 |
+| **Codex GPT-5.4**（辅助模型） | 代码审查、对抗审查、Bug 修复 | 功能完成后、部署前 |
+
+**协作流程**：
+```
+GLM-5（开发实现）→ GPT-5.4（代码审查）→ GLM-5（修复）→ GPT-5.4（批准）→ 合并
+```
+
+**4 层触发架构**：
+
+| 层 | 触发点 | 方法 | 时机 | 可跳过？ |
+|---|--------|------|------|---------|
+| **L1 自动** | Phase 2→3 门禁 | `orchestrate.sh` 调用 `codex review --wait` | Feature 全部完成后 | 否（硬编码） |
+| **L1 自动** | Phase 4→5 门禁 | `orchestrate.sh` 调用 `codex adversarial-review --wait` | 部署前 | 否（硬编码） |
+| **L2 提醒** | Agent prompt | `generatePrompt()` 注入 Codex 提醒 | Agent 任务完成时 | 是（主 Claude 决定） |
+| **L3 兜底** | 会话结束 | Stop Review Gate（插件钩子） | 检测到代码变更时 | 否（启用后） |
+| **L4 手动** | 用户/主 Claude | `/codex:review` / `/codex:rescue` | 随时 | 是 |
+
+**Codex 集成角色**（`agent-orchestration.json` 中含 `codexIntegration`）：
+
+| 角色 | reviewCommand | rescueCommand | triggerAfterFeature | triggerAfterPhase |
+|------|--------------|---------------|--------------------|--------------------|
+| Frontend | `/codex:review` | `/codex:rescue` | ✅ | ✅ |
+| Backend-Java | `/codex:review` | `/codex:rescue` | ✅ | ✅ |
+| Backend-Python | `/codex:review` | `/codex:rescue` | ✅ | ✅ |
+| QA | `/codex:review` | - | ✅ | - |
+| DevOps | `/codex:adversarial-review` | - | - | ✅ |
+
+**不触发 Codex 的场景**：
+
+| 场景 | 原因 |
+|------|------|
+| Phase 0/1（初始化/需求） | 无代码变更 |
+| Phase 2 开发进行中 | Feature 未完成，审查无意义 |
+| GAN 循环 | 内置 Evaluator 已有评估 |
+| `--dry-run` 模式 | orchestrate.sh 不执行实际操作 |
+| Codex 未安装 | 仅 warn 不阻塞（优雅降级） |
+
+**启用 L3 Stop Review Gate**（首次使用必须执行）：
+```bash
+/codex:setup --enable-review-gate
+```
+
+启用后，每次会话结束自动运行 Codex 审查。Stop Gate 内置智能判断：
+- **有代码变更** → 自动触发 Codex 审查（GPT-5.4）
+- **纯文档/报告** → 自动跳过
+- **Codex 未安装** → 静默跳过
+
+配置方式（环境变量）：
+```bash
+# Subagent 模型选择
+export SUBAGENT_MODEL=sonnet    # 推荐：平衡速度与质量
+```
+
+### 6.8 Team 清理机制
+
+当 `TeamDelete` 遇到残留文件导致失败时，使用 `team-manager.sh` 强制清理：
+
+```bash
+# 查看 Team 状态
+bash scripts/team-manager.sh status
+
+# 清理已关闭 Agent 的残留文件
+bash scripts/team-manager.sh clean
+
+# 完全清除（nuke）- 删除所有 Team 数据
+bash scripts/team-manager.sh nuke
+```
+
+**解决的问题**：
+- Agent 已关闭但 Team 文件未清理
+- `TeamDelete` 报错 "team still has active members"
+- 残留的 `~/.claude/teams/` 和 `~/.claude/tasks/` 目录
+
+### 6.9 环境变量优化
+
+推荐的环境变量配置，优化 Claude Code 运行效率：
+
+| 变量 | 推荐值 | 说明 |
+|------|-------|------|
+| `AUTOCOMPACT_PCT` | `80` | 上下文使用率达 80% 时自动压缩 |
+| `MAX_THINKING_TOKENS` | `16000` | 限制思考 token 数量，控制成本 |
+| `SUBAGENT_MODEL` | `sonnet` | Subagent 使用 sonnet 模型，平衡速度与质量 |
+
+配置方式：
+```bash
+# 在 ~/.bashrc 或 ~/.zshrc 中添加
+export AUTOCOMPACT_PCT=80
+export MAX_THINKING_TOKENS=16000
+export SUBAGENT_MODEL=sonnet
+```
+
+> **为什么 AUTOCOMPACT_PCT=80**：默认在 70% 时建议压缩，但频繁压缩会中断工作流。设为 80% 在保持精度的同时减少不必要的压缩次数。
+
+### 6.10 编排脚本
+
+项目提供两个核心编排脚本，简化 Agent 管理和 GAN 流程：
+
+**`orchestrate.sh` — 阶段编排**：
+```bash
+# 启动指定阶段
+bash scripts/orchestrate.sh --phase 1    # Phase 1: 需求分析
+bash scripts/orchestrate.sh --phase 2    # Phase 2: 开发实现
+bash scripts/orchestrate.sh --phase 3    # Phase 3: 测试验证
+bash scripts/orchestrate.sh --phase 4    # Phase 4: 产品体验
+bash scripts/orchestrate.sh --phase 5    # Phase 5: 部署发布
+
+# 查看当前阶段状态
+bash scripts/orchestrate.sh --status
+```
+
+**`gan-harness.sh` — GAN 循环**：
+```bash
+# 启动 GAN 生成对抗开发循环
+bash scripts/gan-harness.sh "实现用户注册功能"
+
+# 指定迭代次数
+bash scripts/gan-harness.sh "优化首页性能" --iterations 3
+```
+
+GAN 循环流程：
+```
+Planner（规格设计）→ Generator（代码实现）→ Evaluator（质量评估）
+    ↑                                            |
+    └──────────── 反馈迭代 ←──────────────────────┘
 ```
 
 ---
@@ -811,6 +973,18 @@ Skill content and instructions here...
 | `/simplify` | 代码质量审查（内置） |
 | `/loop` | 定期监控（内置） |
 
+**CLI 工具命令**：
+
+| 命令 | 用途 |
+|------|------|
+| `node scripts/validate-config.js` | 验证项目配置完整性 |
+| `bash scripts/team-manager.sh status` | 查看 Team 状态 |
+| `bash scripts/team-manager.sh clean` | 清理已关闭 Agent 的残留文件 |
+| `bash scripts/team-manager.sh nuke` | 完全清除所有 Team 数据 |
+| `bash scripts/orchestrate.sh --phase 1` | 启动指定阶段（1-5） |
+| `bash scripts/orchestrate.sh --status` | 查看当前阶段状态 |
+| `bash scripts/gan-harness.sh "描述"` | 启动 GAN 生成对抗开发循环 |
+
 ### B. 技能触发速查表
 
 | 你在做什么 | 调用什么 |
@@ -835,7 +1009,10 @@ Skill content and instructions here...
 | `GITHUB_TOKEN` | 是 | GitHub Settings → Developer Settings → Personal Access Tokens |
 | `FIGMA_ACCESS_TOKEN` | UI Designer | Figma → Settings → Personal access tokens |
 | `ANTHROPIC_API_KEY` | 视情况 | console.anthropic.com |
+| `AUTOCOMPACT_PCT` | 推荐 | 设为 `80`，上下文达 80% 时自动压缩 |
+| `MAX_THINKING_TOKENS` | 推荐 | 设为 `16000`，限制思考 token 数量 |
+| `SUBAGENT_MODEL` | 推荐 | 设为 `sonnet`，Subagent 使用的模型 |
 
 ---
 
-*使用手册版本: 2.2.0 | 项目模板: [GitHub](https://github.com/circleone1980/claude-enterprise-starter)*
+*使用手册版本: 2.3.0 | 项目模板: [GitHub](https://github.com/circleone1980/claude-enterprise-starter)*

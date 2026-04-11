@@ -200,6 +200,20 @@ Claude Code 内置技能无需安装，直接通过 `/` 命令调用：
 
 ---
 
+## 十-B、Codex 双模型触发规则
+
+> 开发用 GLM-5，代码审查和 Bug 修复用 Codex (GPT-5.4)
+
+| 触发场景 | Codex 命令 | 适用阶段 | 说明 |
+|---------|-----------|---------|------|
+| 完成 Feature 开发 | `/codex:review` | Phase 2, 3 | GPT-5.4 独立审查代码 |
+| 发现 Bug | `/codex:rescue` | Phase 2, 3 | GPT-5.4 诊断+修复 |
+| 部署前最终检查 | `/codex:adversarial-review` | Phase 5 | GPT-5.4 对抗审查 |
+| 会话结束 | Codex Stop Review Gate | 全阶段 | 自动（需 `/codex:setup` 启用） |
+| 卡住需要第二意见 | `/codex:rescue` | 全阶段 | 诊断+第二实现方案 |
+
+---
+
 ## 十一、全局阶段流程图
 
 ### Phase 1: 需求分析

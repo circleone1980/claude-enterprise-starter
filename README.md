@@ -9,7 +9,7 @@
 > 🚀 Enterprise-grade Claude Code configuration template with Agent Team orchestration, Rage Mode automation, TDD workflow, and production-ready configurations.
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-blue)](https://code.claude.com)
-[![Version](https://img.shields.io/badge/Version-2.2.0-green)](./CLAUDE.md)
+[![Version](https://img.shields.io/badge/Version-2.3.0-green)](./CLAUDE.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 ### Features
@@ -33,6 +33,10 @@
 | **Document System** | Frozen/Evolution/ADR document layers with design-context skill for auto-loading |
 | **Skill Triggers** | Global phase flowchart (Phase 1-5) + dynamic trigger rules |
 | **Commands** | Custom slash commands: `/commit`, `/pr`, `/review` |
+| **Smart Mode Selection** 🆕 | modeSelection scoring engine — auto-decide Team vs Subagent per phase |
+| **Team Cleanup** 🆕 | `team-manager.sh` — resolves 5 TeamDelete bugs, safe cleanup workflow |
+| **Codex Dual-Model** 🆕 | GLM-5 for development + GPT-5.4 for review via Codex integration |
+| **Env Optimization** 🆕 | `AUTOCOMPACT_PCT=80`, `MAX_THINKING_TOKENS=16000` for optimal performance |
 
 ### Quick Start
 
@@ -140,7 +144,11 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   └── {role}/MEMORY.md             # Per-agent memory files
 └── scripts/                         # Setup scripts
     ├── init.sh                      # Unix setup script
-    └── init.ps1                     # Windows setup script
+    ├── init.ps1                     # Windows setup script
+    ├── team-manager.sh              # Team cleanup (resolves 5 TeamDelete bugs) 🆕
+    ├── orchestrate.sh               # Agent orchestration launcher 🆕
+    ├── gan-harness.sh               # GAN harness runner 🆕
+    └── validate-config.js           # Configuration validator 🆕
 
 docs/                                # Project documentation (from templates)
 ├── requirements/                    # Frozen layer: PRD, user stories
@@ -282,6 +290,92 @@ Phase 4: UX Review    → Product Experience evaluation
 Phase 5: Deployment   → DevOps → GitHub push
 ```
 
+### Dual-Model Collaboration Strategy
+
+> Leverage each model's strengths: GLM-5 for rapid development, GPT-5.4 (via Codex) for thorough review.
+
+| Stage | Model | Purpose | Trigger |
+|-------|-------|---------|---------|
+| **Development** | GLM-5 | Code generation, implementation, refactoring | Default for all Agent tasks |
+| **Code Review** | GPT-5.4 (Codex) | Deep analysis, pattern detection, security audit | After feature completion |
+| **Architecture Review** | GPT-5.4 (Codex) | Trade-off analysis, design pattern validation | Phase 1 & design changes |
+| **Final Verification** | GPT-5.4 (Codex) | Pre-merge quality gate | Phase 5 before push |
+
+**Workflow**: GLM-5 implements → GPT-5.4 reviews → GLM-5 fixes → GPT-5.4 approves → merge.
+
+**4-Layer Trigger Architecture**:
+
+| Layer | Trigger Point | Method | Timing | Skippable? |
+|-------|--------------|--------|--------|-----------|
+| **L1 Auto** | Phase 2→3 gate | `orchestrate.sh` calls `codex review --wait` | After all features complete | No (hardcoded) |
+| **L1 Auto** | Phase 4→5 gate | `orchestrate.sh` calls `codex adversarial-review --wait` | Before deployment | No (hardcoded) |
+| **L2 Reminder** | Agent prompt | `generatePrompt()` injects Codex reminder | Agent task completion | Yes (main Claude decides) |
+| **L3 Safety Net** | Session end | Stop Review Gate (plugin hook) | When code changes detected | No (once enabled) |
+| **L4 Manual** | User / main Claude | `/codex:review` / `/codex:rescue` | Anytime | Yes |
+
+**Codex-integrated roles** (5 agents with `codexIntegration` in SSOT):
+Frontend, Backend-Java, Backend-Python (`/codex:review` + `/codex:rescue`), QA (`/codex:review`), DevOps (`/codex:adversarial-review`)
+
+**Enable L3 Stop Review Gate** (first-time setup):
+```bash
+/codex:setup --enable-review-gate
+```
+
+**Graceful fallback**: If Codex is not installed, all L1 auto-triggers log a warning and continue without blocking the pipeline.
+
+### Smart Mode Selection
+
+> The `modeSelection` scoring engine automatically determines the optimal execution mode (Team vs Subagent) for each phase based on multi-dimensional scoring.
+
+**Scoring Dimensions**:
+
+| Dimension | Weight | Description |
+|-----------|--------|-------------|
+| **Task Complexity** | 30% | Lines of code, number of files, API endpoints |
+| **Parallelism** | 25% | Can sub-tasks run independently? |
+| **Context Budget** | 20% | Token consumption estimate |
+| **Risk Level** | 15% | Security impact, data sensitivity |
+| **Deadline Pressure** | 10% | Time constraint urgency |
+
+**Decision Matrix**:
+
+| Score Range | Mode | Phase Application |
+|-------------|------|-------------------|
+| 0-30 | **Solo** (direct execution) | Simple fixes, doc updates |
+| 31-60 | **Subagent** (single agent) | Feature development, bug fixes |
+| 61-80 | **Team** (coordinated agents) | Phase 2 parallel development |
+| 81-100 | **Full Team + GAN** | Complex features, critical paths |
+
+### Team Cleanup
+
+> `team-manager.sh` resolves 5 known `TeamDelete` bugs (stale processes, orphan directories, zombie temp files, dangling lock files, incomplete cleanup).
+
+```bash
+# Full cleanup (stops all agents, removes team dirs, cleans temp files)
+./scripts/team-manager.sh cleanup
+
+# Status check (show active teams, agents, temp files)
+./scripts/team-manager.sh status
+
+# Force cleanup (use when normal cleanup fails)
+./scripts/team-manager.sh force-cleanup
+```
+
+| Bug Resolved | Root Cause | Solution |
+|-------------|-----------|----------|
+| Stale agent processes | Agent PID not tracked | PID file tracking + kill on cleanup |
+| Orphan team directories | `TeamDelete` skips `.claude/teams/` | Recursive directory removal |
+| Zombie temp files | Temp files left in `/tmp` | Pattern-based temp file cleanup |
+| Dangling lock files | Lock not released on crash | Lock file detection + forced release |
+| Incomplete cleanup | Partial failure stops cleanup | Atomic cleanup with rollback |
+
+### Environment Variable Optimization
+
+| Variable | Value | Purpose |
+|----------|-------|---------|
+| `AUTOCOMPACT_PCT` | `80` | Auto-compact at 80% context usage (vs default 90%) |
+| `MAX_THINKING_TOKENS` | `16000` | Extended thinking token budget for complex analysis |
+
 ### Rage Mode Features
 
 | Automation | Trigger |
@@ -354,6 +448,10 @@ Agent --name "Backend-Python-1" \
 | **文档体系** | 冻结层/演化层/ADR 三层文档体系 |
 | **技能触发** | 全局阶段流程图（Phase 1-5）+ 动态触发规则 |
 | **命令系统** | 自定义斜杠命令：`/commit`、`/pr`、`/review` |
+| **智能模式选择** 🆕 | modeSelection 评分引擎 — 各阶段自动决策 Team 或 Subagent 模式 |
+| **Team 清除机制** 🆕 | `team-manager.sh` — 解决 5 个 TeamDelete Bug，安全清理工作流 |
+| **Codex 双模型** 🆕 | GLM-5 开发 + GPT-5.4 审查的 Codex 双模型集成 |
+| **环境变量优化** 🆕 | `AUTOCOMPACT_PCT=80`、`MAX_THINKING_TOKENS=16000` 性能优化 |
 
 ### 快速开始
 
@@ -461,7 +559,11 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   └── {role}/MEMORY.md             # 各角色记忆文件
 └── scripts/                         # 安装脚本
     ├── init.sh                      # Unix 安装脚本
-    └── init.ps1                     # Windows 安装脚本
+    ├── init.ps1                     # Windows 安装脚本
+    ├── team-manager.sh              # Team 清理（解决 5 个 TeamDelete Bug） 🆕
+    ├── orchestrate.sh               # Agent 编排启动器 🆕
+    ├── gan-harness.sh               # GAN Harness 运行器 🆕
+    └── validate-config.js           # 配置验证器 🆕
 
 docs/                                # 项目文档（来自模板）
 ├── requirements/                    # 冻结层：PRD、用户故事
@@ -603,6 +705,92 @@ Phase 4: 产品体验 → 产品体验师评估
 Phase 5: 部署发布 → DevOps → GitHub 推送
 ```
 
+### 双模型协作策略
+
+> 发挥每个模型的优势：GLM-5 用于快速开发，GPT-5.4（通过 Codex）用于深度审查。
+
+| 阶段 | 模型 | 用途 | 触发时机 |
+|------|------|------|---------|
+| **开发实现** | GLM-5 | 代码生成、功能实现、重构优化 | 所有 Agent 任务的默认模型 |
+| **代码审查** | GPT-5.4 (Codex) | 深度分析、模式检测、安全审计 | 功能完成后触发 |
+| **架构评审** | GPT-5.4 (Codex) | 权衡分析、设计模式验证 | Phase 1 及设计变更时 |
+| **最终验证** | GPT-5.4 (Codex) | 合并前质量门禁 | Phase 5 推送前 |
+
+**工作流**: GLM-5 实现 → GPT-5.4 审查 → GLM-5 修复 → GPT-5.4 批准 → 合并。
+
+**4 层触发架构**:
+
+| 层 | 触发点 | 方法 | 时机 | 可跳过？ |
+|---|--------|------|------|---------|
+| **L1 自动** | Phase 2→3 门禁 | `orchestrate.sh` 调用 `codex review --wait` | Feature 全部完成后 | 否（硬编码） |
+| **L1 自动** | Phase 4→5 门禁 | `orchestrate.sh` 调用 `codex adversarial-review --wait` | 部署前 | 否（硬编码） |
+| **L2 提醒** | Agent prompt | `generatePrompt()` 注入 Codex 提醒 | Agent 任务完成时 | 是（主 Claude 决定） |
+| **L3 兜底** | 会话结束 | Stop Review Gate（插件钩子） | 检测到代码变更时 | 否（启用后） |
+| **L4 手动** | 用户/主 Claude | `/codex:review` / `/codex:rescue` | 随时 | 是 |
+
+**Codex 集成角色**（SSOT 中 5 个角色含 `codexIntegration`）：
+Frontend、Backend-Java、Backend-Python（`/codex:review` + `/codex:rescue`）、QA（`/codex:review`）、DevOps（`/codex:adversarial-review`）
+
+**启用 L3 Stop Review Gate**（首次设置）:
+```bash
+/codex:setup --enable-review-gate
+```
+
+**优雅降级**: Codex 未安装时，所有 L1 自动触发仅记录警告，不阻塞流程。
+
+### 智能模式选择
+
+> `modeSelection` 评分引擎基于多维度评分，自动决定各阶段的最优执行模式（Team 或 Subagent）。
+
+**评分维度**:
+
+| 维度 | 权重 | 说明 |
+|------|------|------|
+| **任务复杂度** | 30% | 代码行数、文件数量、API 端点数 |
+| **并行度** | 25% | 子任务是否能独立执行 |
+| **上下文预算** | 20% | Token 消耗估算 |
+| **风险等级** | 15% | 安全影响、数据敏感性 |
+| **时间压力** | 10% | 截止时间紧迫度 |
+
+**决策矩阵**:
+
+| 分值范围 | 模式 | 适用阶段 |
+|---------|------|---------|
+| 0-30 | **Solo**（直接执行） | 简单修复、文档更新 |
+| 31-60 | **Subagent**（单 Agent） | 功能开发、Bug 修复 |
+| 61-80 | **Team**（协作 Agent） | Phase 2 并行开发 |
+| 81-100 | **Full Team + GAN** | 复杂功能、关键路径 |
+
+### Team 清除机制
+
+> `team-manager.sh` 解决 5 个已知的 `TeamDelete` Bug（残留进程、孤立目录、僵尸临时文件、悬挂锁文件、不完整清理）。
+
+```bash
+# 完整清理（停止所有 Agent、移除 Team 目录、清理临时文件）
+./scripts/team-manager.sh cleanup
+
+# 状态检查（显示活跃 Team、Agent、临时文件）
+./scripts/team-manager.sh status
+
+# 强制清理（正常清理失败时使用）
+./scripts/team-manager.sh force-cleanup
+```
+
+| 解决的 Bug | 根本原因 | 解决方案 |
+|-----------|---------|---------|
+| 残留 Agent 进程 | Agent PID 未追踪 | PID 文件追踪 + 清理时终止 |
+| 孤立 Team 目录 | `TeamDelete` 跳过 `.claude/teams/` | 递归目录移除 |
+| 僵尸临时文件 | `/tmp` 下的临时文件未清理 | 基于模式的临时文件清理 |
+| 悬挂锁文件 | 崩溃时锁文件未释放 | 锁文件检测 + 强制释放 |
+| 不完整清理 | 部分失败导致整体中断 | 原子清理 + 回滚机制 |
+
+### 环境变量优化
+
+| 变量 | 值 | 用途 |
+|------|---|------|
+| `AUTOCOMPACT_PCT` | `80` | 80% 上下文使用率时自动压缩（默认 90%） |
+| `MAX_THINKING_TOKENS` | `16000` | 复杂分析的扩展思考 Token 预算 |
+
 ### 狂暴模式功能
 
 | 自动化 | 触发条件 |
@@ -677,5 +865,5 @@ MIT License
 
 ---
 
-*Template Version: 2.2.0*
-*Last Updated: 2026-04-09*
+*Template Version: 2.3.0*
+*Last Updated: 2026-04-11*
