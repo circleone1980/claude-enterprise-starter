@@ -92,6 +92,11 @@
             "type": "command",
             "command": "node hooks/scripts/phase-controller.js",
             "description": "阶段推进检查"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/ac-status-update.js",
+            "description": "AC 状态更新（任务完成时检查并更新 AC 状态）"
           }
         ]
       },

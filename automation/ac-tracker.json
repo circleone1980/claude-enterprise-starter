@@ -1,0 +1,20 @@
+{
+  "name": "ac-tracker",
+  "version": "1.0.0",
+  "enabled": true,
+  "projectName": "",
+  "lastSynced": "",
+  "features": [],
+  "statistics": {
+    "total": 0,
+    "draft": 0,
+    "approved": 0,
+    "test_written": 0,
+    "verified": 0,
+    "passed": 0,
+    "failed": 0
+  },
+  "_comment": "v1.0.0 - AC status tracker, derived from acceptance-criteria.md by ac-tracker-sync.js",
+  "_lifecycle": "draft → approved → test_written → verified → passed | failed",
+  "_id_format": "FEAT-{NNN} for features, AC-F{NNN}-{MM} for acceptance criteria"
+}

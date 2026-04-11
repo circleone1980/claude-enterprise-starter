@@ -100,6 +100,11 @@
           "description": "代码审查已完成",
           "check": "test -f .phase2-review-pass",
           "checkType": "file_exists"
+        },
+        {
+          "description": "所有 Feature AC 验收通过",
+          "check": "node hooks/scripts/ac-gate-check.js --all-features-passed",
+          "checkType": "command_succeeds"
         }
       ],
       "autoAdvance": true,

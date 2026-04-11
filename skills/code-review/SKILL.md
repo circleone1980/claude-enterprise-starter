@@ -71,6 +71,34 @@ Ensure maintainability:
 - [ ] **Changelog**: Breaking changes noted
 - [ ] **Type Hints**: TypeScript/Python type annotations present
 
+### 6. AC Coverage（验收标准覆盖）
+
+验证代码变更是否满足验收标准：
+
+- [ ] **AC Mapping**: 每个变更关联到具体 AC ID（`AC-F{NNN}-{MM}`）
+- [ ] **AC Test Coverage**: 每个 AC 有对应测试文件且测试通过
+- [ ] **AC Status**: 所有 P0 AC 状态为 `passed`，P1 AC 至少为 `verified`
+- [ ] **Gherkin Alignment**: 实现逻辑与 AC 的 Given-When-Then 一致
+- [ ] **No Orphan Code**: 没有不关联任何 AC 的功能代码（排除工具类/配置）
+- [ ] **Tracker Updated**: `ac-tracker.json` 中 AC 状态已更新
+
+**检查命令**:
+```bash
+# 查看变更文件关联的 AC 覆盖
+node scripts/ac-coverage-report.js --changed-files
+
+# 检查特定 Feature 的 AC 状态
+node hooks/scripts/ac-gate-check.js --feat-id=FEAT-001
+```
+
+**判断标准**:
+| 情况 | 严重性 | 处理 |
+|------|--------|------|
+| P0 AC 未 passed | 🔴 Critical | 必须修复后才能合并 |
+| P1 AC 未 verified | 🟡 Major | 建议补充测试 |
+| 无 AC 关联的功能代码 | 🟡 Major | 确认是否遗漏 AC 映射 |
+| Gherkin 不一致 | 🟡 Major | 对齐实现与 AC 定义 |
+
 ## Review Report Template
 
 ```markdown

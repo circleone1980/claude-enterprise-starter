@@ -60,8 +60,8 @@ Skill design-context --role <角色>
 | **PO** | PRD, 用户故事, 验收标准 | `docs/requirements/PRD.md`, `docs/requirements/user-stories.md`, `docs/requirements/acceptance-criteria.md` |
 | **Architect** | 所有设计文档, ADRs | `docs/design/` 所有文件, `docs/superpowers/decisions/` 所有 ADR |
 | **UI Designer** | PRD, 系统架构(高层), UI设计规范 | `docs/requirements/PRD.md`, `docs/design/01_系统架构设计.md`, `docs/design/04_UI设计规范.md` |
-| **Frontend** | 系统架构(高层), API设计, 数据库设计(ER图), UI设计规范, 编码规范 | `docs/design/01_系统架构设计.md`, `docs/design/03_API接口设计.md`, `docs/design/02_数据库设计.md`, `docs/design/04_UI设计规范.md`, `docs/dev/02_编码规范.md` |
-| **Backend** | 系统架构(详细), API设计, 数据库设计(完整), 编码规范 | `docs/design/01_系统架构设计.md`, `docs/design/03_API接口设计.md`, `docs/design/02_数据库设计.md`, `docs/dev/02_编码规范.md` |
+| **Frontend** | 系统架构(高层), API设计, 数据库设计(ER图), UI设计规范, 编码规范, 验收标准 | `docs/design/01_系统架构设计.md`, `docs/design/03_API接口设计.md`, `docs/design/02_数据库设计.md`, `docs/design/04_UI设计规范.md`, `docs/dev/02_编码规范.md`, `docs/requirements/acceptance-criteria.md` |
+| **Backend** | 系统架构(详细), API设计, 数据库设计(完整), 编码规范, 验收标准 | `docs/design/01_系统架构设计.md`, `docs/design/03_API接口设计.md`, `docs/design/02_数据库设计.md`, `docs/dev/02_编码规范.md`, `docs/requirements/acceptance-criteria.md` |
 | **QA** | 系统架构(高层), 测试计划, 验收标准, 数据库设计(ER图) | `docs/design/01_系统架构设计.md`, `docs/test/01_测试计划.md`, `docs/requirements/acceptance-criteria.md`, `docs/design/02_数据库设计.md` |
 | **DevOps** | 系统架构(详细), 开发环境搭建, Git工作流 | `docs/design/01_系统架构设计.md`, `docs/dev/01_开发环境搭建.md`, `docs/dev/03_Git工作流.md` |
 | **产品体验师** | PRD, 验收标准, UI设计规范, 用户故事 | `docs/requirements/PRD.md`, `docs/requirements/acceptance-criteria.md`, `docs/design/04_UI设计规范.md`, `docs/requirements/user-stories.md` |

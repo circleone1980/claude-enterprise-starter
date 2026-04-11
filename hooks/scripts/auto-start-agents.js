@@ -101,6 +101,32 @@ function decideMode(agent, thresholds, subPhase) {
 }
 
 /**
+ * 加载与 Agent 角色相关的 AC 信息
+ * @param {string} roleName
+ * @param {object} acTracker
+ * @returns {Array}
+ */
+function loadRelevantACs(roleName, acTracker) {
+  if (!acTracker || !acTracker.features) return [];
+
+  // 按角色映射筛选策略
+  const roleFilterMap = {
+    'QA': () => true,
+    'PM': () => true,
+    'PO': () => true,
+    'Architect': () => true,
+    '产品体验师': () => true,
+    'Frontend': (f) => f.priority === 'P0' || f.priority === 'P1',
+    'Backend-Java': (f) => f.priority === 'P0' || f.priority === 'P1',
+    'Backend-Python': (f) => f.priority === 'P0' || f.priority === 'P1',
+    'DevOps': () => true,
+  };
+
+  const filter = roleFilterMap[roleName] || (() => false);
+  return acTracker.features.filter(filter);
+}
+
+/**
  * 生成 Agent 启动 prompt
  */
 function generatePrompt(name, agent) {
@@ -136,8 +162,33 @@ function generatePrompt(name, agent) {
     - 不要自行调用 Codex 命令`;
   }
 
+  // AC Context 注入 — 验收标准驱动
+  let acSection = '';
+  const acTrackerPath = path.join(PROJECT_ROOT, 'automation', 'ac-tracker.json');
+  if (fs.existsSync(acTrackerPath)) {
+    try {
+      const tracker = JSON.parse(fs.readFileSync(acTrackerPath, 'utf-8'));
+      const relevantFeatures = loadRelevantACs(name, tracker);
+      if (relevantFeatures.length > 0) {
+        const acList = relevantFeatures.map(f =>
+          f.acceptanceCriteria.map(ac =>
+            `    - ${ac.acId}: ${ac.title} [${ac.status}]`
+          ).join('\n')
+        ).join('\n');
+        if (acList) {
+          acSection = `
+
+    验收标准（必须满足）:
+${acList}
+    ⚠️ 每个功能完成后必须验证对应 AC 是否通过
+    ⚠️ AC 未通过视为功能未完成，不可提交`;
+        }
+      }
+    } catch (e) { /* tracker 解析失败不影响正常启动 */ }
+  }
+
   return `你是 ${name}。必须遵循以下流程：
-${skillCalls}${tddSection}${reviewSection}${codexSection}
+${skillCalls}${tddSection}${reviewSection}${codexSection}${acSection}
 
     任务：等待分配具体任务`;
 }

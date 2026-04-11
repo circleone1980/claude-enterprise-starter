@@ -212,6 +212,95 @@ if (fs.existsSync(phaseControllerPath)) {
 
 console.log('');
 
+// === 检查 6: AC Tracker 一致性 ===
+console.log('--- 检查 6: AC Tracker 一致性 ---');
+
+const AC_TRACKER_PATH = path.join(PROJECT_ROOT, 'automation', 'ac-tracker.json');
+const AC_MD_PATH_ACTUAL = path.join(PROJECT_ROOT, 'docs', 'requirements', 'acceptance-criteria.md');
+const PRD_PATH = path.join(PROJECT_ROOT, 'docs', 'requirements', 'PRD.md');
+
+const VALID_STATUSES = ['draft', 'approved', 'test_written', 'verified', 'passed', 'failed'];
+
+if (fs.existsSync(AC_TRACKER_PATH)) {
+  let acTracker;
+  try {
+    acTracker = JSON.parse(fs.readFileSync(AC_TRACKER_PATH, 'utf-8'));
+    log_ok(`ac-tracker.json loaded: v${acTracker.version}`);
+  } catch (e) {
+    log_fail(`ac-tracker.json 解析失败: ${e.message}`);
+    acTracker = null;
+  }
+
+  if (acTracker && acTracker.features) {
+    const allACIds = new Set();
+    const allFeatIds = new Set();
+
+    for (const feat of acTracker.features) {
+      // 检查 FEAT ID 格式
+      if (/^FEAT-\d{3}$/.test(feat.featId)) {
+        log_ok(`FEAT ID 格式正确: ${feat.featId}`);
+      } else {
+        log_fail(`FEAT ID 格式错误: ${feat.featId}（应为 FEAT-{NNN}）`);
+      }
+      allFeatIds.add(feat.featId);
+
+      for (const ac of (feat.acceptanceCriteria || [])) {
+        // 检查 AC ID 格式
+        if (/^AC-F\d{3}-\d{2}$/.test(ac.acId)) {
+          log_ok(`AC ID 格式正确: ${ac.acId}`);
+        } else {
+          log_fail(`AC ID 格式错误: ${ac.acId}（应为 AC-F{NNN}-{MM}）`);
+        }
+
+        // 检查重复
+        if (allACIds.has(ac.acId)) {
+          log_fail(`AC ID 重复: ${ac.acId}`);
+        }
+        allACIds.add(ac.acId);
+
+        // 检查状态合法性
+        if (VALID_STATUSES.includes(ac.status)) {
+          log_ok(`${ac.acId} 状态合法: ${ac.status}`);
+        } else {
+          log_fail(`${ac.acId} 状态非法: ${ac.status}（应为 ${VALID_STATUSES.join('/')}）`);
+        }
+      }
+    }
+
+    // 检查 markdown 中引用的 AC 是否都在 tracker 中
+    if (fs.existsSync(AC_MD_PATH_ACTUAL)) {
+      const mdContent = fs.readFileSync(AC_MD_PATH_ACTUAL, 'utf-8');
+      const mdACIds = [...mdContent.matchAll(/AC-F\d{3}-\d{2}/g)].map(m => m[0]);
+      const uniqueMdACIds = [...new Set(mdACIds)];
+      for (const acId of uniqueMdACIds) {
+        if (allACIds.has(acId)) {
+          log_ok(`markdown AC ${acId} 存在于 tracker`);
+        } else {
+          log_warn(`markdown AC ${acId} 不在 tracker 中（可能需要运行 ac-tracker-sync.js）`);
+        }
+      }
+    }
+
+    // 检查 PRD 中引用的 FEAT ID 是否都在 tracker 中
+    if (fs.existsSync(PRD_PATH)) {
+      const prdContent = fs.readFileSync(PRD_PATH, 'utf-8');
+      const prdFeatIds = [...prdContent.matchAll(/FEAT-\d{3}/g)].map(m => m[0]);
+      const uniquePrdFeatIds = [...new Set(prdFeatIds)];
+      for (const featId of uniquePrdFeatIds) {
+        if (allFeatIds.has(featId)) {
+          log_ok(`PRD FEAT ${featId} 存在于 tracker`);
+        } else {
+          log_warn(`PRD FEAT ${featId} 不在 tracker 中（可能需要运行 ac-tracker-sync.js）`);
+        }
+      }
+    }
+  }
+} else {
+  log_warn('ac-tracker.json 不存在（运行 node scripts/ac-tracker-sync.js 创建）');
+}
+
+console.log('');
+
 // === 总结 ===
 console.log('========================================');
 console.log(`  结果: ${passed} PASS, ${failed} FAIL, ${warnings} WARN`);

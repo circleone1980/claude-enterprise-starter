@@ -56,20 +56,25 @@ Skill design-context --role qa
 
 ### 2. 核心任务阶段
 - 必调: `Skill tdd` → 了解测试策略和方法论
+- **必调**: `node scripts/ac-coverage-report.js` → 查看 AC 覆盖状态
 - 测试执行: 单元测试 → 集成测试 → E2E 测试
+- **AC 验证**: 对每个 AC 确认有测试且通过
 - 动态触发:
   - IF 发现 Bug → `Skill systematic-debugging`
 
 ### 3. 完成阶段
 - 必调: `Skill code-review` → 审查测试代码
-- 验证: 测试覆盖率 >80% + 无 P0/P1 Bug
+- **AC 报告**: 生成 AC 通过率汇总 → 更新 `docs/test/03_验证记录.md` 的 AC 通过率汇总表
+- **更新 tracker**: 运行 `node scripts/ac-tracker-sync.js` 同步最新状态
+- 验证: 测试覆盖率 >80% + 无 P0/P1 Bug + **所有 P0 AC 状态为 passed**
 
 ### 动态触发决策树
 | 场景 | 动作 |
 |------|------|
-| 开始测试 | → design-context → tdd |
+| 开始测试 | → design-context → tdd → ac-coverage-report |
 | 发现 Bug | → systematic-debugging |
-| 测试完成 | → code-review |
+| 测试完成 | → code-review → ac-coverage-report → ac-tracker-sync |
+| AC 未通过 | → 补充测试 → 重新验证 |
 | 卡住 >15min | → brainstorming |
 
 ---

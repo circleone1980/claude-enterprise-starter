@@ -18,7 +18,7 @@ effort: medium
 - 合并前质量检查
 - 每 15 分钟自动验证（长时间会话）
 
-## 6 阶段验证流程
+## 7 阶段验证流程
 
 ### Phase 1: Build（构建）
 
@@ -105,6 +105,44 @@ git diff --name-only
 - 是否有遗漏的文件
 - 是否有不应该提交的文件
 
+### Phase 7: AC Coverage（验收标准覆盖）
+
+检查本次变更是否满足关联的验收标准。
+
+```bash
+# 查看变更文件关联的 AC 状态
+node scripts/ac-coverage-report.js --changed-files
+```
+
+**执行逻辑**:
+1. 读取 `automation/ac-tracker.json`
+2. 从 `git diff --name-only` 获取变更文件列表
+3. 通过 AC 的 `testFile` 字段将变更映射到 Feature
+4. 检查每个关联 AC 的状态
+
+**停止条件**: 有 P0 AC 未 passed → 必须补充测试或修复实现
+
+**输出示例**:
+```
+Phase 7: AC Coverage ✅ PASS (4/4 ACs verified)
+  FEAT-001:
+    AC-F001-01: ✅ passed (test: auth.spec.ts:15)
+    AC-F001-02: ✅ passed (test: auth.spec.ts:32)
+  FEAT-002:
+    AC-F002-01: ⚠️ verified (no test file mapped)
+    AC-F002-02: ❌ draft (test missing)
+```
+
+**AC 状态说明**:
+| 状态 | 含义 | 验证动作 |
+|------|------|---------|
+| `draft` | AC 已定义但未开始 | 检查是否需要开发 |
+| `approved` | AC 已审批 | 检查是否有开发任务 |
+| `test_written` | 测试已编写 | 运行测试验证 |
+| `verified` | AC 已验证通过 | 确认无回归 |
+| `passed` | AC 最终通过 | 无需额外动作 |
+| `failed` | AC 验证失败 | 必须修复 |
+
 ## 输出格式
 
 ```
@@ -117,6 +155,7 @@ Phase 3: Lint         ⚠️  WARNING (3 warnings)
 Phase 4: Tests        ✅ PASS (42/42 tests, 87% coverage)
 Phase 5: Security     ✅ PASS (0 issues)
 Phase 6: Diff Review  ✅ PASS (5 files changed)
+Phase 7: AC Coverage  ✅ PASS (4/4 ACs verified)
 ───────────────────────────────────────────────────────
 OVERALL: ✅ READY FOR COMMIT
 ═══════════════════════════════════════════════════════

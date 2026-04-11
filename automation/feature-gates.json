@@ -1,0 +1,32 @@
+{
+  "name": "feature-gates",
+  "version": "1.0.0",
+  "enabled": true,
+  "gateMode": "per_feature",
+  "features": {},
+  "gateConditions": {
+    "feature_complete": {
+      "description": "Feature 所有 AC 状态为 passed",
+      "checkTemplate": "node hooks/scripts/ac-gate-check.js --feat-id={featId} --require-all-passed",
+      "checkType": "command_succeeds"
+    },
+    "test_coverage": {
+      "description": "Feature 相关测试覆盖率 > 80%",
+      "checkTemplate": "node hooks/scripts/ac-gate-check.js --feat-id={featId} --check-coverage",
+      "checkType": "command_succeeds"
+    },
+    "ac_verified": {
+      "description": "每个 AC 都有对应的已通过测试",
+      "checkTemplate": "node hooks/scripts/ac-gate-check.js --feat-id={featId} --check-ac-tests",
+      "checkType": "command_succeeds"
+    }
+  },
+  "phaseIntegration": {
+    "phase2_to_phase3_ac_condition": {
+      "description": "所有 Feature AC 通过",
+      "check": "node hooks/scripts/ac-gate-check.js --all-features-passed",
+      "checkType": "command_succeeds"
+    }
+  },
+  "_comment": "v1.0.0 - Feature-level gates, complements phase-gates.json. features 对象由 ac-tracker-sync.js 动态填充"
+}

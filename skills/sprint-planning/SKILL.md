@@ -47,37 +47,43 @@ Success Metrics:
 
 ### Step 3: Break Down Tasks
 
-Decompose features into actionable tasks:
+Decompose features into actionable tasks. **每个任务必须关联到具体的 AC ID**，确保验收标准可追溯：
 
 ```
-Feature: User Authentication
-├── Task 1.1: Design auth API (Architect) - 2h
-├── Task 1.2: Implement JWT logic (Backend-1) - 4h
-├── Task 1.3: Create login UI (Frontend-1) - 3h
-├── Task 1.4: Write unit tests (QA) - 2h
-├── Task 1.5: Integration testing (QA) - 2h
-└── Task 1.6: Update documentation (PO) - 1h
+Feature: User Authentication (FEAT-001)
+├── Task 1.1: Design auth API (Architect)     → AC-F001-01, AC-F001-02  - 2h
+├── Task 1.2: Implement JWT logic (Backend-1) → AC-F001-01, AC-F001-03  - 4h
+├── Task 1.3: Create login UI (Frontend-1)    → AC-F001-02, AC-F001-04  - 3h
+├── Task 1.4: Write unit tests (QA)           → AC-F001-01~04           - 2h
+├── Task 1.5: Integration testing (QA)        → AC-F001-01~04           - 2h
+└── Task 1.6: Update documentation (PO)       → —                       - 1h
 ```
+
+**AC 关联规则**:
+- 每个开发任务必须关联至少一个 AC ID（格式: `AC-F{NNN}-{MM}`）
+- 测试任务应覆盖关联 Feature 的所有 AC
+- 非功能性任务（文档、配置）可以不关联 AC
+- AC ID 来源于 `docs/requirements/acceptance-criteria.md`（SSOT）
 
 ### Step 4: Estimate Effort
 
-Use story points or time estimates:
+Use story points or time estimates. **AC IDs 列追踪验收覆盖**:
 
-| Task | Estimate | Assignee | Dependencies |
-|------|----------|----------|--------------|
-| 1.1 Design API | 2h | Architect | None |
-| 1.2 Implement JWT | 4h | Backend-1 | 1.1 |
-| 1.3 Create UI | 3h | Frontend-1 | 1.1 |
-| 1.4 Unit tests | 2h | QA | 1.2, 1.3 |
-| 1.5 Integration | 2h | QA | 1.4 |
-| 1.6 Docs | 1h | PO | 1.5 |
+| Task | AC IDs | Estimate | Assignee | Dependencies |
+|------|--------|----------|----------|--------------|
+| 1.1 Design API | AC-F001-01, AC-F001-02 | 2h | Architect | None |
+| 1.2 Implement JWT | AC-F001-01, AC-F001-03 | 4h | Backend-1 | 1.1 |
+| 1.3 Create UI | AC-F001-02, AC-F001-04 | 3h | Frontend-1 | 1.1 |
+| 1.4 Unit tests | AC-F001-01~04 | 2h | QA | 1.2, 1.3 |
+| 1.5 Integration | AC-F001-01~04 | 2h | QA | 1.4 |
+| 1.6 Docs | — | 1h | PO | 1.5 |
 
 ### Step 5: Assign Tasks
 
 Use Claude Code task tools:
 ```bash
-# Create sprint tasks
-TaskCreate --subject "Sprint 1: User Auth" --description "..."
+# Create sprint tasks（描述中包含 AC ID，供 ac-status-update.js 提取）
+TaskCreate --subject "Sprint 1: Implement JWT logic" --description "FEAT-001 AC-F001-01 AC-F001-03: 实现 JWT 认证逻辑..."
 
 # Assign to team members
 TaskUpdate --taskId "1" --owner "Backend-1"
@@ -178,5 +184,7 @@ Before starting the sprint:
 - [ ] Risks assessed
 - [ ] Capacity confirmed
 - [ ] Definition of Done agreed
+- [ ] **所有开发任务已关联 AC ID**（格式: `AC-F{NNN}-{MM}`）
+- [ ] **ac-tracker.json 已同步**（运行 `node scripts/ac-tracker-sync.js`）
 
 **Related Skills**: `product-requirements`, `writing-plans` (for architecture design)
