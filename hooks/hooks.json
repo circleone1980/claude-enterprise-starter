@@ -1,6 +1,6 @@
 {
-  "version": "2.0.0",
-  "_comment": "Updated 2026-04-09 - ECC 集成: 修复路径 + 新增 hooks (block-no-verify, commit-quality, suggest-compact, config-protection, edit-accumulator, console-warn, format-typecheck, doc-sync-check)",
+  "version": "2.1.0",
+  "_comment": "Updated 2026-04-11 - GStack integration: gstack-output-validator + gstack-phase-guard",
   "hooks": {
     "PreToolUse": [
       {
@@ -97,6 +97,11 @@
             "type": "command",
             "command": "node hooks/scripts/ac-status-update.js",
             "description": "AC 状态更新（任务完成时检查并更新 AC 状态）"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/gstack-phase-guard.js",
+            "description": "GStack Phase 0.5 门禁验证"
           }
         ]
       },
@@ -122,6 +127,11 @@
             "type": "command",
             "command": "node hooks/scripts/console-warn.js",
             "description": "检测编辑文件中的 console.log"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/gstack-output-validator.js",
+            "description": "验证 GStack 输出文档完整性"
           }
         ]
       }

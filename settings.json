@@ -140,6 +140,10 @@
           {
             "type": "command",
             "command": "node hooks/scripts/phase-controller.js"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/gstack-phase-guard.js"
           }
         ]
       },
@@ -162,6 +166,10 @@
           {
             "type": "command",
             "command": "node hooks/scripts/console-warn.js"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/gstack-output-validator.js"
           }
         ]
       }
@@ -213,7 +221,19 @@
         "architect": "everything-claude-code:architect",
         "qa": "everything-claude-code:tdd-guide"
       }
+    },
+    "gstackIntegration": {
+      "enabled": false,
+      "description": "GStack 产品设计层 - Phase 0.5 Think + Plan",
+      "features": {
+        "officeHours": true,
+        "designConsultation": true,
+        "designShotgun": true,
+        "designHtml": true,
+        "autoplan": true
+      },
+      "backwardCompatible": true
     }
   },
-  "_comment": "Updated 2026-04-11 - v2.3.0: 环境变量 (AUTOCOMPACT/THINKING/SUBAGENT_MODEL)"
+  "_comment": "Updated 2026-04-11 - v2.6.0: GStack integration (gstackIntegration + gstack-phase-guard + gstack-output-validator)"
 }
