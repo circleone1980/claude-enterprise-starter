@@ -18,17 +18,17 @@
       "conditions": [
         {
           "description": "DESIGN.md 已生成",
-          "check": "test -f workspace/docs/design/DESIGN.md",
+          "check": "node -e \"require('fs').existsSync('workspace/docs/design/DESIGN.md')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "IMPLEMENTATION_PLAN.md 已生成",
-          "check": "test -f workspace/docs/design/IMPLEMENTATION_PLAN.md",
+          "check": "node -e \"require('fs').existsSync('workspace/docs/design/IMPLEMENTATION_PLAN.md')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "OFFICE_HOURS.md 已生成",
-          "check": "test -f workspace/docs/design/OFFICE_HOURS.md",
+          "check": "node -e \"require('fs').existsSync('workspace/docs/design/OFFICE_HOURS.md')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
@@ -44,17 +44,17 @@
       "conditions": [
         {
           "description": "目录结构已创建",
-          "check": "test -d src || test -d docs",
+          "check": "node -e \"const f=require('fs');process.exit(f.existsSync('src')||f.existsSync('docs')?0:1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "开发环境已配置",
-          "check": "test -f package.json || test -f pom.xml || test -f pyproject.toml",
+          "check": "node -e \"const f=require('fs');process.exit(f.existsSync('package.json')||f.existsSync('pom.xml')||f.existsSync('pyproject.toml')?0:1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "GitHub 仓库已创建",
-          "check": "git remote -v 2>/dev/null | grep -q origin",
+          "check": "node -e \"require('child_process').execSync('git remote').toString().includes('origin')||process.exit(1)\"",
           "checkType": "command_succeeds"
         }
       ],
@@ -64,52 +64,52 @@
       "conditions": [
         {
           "description": "PRD 文档已完成",
-          "check": "test -f docs/requirements/PRD.md",
+          "check": "node -e \"require('fs').existsSync('docs/requirements/PRD.md')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "用户故事文档已完成",
-          "check": "test -f docs/requirements/user-stories.md",
+          "check": "node -e \"require('fs').existsSync('docs/requirements/user-stories.md')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "验收标准文档已完成",
-          "check": "test -f docs/requirements/acceptance-criteria.md",
+          "check": "node -e \"require('fs').existsSync('docs/requirements/acceptance-criteria.md')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "系统架构设计文档已完成",
-          "check": "test -f docs/design/01_系统架构设计.md",
+          "check": "node -e \"require('fs').existsSync('docs/design/01_系统架构设计.md')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "数据库设计文档已完成",
-          "check": "test -f docs/design/02_数据库设计.md",
+          "check": "node -e \"require('fs').existsSync('docs/design/02_数据库设计.md')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "API 接口设计文档已完成",
-          "check": "test -f docs/design/03_API接口设计.md",
+          "check": "node -e \"require('fs').existsSync('docs/design/03_API接口设计.md')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "UI 设计规范文档已完成",
-          "check": "test -f docs/design/04_UI设计规范.md",
+          "check": "node -e \"require('fs').existsSync('docs/design/04_UI设计规范.md')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "Architect 已审查所有设计文档",
-          "check": "test -f docs/design/.architect-review-approved",
+          "check": "node -e \"require('fs').existsSync('docs/design/.architect-review-approved')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "冻结层文档已锁定",
-          "check": "test -f docs/requirements/.frozen",
+          "check": "node -e \"require('fs').existsSync('docs/requirements/.frozen')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "任务已分配",
-          "check": "test -f docs/requirements/sprint-plan.md",
+          "check": "node -e \"require('fs').existsSync('docs/requirements/sprint-plan.md')||process.exit(1)\"",
           "checkType": "file_exists"
         }
       ],
@@ -120,22 +120,22 @@
       "conditions": [
         {
           "description": "所有代码已实现",
-          "check": "test -f .phase2-code-complete",
+          "check": "node -e \"require('fs').existsSync('.phase2-code-complete')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "单元测试覆盖率 > 80%",
-          "check": "test -f .phase2-coverage-pass",
+          "check": "node -e \"require('fs').existsSync('.phase2-coverage-pass')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "所有单元测试通过",
-          "check": "test -f .phase2-tests-pass",
+          "check": "node -e \"require('fs').existsSync('.phase2-tests-pass')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "代码审查已完成",
-          "check": "test -f .phase2-review-pass",
+          "check": "node -e \"require('fs').existsSync('.phase2-review-pass')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
@@ -151,22 +151,22 @@
       "conditions": [
         {
           "description": "所有测试用例通过",
-          "check": "test -f .phase3-tests-pass",
+          "check": "node -e \"require('fs').existsSync('.phase3-tests-pass')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "集成测试通过",
-          "check": "test -f .phase3-integration-pass",
+          "check": "node -e \"require('fs').existsSync('.phase3-integration-pass')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "E2E 测试通过",
-          "check": "test -f .phase3-e2e-pass",
+          "check": "node -e \"require('fs').existsSync('.phase3-e2e-pass')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "测试报告已输出",
-          "check": "test -f docs/test/test-report.md",
+          "check": "node -e \"require('fs').existsSync('docs/test/test-report.md')||process.exit(1)\"",
           "checkType": "file_exists"
         }
       ],
@@ -177,17 +177,17 @@
       "conditions": [
         {
           "description": "产品体验测试已完成",
-          "check": "test -f .phase4-ux-complete",
+          "check": "node -e \"require('fs').existsSync('.phase4-ux-complete')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "体验报告已输出",
-          "check": "test -f docs/test/ux-report.md",
+          "check": "node -e \"require('fs').existsSync('docs/test/ux-report.md')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "关键体验问题已修复",
-          "check": "test -f .phase4-ux-fixes-complete",
+          "check": "node -e \"require('fs').existsSync('.phase4-ux-fixes-complete')||process.exit(1)\"",
           "checkType": "file_exists"
         }
       ],
@@ -198,22 +198,22 @@
       "conditions": [
         {
           "description": "部署成功",
-          "check": "test -f .phase5-deploy-success",
+          "check": "node -e \"require('fs').existsSync('.phase5-deploy-success')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "健康检查通过",
-          "check": "test -f .phase5-health-check-pass",
+          "check": "node -e \"require('fs').existsSync('.phase5-health-check-pass')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "文档已更新",
-          "check": "test -f .phase5-docs-updated",
+          "check": "node -e \"require('fs').existsSync('.phase5-docs-updated')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "代码已推送到 GitHub",
-          "check": "git log origin/main..HEAD --oneline 2>/dev/null | wc -l | grep -q '^0$'",
+          "check": "node -e \"const r=require('child_process').execSync('git log origin/main..HEAD --oneline').toString().trim();process.exit(r.length===0?0:1)\"",
           "checkType": "command_succeeds",
           "cwd": "project_root"
         }

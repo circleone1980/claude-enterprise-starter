@@ -135,6 +135,13 @@ echo -e "${BLUE}[6/8] 复制可选组件...${NC}"
 cp -r "$TEMPLATE_DIR/commands" .claude/ 2>/dev/null || true
 cp -r "$TEMPLATE_DIR/output-styles" .claude/ 2>/dev/null || true
 
+# 复制自动化配置（hooks、automation、scripts、templates）
+echo -e "${BLUE}[6b/8] 复制自动化配置...${NC}"
+cp -r "$TEMPLATE_DIR/hooks" .claude/ 2>/dev/null || true
+cp -r "$TEMPLATE_DIR/automation" .claude/ 2>/dev/null || true
+cp -r "$TEMPLATE_DIR/scripts" .claude/ 2>/dev/null || true
+cp -r "$TEMPLATE_DIR/templates" .claude/ 2>/dev/null || true
+
 # ─── 文档目录创建 ─────────────────────────────────
 
 echo -e "${BLUE}[7/8] 创建文档目录结构...${NC}"
@@ -312,6 +319,7 @@ if [ -f .gitignore ]; then
         echo "# Claude Code 本地配置" >> .gitignore
         echo "CLAUDE.local.md" >> .gitignore
         echo ".claude/settings.local.json" >> .gitignore
+        echo "settings.local.json" >> .gitignore
         echo -e "${GREEN}  ✓ 已添加 gitignore 规则${NC}"
     fi
 else

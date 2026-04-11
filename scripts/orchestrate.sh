@@ -292,7 +292,7 @@ cmd_status() {
 
 # --- Codex 阶段钩子 ---
 # L1 自动层: Phase 2 完成后 review, Phase 4 完成后 adversarial-review
-CODEX_SCRIPT="C:/Users/fengm/.claude/plugins/cache/openai-codex/codex/1.0.3/scripts/codex-companion.mjs"
+CODEX_SCRIPT=$(find ~/.claude/plugins -name "codex-companion.mjs" 2>/dev/null | head -1)
 
 run_codex_phase_hook() {
   local phase_id="$1"

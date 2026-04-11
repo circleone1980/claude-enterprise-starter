@@ -10,7 +10,8 @@ param(
     [string]$WorkspaceDir = "workspace",
     [ValidateSet("node", "java", "python")]
     [string]$ProjectType = "node",
-    [switch]$Flat
+    [switch]$Flat,
+    [switch]$Gstack
 )
 
 # 模板目录
@@ -38,6 +39,9 @@ if ($UseWorkspace) {
     Write-Host "项目类型: $ProjectType" -ForegroundColor Green
 } else {
     Write-Host "模式: 传统 (flat)" -ForegroundColor Green
+}
+if ($Gstack) {
+    Write-Host "GStack 产品设计层: 已启用" -ForegroundColor Magenta
 }
 Write-Host ""
 
@@ -89,6 +93,25 @@ if (Test-Path $CommandsDir) {
 $OutputStylesDir = Join-Path $TemplateDir "output-styles"
 if (Test-Path $OutputStylesDir) {
     Copy-Item -Path $OutputStylesDir -Destination $ClaudeDir -Recurse -Force
+}
+
+# 复制自动化配置（hooks、automation、scripts、templates）
+Write-Host "[6b/8] 复制自动化配置..." -ForegroundColor Blue
+$HooksDir = Join-Path $TemplateDir "hooks"
+if (Test-Path $HooksDir) {
+    Copy-Item -Path $HooksDir -Destination $ClaudeDir -Recurse -Force
+}
+$AutomationDir = Join-Path $TemplateDir "automation"
+if (Test-Path $AutomationDir) {
+    Copy-Item -Path $AutomationDir -Destination $ClaudeDir -Recurse -Force
+}
+$ScriptsDir = Join-Path $TemplateDir "scripts"
+if (Test-Path $ScriptsDir) {
+    Copy-Item -Path $ScriptsDir -Destination $ClaudeDir -Recurse -Force
+}
+$TemplatesDir = Join-Path $TemplateDir "templates"
+if (Test-Path $TemplatesDir) {
+    Copy-Item -Path $TemplatesDir -Destination $ClaudeDir -Recurse -Force
 }
 
 # ─── 文档目录创建 ──────────────────────────────────
@@ -274,6 +297,7 @@ $GitignoreContent = @"
 # Claude Code 本地配置
 CLAUDE.local.md
 .claude/settings.local.json
+settings.local.json
 "@
 
 if (Test-Path $GitignorePath) {
@@ -285,6 +309,29 @@ if (Test-Path $GitignorePath) {
 } else {
     Set-Content -Path $GitignorePath -Value $GitignoreContent.TrimStart()
     Write-Host "  ✓ 创建 .gitignore" -ForegroundColor Green
+}
+
+# GStack 启用
+if ($Gstack) {
+    Write-Host "  启用 GStack 产品设计层..." -ForegroundColor Magenta
+    $GstackToggle = Join-Path $TemplateDir "scripts\gstack-toggle.js"
+    if (Test-Path $GstackToggle) {
+        try {
+            & node $GstackToggle --enable 2>$null
+            Write-Host "  ✓ GStack 已启用（gstackConfig.enabled: true）" -ForegroundColor Magenta
+        } catch {
+            Write-Host "  ⚠ GStack 启用失败，请手动运行: node scripts/gstack-toggle.js --enable" -ForegroundColor Yellow
+        }
+    }
+
+    # 创建 prototype 目录
+    if ($UseWorkspace) {
+        $PrototypeDir = Join-Path $TargetDir "$WorkspaceDir\docs\design\prototype"
+    } else {
+        $PrototypeDir = Join-Path $TargetDir "docs\design\prototype"
+    }
+    New-Item -ItemType Directory -Path $PrototypeDir -Force | Out-Null
+    Write-Host "  ✓ $(if ($UseWorkspace) { $WorkspaceDir }) docs/design/prototype/ 已创建（GStack 原型输出目录）" -ForegroundColor Magenta
 }
 
 # ─── 完成 ─────────────────────────────────────────
@@ -324,4 +371,9 @@ Write-Host "  2. 编辑 .mcp.json 配置 MCP 服务器"
 Write-Host "  3. 运行 " -NoNewline
 Write-Host "/doctor" -ForegroundColor Green -NoNewline
 Write-Host " 验证配置"
+if ($Gstack) {
+    Write-Host "  4. 运行 " -NoNewline
+    Write-Host "/office-hours" -ForegroundColor Magenta -NoNewline
+    Write-Host " 开始产品设计"
+}
 Write-Host ""

@@ -15,9 +15,9 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const { resolveWorkspaceRoot } = require('./lib/workspace-resolver');
+const { resolveWorkspaceRoot, PROJECT_ROOT: WORKSPACE_PROJECT_ROOT } = require('./lib/workspace-resolver');
 
-const PROJECT_ROOT = process.cwd();
+const PROJECT_ROOT = WORKSPACE_PROJECT_ROOT;
 const GATES_PATH = path.join(PROJECT_ROOT, 'automation', 'phase-gates.json');
 const RAGE_MODE_PATH = path.join(PROJECT_ROOT, 'automation', 'rage-mode.json');
 const PHASE_LOG_DIR = path.join(PROJECT_ROOT, '.claude', 'logs');
@@ -79,7 +79,7 @@ function checkCondition(condition) {
       cwd: condition.cwd === 'project_root' ? PROJECT_ROOT : resolveWorkspaceRoot(),
       timeout: 5000,
       stdio: 'pipe',
-      shell: '/bin/bash'
+      shell: process.platform === 'win32' ? undefined : '/bin/bash'
     });
     return { passed: true };
   } catch (error) {

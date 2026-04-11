@@ -169,6 +169,17 @@
             "description": "提醒同步文档（对应规则 00_global.md）"
           }
         ]
+      },
+      {
+        "id": "stop:session-evaluate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/scripts/session-evaluate.js",
+            "timeout": 10,
+            "description": "评估会话可提取模式（配合 continuous-learning skill）"
+          }
+        ]
       }
     ],
     "Scheduled": [
