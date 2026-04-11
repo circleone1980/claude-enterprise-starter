@@ -22,7 +22,7 @@
 | `skills/<name>/SKILL.md` | 项目 + 全局 | ✓ | ✅ 已有 | 多个自定义技能 |
 | `commands/*.md` | 项目 + 全局 | ✓ | ✅ 已补充 | 3 个命令文件 |
 | `output-styles/*.md` | 项目 + 全局 | ✓ | ✅ 已补充 | 3 个输出风格 |
-| `agents/*.md` | 项目 + 全局 | ✓ | ✅ 已有 | 13 个代理定义 |
+| `agents/*.md` | 项目 + 全局 | ✓ | ✅ 已有 | 15 个代理定义 |
 | `agent-memory/<name>/` | 项目 + 全局 | ✓ | ✅ 已补充 | 代理记忆目录 |
 
 ### 项目特有的扩展（非官方）
@@ -30,10 +30,10 @@
 | 目录/文件 | 说明 |
 |-----------|------|
 | `automation/` | 狂暴模式配置（项目创新） |
-| `hooks/` | 16 个自定义钩子脚本（项目创新） |
+| `hooks/` | 18 个自定义钩子脚本（项目创新） |
 | `templates/` | 模板文件（项目创新） |
 | `workspace/` | 目标项目工作区（项目创新） |
-| `.claude/skills/` | Prisma 技能（与 skills/ 并存） |
+| `.claude/skills/` | 已合并到 `skills/` |
 
 ---
 
@@ -69,14 +69,14 @@
 claude-enterprise-starter/
 ├── .claude/                     # ✅ 额外的技能目录
 │   └── skills/prisma-database-setup/
-├── agents/                      # ✅ 13 个代理定义
+├── agents/                      # ✅ 15 个代理定义
 ├── agent-memory/                # ✅ 已补充
 ├── automation/                  # ✨ 项目扩展
 ├── commands/                    # ✅ 已补充
-├── hooks/                       # ✨ 项目扩展（16 个钩子脚本）
+├── hooks/                       # ✨ 项目扩展（18 个钩子脚本）
 ├── output-styles/               # ✅ 已补充
 ├── rules/                       # ✅ 9 个规则文件
-├── skills/                      # ✅ 27 个技能
+├── skills/                      # ✅ 37 个技能
 ├── templates/                   # ✨ 项目扩展（含 code-headers/）
 ├── workspace/                   # ✨ 目标项目工作区
 ├── .mcp.json                    # ✅
