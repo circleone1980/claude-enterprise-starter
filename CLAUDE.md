@@ -227,6 +227,9 @@ Module
 | **QA**             | tdd, verification-loop 🔴                 | code-review, security-review, Playwright MCP                                                                             | tdd-guide           |
 | **DevOps**         | code-review                               | security-review, GitHub MCP                                                                                              | general-purpose     |
 | **产品体验师**     | user-onboarding 🔴                        | product-requirements, ui-ux-pro-max                                                                                      | planner             |
+| **GAN Planner**    | gan-harness                               | writing-plans, product-requirements                                                                                      | planner             |
+| **GAN Generator**  | gan-harness                               | tdd, code-review, springboot-patterns, antfu                                                                             | general-purpose     |
+| **GAN Evaluator**  | gan-harness, verification-loop 🔴         | code-review, security-review                                                                                            | general-purpose     |
 
 **Why**: 技能映射确保角色专业化，避免通用 Agent 能力稀释
 

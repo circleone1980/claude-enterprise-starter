@@ -1,6 +1,7 @@
 # Claude Code 官方文档对比分析报告
 
-> 对比日期: 2026-04-05
+> 对比日期: 2026-04-11
+> 版本: v2.5.0
 > 官方文档: https://code.claude.com/docs/en/claude-directory
 
 ---
@@ -13,7 +14,7 @@
 |------|------|------|------|------|
 | `CLAUDE.md` | 项目 + 全局 | ✓ | ✅ 已有 | 核心指令文件 |
 | `CLAUDE.local.md` | 仅项目 | ✗ | ✅ 已补充 | 个人项目偏好模板 |
-| `rules/*.md` | 项目 + 全局 | ✓ | ✅ 已有 | 6 个规则文件 |
+| `rules/*.md` | 项目 + 全局 | ✓ | ✅ 已有 | 9 个规则文件 |
 | `settings.json` | 项目 + 全局 | ✓ | ✅ 已有 | 共享设置 |
 | `settings.local.json` | 仅项目 | ✗ | ✅ 已补充 | 个人设置覆盖模板 |
 | `.mcp.json` | 仅项目 | ✓ | ✅ 已有 | MCP 工具集成 |
@@ -21,7 +22,7 @@
 | `skills/<name>/SKILL.md` | 项目 + 全局 | ✓ | ✅ 已有 | 多个自定义技能 |
 | `commands/*.md` | 项目 + 全局 | ✓ | ✅ 已补充 | 3 个命令文件 |
 | `output-styles/*.md` | 项目 + 全局 | ✓ | ✅ 已补充 | 3 个输出风格 |
-| `agents/*.md` | 项目 + 全局 | ✓ | ✅ 已有 | 9 个代理定义 |
+| `agents/*.md` | 项目 + 全局 | ✓ | ✅ 已有 | 13 个代理定义 |
 | `agent-memory/<name>/` | 项目 + 全局 | ✓ | ✅ 已补充 | 代理记忆目录 |
 
 ### 项目特有的扩展（非官方）
@@ -29,8 +30,9 @@
 | 目录/文件 | 说明 |
 |-----------|------|
 | `automation/` | 狂暴模式配置（项目创新） |
-| `hooks/` | 自定义钩子系统（项目创新） |
+| `hooks/` | 16 个自定义钩子脚本（项目创新） |
 | `templates/` | 模板文件（项目创新） |
+| `workspace/` | 目标项目工作区（项目创新） |
 | `.claude/skills/` | Prisma 技能（与 skills/ 并存） |
 
 ---
@@ -64,22 +66,23 @@
 ### 本模板当前结构
 
 ```
-F:/Agr/.claude-template/
+claude-enterprise-starter/
 ├── .claude/                     # ✅ 额外的技能目录
 │   └── skills/prisma-database-setup/
-├── agents/                      # ✅ 9 个代理定义
+├── agents/                      # ✅ 13 个代理定义
 ├── agent-memory/                # ✅ 已补充
 ├── automation/                  # ✨ 项目扩展
 ├── commands/                    # ✅ 已补充
-├── hooks/                       # ✨ 项目扩展
+├── hooks/                       # ✨ 项目扩展（16 个钩子脚本）
 ├── output-styles/               # ✅ 已补充
-├── rules/                       # ✅ 6 个规则文件
-├── skills/                      # ✅ 多个技能
-├── templates/                   # ✨ 项目扩展
+├── rules/                       # ✅ 9 个规则文件
+├── skills/                      # ✅ 27 个技能
+├── templates/                   # ✨ 项目扩展（含 code-headers/）
+├── workspace/                   # ✨ 目标项目工作区
 ├── .mcp.json                    # ✅
 ├── .worktreeinclude             # ✅ 已补充
 ├── CLAUDE.md                    # ✅
-├── CLAUDE.local.md              # ✅ 已补充
+├── CLAUDE.local.md.example      # ✅ 已补充（模板）
 ├── settings.json                # ✅
 └── settings.local.json          # ✅ 已补充
 ```
@@ -188,11 +191,11 @@ CLAUDE.local.md
 - [x] `CLAUDE.local.md` (模板)
 - [x] `settings.local.json` (模板)
 - [x] `.worktreeinclude`
-- [x] `rules/*.md` (6 个)
-- [x] `skills/*/SKILL.md` (多个)
+- [x] `rules/*.md` (9 个)
+- [x] `skills/*/SKILL.md` (27 个)
 - [x] `commands/*.md` (3 个)
 - [x] `output-styles/*.md` (3 个)
-- [x] `agents/*.md` (9 个)
+- [x] `agents/*.md` (13 个)
 - [x] `agent-memory/*/MEMORY.md` (3 个)
 
 ### 项目扩展 ✨
@@ -203,4 +206,5 @@ CLAUDE.local.md
 
 ---
 
-*报告生成时间: 2026-04-05*
+*报告更新时间: 2026-04-11*
+*版本: v2.5.0*

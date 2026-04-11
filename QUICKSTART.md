@@ -61,7 +61,7 @@ my-project/
 │   ├── package.json               ← 项目依赖（node 类型）
 │   └── .gitignore
 ├── CLAUDE.md                      ← Claude 行为指令（引擎核心）
-├── agents/                        ← 14 个 AI 角色定义（PM/前端/后端/QA...）
+├── agents/                        ← 13 个 AI 角色定义（PM/前端/后端/QA...）
 ├── skills/                        ← 27 个技能（TDD/代码审查/UI设计...）
 ├── rules/                         ← 9 条开发规则（注释/安全/质量门禁...）
 ├── hooks/                         ← 自动钩子（安全检查/门禁/格式化...）

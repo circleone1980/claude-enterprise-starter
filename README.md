@@ -9,7 +9,7 @@
 > 🚀 Enterprise-grade Claude Code configuration template with Agent Team orchestration, Rage Mode automation, TDD workflow, and production-ready configurations.
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-blue)](https://code.claude.com)
-[![Version](https://img.shields.io/badge/Version-2.3.0-green)](./CLAUDE.md)
+[![Version](https://img.shields.io/badge/Version-2.5.0-green)](./CLAUDE.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 ### Features
@@ -23,11 +23,11 @@
 | **Skills System** | 27 integrated skills with advanced frontmatter configuration |
 | **Backend Dual-Stack** 🆕 | Java + Python backend (SpringBoot + Prisma + LLM + VLM + Workflow) |
 | **GAN Harness** 🆕 | Planner→Generator→Evaluator loop for quality-driven development |
-| **Hook Reinforcement** 🆕 | 14 hooks covering full lifecycle (commit quality, config protection, edit accumulator) |
+| **Hook Reinforcement** 🆕 | 16 hooks covering full lifecycle (commit quality, config protection, edit accumulator) |
 | **Continuous Learning** 🆕 | Instinct-based learning system with confidence scoring |
 | **Frontmatter Config** | `effort`, `paths`, `allowed-tools`, `user-invocable` for precise skill control |
 | **UI Style Selector** | 60 brand design templates with auto-scenario matching |
-| **Tech Stack** | React + TypeScript + Vite (frontend fixed), Java + SpringBoot + Python (backend) |
+| **Tech Stack** | React + TypeScript + Vite 6 (frontend fixed), Java + SpringBoot + Python (backend) |
 | **SSOT Architecture** | `automation/agent-orchestration.json` as single source of truth |
 | **Per-Role SOP** | Standard Operating Procedure for all 13 agent roles |
 | **Document System** | Frozen/Evolution/ADR document layers with design-context skill for auto-loading |
@@ -456,11 +456,11 @@ Agent --name "Backend-Python-1" \
 | **技能系统** | 27 个集成技能，全部配置高级 Frontmatter |
 | **后端双栈** 🆕 | Java + Python 后端（SpringBoot + Prisma + LLM + VLM + Workflow） |
 | **GAN Harness** 🆕 | Planner→Generator→Evaluator 循环，质量驱动开发 |
-| **Hook 强化** 🆕 | 14 个 Hooks 覆盖全生命周期（提交质量、配置保护、编辑累积器） |
+| **Hook 强化** 🆕 | 16 个 Hooks 覆盖全生命周期（提交质量、配置保护、编辑累积器） |
 | **持续学习** 🆕 | 基于本能的学习系统，置信度评分 |
 | **Frontmatter 配置** | `effort`、`paths`、`allowed-tools`、`user-invocable` 精准控制技能调用 |
 | **UI 风格选择** | 60 个品牌设计模板，基于场景自动匹配 |
-| **技术栈** | React + TypeScript + Vite（前端固化），Java + SpringBoot + Python（后端） |
+| **技术栈** | React + TypeScript + Vite 6（前端固化），Java + SpringBoot + Python（后端） |
 | **SSOT 架构** | `automation/agent-orchestration.json` 单一真相源 |
 | **角色 SOP** | 全部 13 个角色标准化操作流程 |
 | **文档体系** | 冻结层/演化层/ADR 三层文档体系 |
@@ -704,7 +704,7 @@ QUICKSTART.md                        # 5 分钟快速开始
 |------|------|---------|
 | 框架 | React 19+ | Vue、Angular、Svelte |
 | 语言 | TypeScript (strict) | - |
-| 构建工具 | Vite | Webpack |
+| 构建工具 | Vite 6 | Webpack |
 | 包管理 | pnpm | npm、yarn |
 | 测试 | Vitest | Jest |
 | Lint | ESLint flat config (antfu) | - |
