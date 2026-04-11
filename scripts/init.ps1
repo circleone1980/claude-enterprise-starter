@@ -220,6 +220,14 @@ line-length = 120
             }
         }
     }
+
+    # 生成 workspace/README.md（项目文档模板）
+    $WorkspaceReadme = Join-Path $WorkspacePath "README.md"
+    $WorkspaceReadmeTemplate = Join-Path $TemplateDir "docs\templates\workspace-readme.md"
+    if (-not (Test-Path $WorkspaceReadme) -and (Test-Path $WorkspaceReadmeTemplate)) {
+        Copy-Item -Path $WorkspaceReadmeTemplate -Destination $WorkspaceReadme -Force
+        Write-Host "  ✓ workspace/README.md 已创建（含项目文档模板）" -ForegroundColor Green
+    }
 } else {
     # 传统模式
     if (Test-Path $DocsTemplatesDir) {

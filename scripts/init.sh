@@ -232,6 +232,14 @@ PYEOF
         fi
         ;;
     esac
+
+    # 生成 workspace/README.md（项目文档模板）
+    if [ ! -f "$WORKSPACE_DIR/README.md" ]; then
+      if [ -f "$TEMPLATE_DIR/docs/templates/workspace-readme.md" ]; then
+        cp "$TEMPLATE_DIR/docs/templates/workspace-readme.md" "$WORKSPACE_DIR/README.md"
+        echo -e "${GREEN}  ✓ workspace/README.md 已创建（含项目文档模板）${NC}"
+      fi
+    fi
 else
     # 传统模式：文档放在项目根目录
     if [ -d "$TEMPLATE_DIR/docs/templates" ]; then

@@ -12,6 +12,89 @@
 [![Version](https://img.shields.io/badge/Version-2.5.0-green)](./CLAUDE.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
+### Core Architecture
+
+**What It Does**: This is not an application framework — it's a **development engine configuration layer** for Claude Code. It provides AI Agent orchestration, quality gates, automated pipelines, and production-ready configurations that let Claude Code autonomously develop enterprise-grade projects.
+
+**How It Works**: Projects go through a 5-phase pipeline (Phase 0: Init → Phase 1: Requirements → Phase 2: Development → Phase 3: Testing → Phase 4: UX Review → Phase 5: Deployment), with each phase requiring quality gate passage. A separate GAN Harness loop (Planner → Generator → Evaluator) handles quality-driven feature development.
+
+**Key Metrics**: 13 Agent roles | 27 Skills | 16 Hook scripts | 9 Rule files | 7 Automation configs
+
+### Module Dependency Topology
+
+```mermaid
+graph TB
+    CLAUDE["CLAUDE.md — System Instructions"]
+    SETTINGS["settings.json — Permissions + Hooks + Rage Mode"]
+    MCP[".mcp.json — MCP Servers"]
+
+    subgraph Rules["Rules (9)"]
+        R0["00_global"]
+        R1["01_development"]
+        R2["02_database"]
+        R3["03_quality"]
+        R4["04_agent_team"]
+        R5["05_security"]
+        R6["06_document_lifecycle"]
+        R7["07_skill_triggers"]
+        R8["08_code_comments"]
+    end
+
+    subgraph Skills["Skills (27)"]
+        S_REQ["Requirements: product-requirements, sprint-planning"]
+        S_DEV["Development: tdd, antfu, springboot-*"]
+        S_UI["UI: ui-ux-pro-max, ui-style-selector"]
+        S_ARCH["Architecture: writing-plans, code-review"]
+        S_AI["AI/ML: llm, vlm, workflow-engine"]
+        S_GAN["GAN: gan-harness"]
+    end
+
+    subgraph Agents["Agent Roles (13)"]
+        A_PM["PM / PO"]
+        A_ARCH["Architect"]
+        A_UI["UI Designer"]
+        A_FE["Frontend x3"]
+        A_BE_J["Backend-Java x2"]
+        A_BE_P["Backend-Python x1"]
+        A_QA["QA"]
+        A_DO["DevOps"]
+        A_PX["Product Experience"]
+        A_GAN["GAN Planner / Generator / Evaluator"]
+    end
+
+    subgraph Hooks["Hook Scripts (16)"]
+        H_SAFETY["safety-guard"]
+        H_PHASE["phase-controller"]
+        H_QUALITY["commit-quality, console-warn"]
+        H_AUTO["auto-github-push, agent-health-monitor, auto-start-agents"]
+        H_AC["ac-gate-check, ac-status-update"]
+        H_STOP["format-typecheck, doc-sync-check, session-evaluate"]
+    end
+
+    subgraph Automation["Automation (7 configs)"]
+        ORCH["agent-orchestration.json — SSOT"]
+        RAGE["rage-mode.json"]
+        GATES["phase-gates.json"]
+        FGATES["feature-gates.json"]
+        AC["ac-tracker.json"]
+        WS["workspace.json"]
+        GH["github-integration.json"]
+    end
+
+    CLAUDE --> Rules
+    CLAUDE --> Automation
+    SETTINGS --> Hooks
+    ORCH --> Agents
+    ORCH --> Skills
+    Agents --> Skills
+    GATES --> H_PHASE
+    FGATES --> H_AC
+    H_AUTO --> RAGE
+    MCP -.-> A_UI
+    MCP -.-> A_QA
+    MCP -.-> A_DO
+```
+
 ### Features
 
 | Feature | Description |
@@ -37,6 +120,44 @@
 | **Team Cleanup** 🆕 | `team-manager.sh` — resolves 5 TeamDelete bugs, safe cleanup workflow |
 | **Codex Dual-Model** 🆕 | GLM-5 for development + GPT-5.4 for review via Codex integration |
 | **Env Optimization** 🆕 | `AUTOCOMPACT_PCT=80`, `MAX_THINKING_TOKENS=16000` for optimal performance |
+
+### Technology Stack (Inferred from Configuration)
+
+| Category | Technology | Source |
+|----------|-----------|--------|
+| Frontend Framework | React 19 + TypeScript (strict) | `CLAUDE.md` Section I-B |
+| Frontend Build | Vite 6 + pnpm 9 | `CLAUDE.md` Section I-B |
+| Frontend Test | Vitest + React Testing Library | `CLAUDE.md` Section I-B |
+| Backend Java | Spring Boot 3.x + JPA + Maven | `CLAUDE.md` Section I-B |
+| Backend Python | Python 3.12+ + Prisma + FastAPI | `CLAUDE.md` Section I-B |
+| AI/ML | OpenAI SDK + Anthropic SDK | `CLAUDE.md` Section I-B |
+| Workflow Engine | Flowable (Java) / Prefect (Python) | `CLAUDE.md` Section I-B |
+| MCP Tools | GitHub / Figma / Playwright / Context7 | `.mcp.json` |
+| Hook Runtime | Node.js | `hooks/scripts/*.js` |
+| Config Validation | Node.js | `scripts/validate-config.js` |
+| Code Review | GLM-5 (dev) + GPT-5.4 via Codex (review) | `CLAUDE.md` Section XIII-C |
+| Lint / Format | ESLint flat config (antfu style) | `CLAUDE.md` Section I-B |
+
+### Navigation Guide
+
+> Want to modify something? Here's where to look.
+
+| Goal | Key Files |
+|------|-----------|
+| Add a new Agent role | `agents/` (new `.md`) + `automation/agent-orchestration.json` + `CLAUDE.md` Section X & XI |
+| Add a new Skill | `skills/<name>/SKILL.md` + `CLAUDE.md` Section XI |
+| Change development rules | `rules/*.md` (corresponding file) |
+| Adjust quality gate conditions | `automation/phase-gates.json` + `hooks/scripts/phase-controller.js` |
+| Change frontend tech stack | `rules/01_development.md` + `CLAUDE.md` Section I-B (requires ADR) |
+| Adjust Hook behavior | `hooks/hooks.json` (definitions) + `hooks/scripts/*.js` (implementations) |
+| Change phase pipeline flow | `automation/rage-mode.json` + `automation/agent-orchestration.json` |
+| Modify permissions / security | `settings.json` permissions + `rules/05_security.md` |
+| Add a new MCP tool | `.mcp.json` + corresponding `agents/*.md` (declare MCP dependency) |
+| Change code comment standards | `rules/08_code_comments.md` + `templates/code-headers/` |
+| Adjust AC acceptance flow | `automation/feature-gates.json` + `automation/ac-tracker.json` + `scripts/ac-*.js` |
+| Change UI design workflow | `skills/ui-style-selector/` + `tips/UI设计风格/` |
+| Configure workspace path | `automation/workspace.json` + `hooks/scripts/lib/workspace-resolver.js` |
+| Dual-model Codex integration | `CLAUDE.md` Section XIII-C + Codex plugin hooks |
 
 ### Quick Start
 
@@ -445,6 +566,89 @@ Agent --name "Backend-Python-1" \
 
 > 🚀 企业级 Claude Code 配置模板，包含 Agent Team 编排、狂暴模式自动化、TDD 工作流和生产级配置。
 
+### 项目架构
+
+**这个项目是什么**: 这不是一个应用框架，而是一套 **Claude Code 的开发引擎配置层**。它提供 AI Agent 编排、质量门禁、自动化流水线和生产级配置，让 Claude Code 能够自主开发企业级项目。
+
+**工作原理**: 项目经历 5 阶段流水线（Phase 0: 初始化 → Phase 1: 需求分析 → Phase 2: 开发实现 → Phase 3: 测试验证 → Phase 4: 产品体验 → Phase 5: 部署发布），每个阶段必须通过质量门禁才能推进。独立的 GAN Harness 循环（Planner → Generator → Evaluator）负责质量驱动的功能开发。
+
+**关键指标**: 13 个 Agent 角色 | 27 个技能 | 16 个 Hook 脚本 | 9 个规则文件 | 7 个自动化配置
+
+### 模块依赖拓扑
+
+```mermaid
+graph TB
+    CLAUDE["CLAUDE.md — 系统指令"]
+    SETTINGS["settings.json — 权限 + Hook + 狂暴模式"]
+    MCP[".mcp.json — MCP 服务器"]
+
+    subgraph Rules["规则系统 (9)"]
+        R0["00_global"]
+        R1["01_development"]
+        R2["02_database"]
+        R3["03_quality"]
+        R4["04_agent_team"]
+        R5["05_security"]
+        R6["06_document_lifecycle"]
+        R7["07_skill_triggers"]
+        R8["08_code_comments"]
+    end
+
+    subgraph Skills["技能系统 (27)"]
+        S_REQ["需求类: product-requirements, sprint-planning"]
+        S_DEV["开发类: tdd, antfu, springboot-*"]
+        S_UI["UI类: ui-ux-pro-max, ui-style-selector"]
+        S_ARCH["架构类: writing-plans, code-review"]
+        S_AI["AI类: llm, vlm, workflow-engine"]
+        S_GAN["GAN类: gan-harness"]
+    end
+
+    subgraph Agents["Agent 角色 (13)"]
+        A_PM["PM / PO"]
+        A_ARCH["架构师"]
+        A_UI["UI 设计师"]
+        A_FE["前端 x3"]
+        A_BE_J["Java 后端 x2"]
+        A_BE_P["Python 后端 x1"]
+        A_QA["QA"]
+        A_DO["DevOps"]
+        A_PX["产品体验师"]
+        A_GAN["GAN 规划/生成/评估"]
+    end
+
+    subgraph Hooks["Hook 脚本 (16)"]
+        H_SAFETY["safety-guard"]
+        H_PHASE["phase-controller"]
+        H_QUALITY["commit-quality, console-warn"]
+        H_AUTO["auto-github-push, agent-health-monitor, auto-start-agents"]
+        H_AC["ac-gate-check, ac-status-update"]
+        H_STOP["format-typecheck, doc-sync-check, session-evaluate"]
+    end
+
+    subgraph Automation["自动化配置 (7)"]
+        ORCH["agent-orchestration.json — SSOT"]
+        RAGE["rage-mode.json"]
+        GATES["phase-gates.json"]
+        FGATES["feature-gates.json"]
+        AC["ac-tracker.json"]
+        WS["workspace.json"]
+        GH["github-integration.json"]
+    end
+
+    CLAUDE --> Rules
+    CLAUDE --> Automation
+    SETTINGS --> Hooks
+    ORCH --> Agents
+    ORCH --> Skills
+    Agents --> Skills
+    GATES --> H_PHASE
+    FGATES --> H_AC
+    H_AUTO --> RAGE
+    MCP -.-> A_UI
+    MCP -.-> A_QA
+    MCP -.-> A_DO
+```
+
 ### 核心功能
 
 | 功能 | 说明 |
@@ -470,6 +674,44 @@ Agent --name "Backend-Python-1" \
 | **Team 清除机制** 🆕 | `team-manager.sh` — 解决 5 个 TeamDelete Bug，安全清理工作流 |
 | **Codex 双模型** 🆕 | GLM-5 开发 + GPT-5.4 审查的 Codex 双模型集成 |
 | **环境变量优化** 🆕 | `AUTOCOMPACT_PCT=80`、`MAX_THINKING_TOKENS=16000` 性能优化 |
+
+### 技术栈全景（从配置文件推断）
+
+| 类别 | 技术 | 来源 |
+|------|------|------|
+| 前端框架 | React 19 + TypeScript (strict) | `CLAUDE.md` 一-B 节 |
+| 前端构建 | Vite 6 + pnpm 9 | `CLAUDE.md` 一-B 节 |
+| 前端测试 | Vitest + React Testing Library | `CLAUDE.md` 一-B 节 |
+| 后端 Java | Spring Boot 3.x + JPA + Maven | `CLAUDE.md` 一-B 节 |
+| 后端 Python | Python 3.12+ + Prisma + FastAPI | `CLAUDE.md` 一-B 节 |
+| AI/ML | OpenAI SDK + Anthropic SDK | `CLAUDE.md` 一-B 节 |
+| 工作流引擎 | Flowable (Java) / Prefect (Python) | `CLAUDE.md` 一-B 节 |
+| MCP 工具 | GitHub / Figma / Playwright / Context7 | `.mcp.json` |
+| Hook 运行时 | Node.js | `hooks/scripts/*.js` |
+| 配置验证 | Node.js | `scripts/validate-config.js` |
+| 代码审查 | GLM-5（开发）+ GPT-5.4 via Codex（审查） | `CLAUDE.md` 十三-C 节 |
+| Lint / 格式化 | ESLint flat config (antfu 风格) | `CLAUDE.md` 一-B 节 |
+
+### 导航指南
+
+> 想修改某个功能？看这里。
+
+| 目标 | 重点关注 |
+|------|---------|
+| 添加新 Agent 角色 | `agents/` 新建 `.md` + `automation/agent-orchestration.json` 添加角色 + `CLAUDE.md` 十、十一节更新 |
+| 添加新技能 | `skills/<name>/SKILL.md` + `CLAUDE.md` 十一节更新 |
+| 修改开发规则 | `rules/*.md` 对应文件 |
+| 调整质量门禁条件 | `automation/phase-gates.json` + `hooks/scripts/phase-controller.js` |
+| 修改前端技术栈 | `rules/01_development.md` + `CLAUDE.md` 一-B 节（需 ADR） |
+| 调整 Hook 行为 | `hooks/hooks.json`（定义）+ `hooks/scripts/*.js`（实现） |
+| 调整阶段流程 | `automation/rage-mode.json` + `automation/agent-orchestration.json` |
+| 修改权限/安全策略 | `settings.json` permissions + `rules/05_security.md` |
+| 添加新的 MCP 工具 | `.mcp.json` + 对应 `agents/*.md` 中声明 MCP 依赖 |
+| 修改注释/代码规范 | `rules/08_code_comments.md` + `templates/code-headers/` |
+| 调整 AC 验收流程 | `automation/feature-gates.json` + `automation/ac-tracker.json` + `scripts/ac-*.js` |
+| 修改 UI 设计流程 | `skills/ui-style-selector/` + `tips/UI设计风格/` |
+| 工作区路径配置 | `automation/workspace.json` + `hooks/scripts/lib/workspace-resolver.js` |
+| Codex 双模型集成 | `CLAUDE.md` 十三-C 节 + Codex 插件钩子 |
 
 ### 快速开始
 
