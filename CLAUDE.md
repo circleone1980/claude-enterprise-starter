@@ -664,5 +664,5 @@ bash scripts/team-manager.sh nuke     # 清除所有非 default 团队
 
 *模板版本: 2.6.0*
 *最后更新: 2026-04-11*
-*重大变更: GStack Phase 0.5 产品设计层集成（15 Agent + 38 Skills）*
+*重大变更: GStack Phase 0.5 产品设计层集成（15 Agent + 37 Skills）*
 *基于: [DataCamp CLAUDE.md Guide](https://www.datacamp.com/tutorial/writing-the-best-claude-md), [eesel AI Best Practices](https://www.eesel.ai/blog/claude-code-best-practices), [FlorianBruniaux Ultimate Guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide)*

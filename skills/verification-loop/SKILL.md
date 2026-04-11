@@ -1,169 +1,126 @@
 ---
 name: verification-loop
-description: |
-  综合验证系统 — 代码变更后或 PR 前执行 Build→TypeCheck→Lint→Tests→Security→DiffReview。
-  TRIGGER when: 完成功能开发、提交前验证、PR 审查前。
+description: "A comprehensive verification system for Claude Code sessions."
 origin: ECC
-effort: medium
 ---
 
-# Verification Loop（验证循环）
+# Verification Loop Skill
 
-代码变更后的综合验证系统。
+A comprehensive verification system for Claude Code sessions.
 
-## 触发场景
+## When to Use
 
-- 完成一个功能/模块的开发
-- 准备提交代码或创建 PR
-- 合并前质量检查
-- 每 15 分钟自动验证（长时间会话）
+Invoke this skill:
+- After completing a feature or significant code change
+- Before creating a PR
+- When you want to ensure quality gates pass
+- After refactoring
 
-## 7 阶段验证流程
+## Verification Phases
 
-### Phase 1: Build（构建）
-
+### Phase 1: Build Verification
 ```bash
-# 前端
-pnpm build
-
-# Java 后端
-mvn compile -T 4
-
-# Python 后端
-python -m build  # 或直接验证 import
+# Check if project builds
+npm run build 2>&1 | tail -20
+# OR
+pnpm build 2>&1 | tail -20
 ```
 
-**停止条件**: 构建失败 → 立即修复，不继续后续阶段
+If build fails, STOP and fix before continuing.
 
-### Phase 2: Type Check（类型检查）
-
+### Phase 2: Type Check
 ```bash
-# TypeScript
-npx tsc --noEmit
+# TypeScript projects
+npx tsc --noEmit 2>&1 | head -30
+
+# Python projects
+pyright . 2>&1 | head -30
+```
+
+Report all type errors. Fix critical ones before continuing.
+
+### Phase 3: Lint Check
+```bash
+# JavaScript/TypeScript
+npm run lint 2>&1 | head -30
 
 # Python
-pyright .  # 或 mypy .
-
-# Java
-mvn compile  # Maven 编译即类型检查
+ruff check . 2>&1 | head -30
 ```
 
-**停止条件**: Critical 类型错误必须修复
-
-### Phase 3: Lint（代码规范）
-
+### Phase 4: Test Suite
 ```bash
-# 前端
-pnpm lint
+# Run tests with coverage
+npm run test -- --coverage 2>&1 | tail -50
 
-# Python
-ruff check .
-
-# Java
-mvn spotless:check  # 或 checkstyle:check
+# Check coverage threshold
+# Target: 80% minimum
 ```
 
-**处理方式**: 报告 Warning，Critical 级别必须修复
+Report:
+- Total tests: X
+- Passed: X
+- Failed: X
+- Coverage: X%
 
-### Phase 4: Tests（测试）
-
+### Phase 5: Security Scan
 ```bash
-# 前端
-pnpm test -- --coverage
+# Check for secrets
+grep -rn "sk-" --include="*.ts" --include="*.js" . 2>/dev/null | head -10
+grep -rn "api_key" --include="*.ts" --include="*.js" . 2>/dev/null | head -10
 
-# Python
-pytest --cov --cov-report=term-missing
-
-# Java
-mvn test -T 4
+# Check for console.log
+grep -rn "console.log" --include="*.ts" --include="*.tsx" src/ 2>/dev/null | head -10
 ```
 
-**目标**: 覆盖率 >80%
-
-### Phase 5: Security（安全扫描）
-
-扫描模式：
-- `sk-`, `api_key`, `secret`, `password` 等密钥泄露
-- `console.log`, `print()`, `System.out.println` 等调试语句
-- `.env` 文件是否被意外包含
-
+### Phase 6: Diff Review
 ```bash
-# 快速检查
-grep -rn "console\.\(log\|debug\)" --include="*.ts" --include="*.tsx" src/
-grep -rn "sk-\|api_key\|secret_key" --include="*.ts" --include="*.py" --include="*.java" .
-```
-
-### Phase 6: Diff Review（变更审查）
-
-```bash
+# Show what changed
 git diff --stat
-git diff --name-only
+git diff HEAD~1 --name-only
 ```
 
-审查每个变更文件：
-- 变更是否合理
-- 是否有遗漏的文件
-- 是否有不应该提交的文件
+Review each changed file for:
+- Unintended changes
+- Missing error handling
+- Potential edge cases
 
-### Phase 7: AC Coverage（验收标准覆盖）
+## Output Format
 
-检查本次变更是否满足关联的验收标准。
-
-```bash
-# 查看变更文件关联的 AC 状态
-node scripts/ac-coverage-report.js --changed-files
-```
-
-**执行逻辑**:
-1. 读取 `automation/ac-tracker.json`
-2. 从 `git diff --name-only` 获取变更文件列表
-3. 通过 AC 的 `testFile` 字段将变更映射到 Feature
-4. 检查每个关联 AC 的状态
-
-**停止条件**: 有 P0 AC 未 passed → 必须补充测试或修复实现
-
-**输出示例**:
-```
-Phase 7: AC Coverage ✅ PASS (4/4 ACs verified)
-  FEAT-001:
-    AC-F001-01: ✅ passed (test: auth.spec.ts:15)
-    AC-F001-02: ✅ passed (test: auth.spec.ts:32)
-  FEAT-002:
-    AC-F002-01: ⚠️ verified (no test file mapped)
-    AC-F002-02: ❌ draft (test missing)
-```
-
-**AC 状态说明**:
-| 状态 | 含义 | 验证动作 |
-|------|------|---------|
-| `draft` | AC 已定义但未开始 | 检查是否需要开发 |
-| `approved` | AC 已审批 | 检查是否有开发任务 |
-| `test_written` | 测试已编写 | 运行测试验证 |
-| `verified` | AC 已验证通过 | 确认无回归 |
-| `passed` | AC 最终通过 | 无需额外动作 |
-| `failed` | AC 验证失败 | 必须修复 |
-
-## 输出格式
+After running all phases, produce a verification report:
 
 ```
-═══════════════════════════════════════════════════════
 VERIFICATION REPORT
-═══════════════════════════════════════════════════════
-Phase 1: Build        ✅ PASS (0 errors)
-Phase 2: Type Check   ✅ PASS (0 errors)
-Phase 3: Lint         ⚠️  WARNING (3 warnings)
-Phase 4: Tests        ✅ PASS (42/42 tests, 87% coverage)
-Phase 5: Security     ✅ PASS (0 issues)
-Phase 6: Diff Review  ✅ PASS (5 files changed)
-Phase 7: AC Coverage  ✅ PASS (4/4 ACs verified)
-───────────────────────────────────────────────────────
-OVERALL: ✅ READY FOR COMMIT
-═══════════════════════════════════════════════════════
+==================
+
+Build:     [PASS/FAIL]
+Types:     [PASS/FAIL] (X errors)
+Lint:      [PASS/FAIL] (X warnings)
+Tests:     [PASS/FAIL] (X/Y passed, Z% coverage)
+Security:  [PASS/FAIL] (X issues)
+Diff:      [X files changed]
+
+Overall:   [READY/NOT READY] for PR
+
+Issues to Fix:
+1. ...
+2. ...
 ```
 
-## 持续模式
+## Continuous Mode
 
-长时间会话中，建议每 15 分钟或每次重大变更后运行验证：
+For long sessions, run verification every 15 minutes or after major changes:
+
+```markdown
+Set a mental checkpoint:
+- After completing each function
+- After finishing a component
+- Before moving to next task
+
+Run: /verify
 ```
-/verify — 手动触发验证循环
-```
+
+## Integration with Hooks
+
+This skill complements PostToolUse hooks but provides deeper verification.
+Hooks catch issues immediately; this skill provides comprehensive review.

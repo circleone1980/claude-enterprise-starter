@@ -9,11 +9,13 @@
 | 代码 | 说明 | 许可证要求 |
 |------|------|-----------|
 | `ECC` | [everything-claude-code](https://github.com/affaan-m/everything-claude-code) by Affaan Mustafa | MIT — 保留版权声明 |
-| `superpowers` | [Superpowers Plugin](https://github.com/anthropics/superpowers) | 参考原项目许可 |
-| `antfu` | [Anthony Fu's Skills](https://github.com/antfu/skills) | MIT |
-| `vercel` | [Vercel Engineering](https://vercel.com) | MIT |
-| `prisma` | [Prisma](https://www.prisma.io) | MIT |
+| `superpowers` | [Superpowers Plugin](https://github.com/anthropics/superpowers) by Anthropic | 参考原项目许可 |
 | `gstack` | [GStack](https://github.com/garrytan/gstack) by Garry Tan | MIT |
+| `claude-plugins-official` | [Anthropic Official Plugins](https://github.com/anthropics/claude-plugins-official) | 参考原项目许可 |
+| `antfu` | [Anthony Fu's Skills](https://github.com/antfu/skills) | MIT |
+| `prisma` | [Prisma](https://www.prisma.io) | MIT |
+| `ui-ux-pro-max-skill` | UI/UX Pro Max Plugin | 参考原项目许可 |
+| `planning-with-files` | Planning with Files Plugin | 参考原项目许可 |
 | `custom` | 本项目自建 | 本项目许可 |
 
 ---
@@ -22,65 +24,70 @@
 
 ### ECC 来源
 
-| Skill | Origin | 已标注 | Adapted | 说明 |
-|-------|--------|--------|---------|------|
-| springboot-patterns | ECC | ✅ | ✅ | SpringBoot 架构模式 |
-| springboot-tdd | ECC | ✅ | ✅ | SpringBoot TDD |
-| springboot-security | ECC | ✅ | ✅ | SpringBoot 安全 |
-| jpa-patterns | ECC | ✅ | ✅ | JPA 数据访问模式 |
-| java-coding-standards | ECC | ✅ | ✅ | Java 编码规范 |
-| verification-loop | ECC | ✅ | ✅ | 6 阶段验证循环 |
-| search-first | ECC | ✅ | ✅ | 编码前先研究 |
-| security-review | ECC | ✅ | ✅ | 10 域安全审查 |
-| strategic-compact | ECC | ✅ | ✅ | 战略性上下文压缩 |
-| continuous-learning | ECC | ✅ | ✅ | 持续学习本能系统 |
-| tdd | ECC | ❌→✅ | ✅ | TDD 垂直切片模式 |
-| tdd-workflow | ECC | ❌→✅ | ✅ | TDD Red-Green-Refactor |
-| code-review | ECC | ❌→✅ | ✅ | 4 维度代码审查 |
-| product-requirements | ECC | ❌→✅ | ✅ | 需求分析 + PRD 生成 |
+| Skill | Origin | 上游名称 | 说明 |
+|-------|--------|---------|------|
+| springboot-patterns | ECC | springboot-patterns | SpringBoot 架构模式 |
+| springboot-tdd | ECC | springboot-tdd | SpringBoot TDD |
+| springboot-security | ECC | springboot-security | SpringBoot 安全 |
+| jpa-patterns | ECC | jpa-patterns | JPA 数据访问模式 |
+| java-coding-standards | ECC | java-coding-standards | Java 编码规范 |
+| verification-loop | ECC | verification-loop | 6 阶段验证循环 |
+| search-first | ECC | search-first | 编码前先研究 |
+| security-review | ECC | security-review | 10 域安全审查 |
+| strategic-compact | ECC | strategic-compact | 战略性上下文压缩 |
+| continuous-learning | ECC | continuous-learning | 持续学习本能系统 |
+| tdd-workflow | ECC | tdd-workflow | TDD Red-Green-Refactor |
+| tdd | ECC | tdd-workflow | TDD（与 tdd-workflow 同源） |
+| gan-harness | ECC | gan-style-harness | GAN 生成对抗网络式开发 |
+| product-requirements | ECC | product-capability | 产品能力/需求规划 |
+| ui-style-selector | ECC | design-system | 设计系统/视觉一致性 |
+| user-onboarding | ECC | codebase-onboarding | 开发者 onboarding |
+| workflow-engine | ECC | dmux-workflows | 多 Agent 工作流编排 |
 
 ### Superpowers 来源
 
-| Skill | Origin | 已标注 | Adapted | 说明 |
-|-------|--------|--------|---------|------|
-| writing-plans | superpowers | ❌→✅ | ✅ | 架构设计 + 功能拆解 |
+| Skill | Origin | 说明 |
+|-------|--------|------|
+| writing-plans | superpowers | 实施计划编写指南 |
 
 ### GStack 来源
 
-| Skill | Origin | 已标注 | Adapted | 说明 |
-|-------|--------|--------|---------|------|
-| office-hours | gstack | ✅ | ✅ | YC 6 问挑战假设，输出 OFFICE_HOURS.md |
-| design-consultation | gstack | ✅ | ✅ | 竞品研究+设计系统，输出 DESIGN.md |
-| design-shotgun | gstack | ✅ | ✅ | 4-6 UI 变体+品味记忆 |
-| design-html | gstack | ✅ | ✅ | 模型转生产级 HTML/CSS |
-| autoplan | gstack | ✅ | ✅ | 自动 CEO→设计→工程→DX 审查 |
-| plan-ceo-review | gstack | ✅ | ✅ | CEO 范围挑战（4 种模式） |
-| plan-design-review | gstack | ✅ | ✅ | 设计评分 6 维度 0-10 |
-| plan-eng-review | gstack | ✅ | ✅ | 工程架构审查 |
-| plan-devex-review | gstack | ✅ | ✅ | 开发者体验审查 |
-| gstack-bridge | custom | ✅ | ✅ | Phase 0.5→1 交接协议（本项目自建，受 gstack 启发） |
+| Skill | Origin | 说明 |
+|-------|--------|------|
+| office-hours | gstack | YC 6 问挑战假设 |
+| design-consultation | gstack | 竞品研究+设计系统 |
+| design-html | gstack | 设计转生产级 HTML/CSS |
+| design-shotgun | gstack | 多 UI 变体+品味记忆 |
+| autoplan | gstack | 自动 CEO→设计→工程→DX 审查 |
+| plan-ceo-review | gstack | CEO 范围挑战 |
+| plan-design-review | gstack | 设计评分 6 维度 |
+| plan-eng-review | gstack | 工程架构审查 |
+| plan-devex-review | gstack | 开发者体验审查 |
+| gstack-bridge | gstack | Phase 0.5→1 交接协议 |
 
-### 外部来源（有明确作者）
+### claude-plugins-official 来源
 
-| Skill | Origin | Author | Source | License | Adapted |
-|-------|--------|--------|--------|---------|----------| 
-| antfu | antfu | Anthony Fu | [GitHub](https://github.com/antfu/skills/tree/main/skills/antfu) | MIT | ✅ |
-| react-best-practices | vercel | Vercel Engineering | — | MIT | ✅ |
-| prisma-database-setup | prisma | Prisma | — | MIT | ✅ |
+| Skill | Origin | 上游名称 | 说明 |
+|-------|--------|---------|------|
+| code-review | claude-plugins-official | code-review | 官方 PR 代码审查 |
+| react-best-practices | claude-plugins-official | frontend-design | 官方前端设计 |
+
+### 其他外部来源
+
+| Skill | Origin | 说明 |
+|-------|--------|------|
+| antfu | antfu | Anthony Fu 工具链惯例 |
+| prisma-database-setup | prisma | Prisma ORM 配置指南 |
+| ui-ux-pro-max | ui-ux-pro-max-skill | 综合 UI 设计智能 |
+| sprint-planning | planning-with-files | 文件式任务规划 |
 
 ### 本项目自建
 
 | Skill | Origin | 说明 |
 |-------|--------|------|
-| ui-ux-pro-max | custom | 161 色板 + 99 UX 准则的综合 UI 设计智能 |
-| sprint-planning | custom | Sprint 计划和迭代管理 |
-| user-onboarding | custom | 产品首次体验设计 |
-| ui-style-selector | custom | 60 品牌 UI 风格选择器 |
 | design-context | custom | 角色级设计约束加载器 |
-| gan-harness | custom | GAN 生成对抗网络式开发（概念来自 ECC） |
 | llm-integration | custom | LLM API 集成模式 |
 | vlm-integration | custom | VLM 视觉语言模型集成 |
-| workflow-engine | custom | 工作流编排模式 |
 
 ---
 
