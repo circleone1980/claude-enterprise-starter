@@ -97,7 +97,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── strategic-compact/           # Strategic context compression 🆕
 │   ├── gan-harness/                 # GAN development loop 🆕
 │   └── continuous-learning/         # Instinct-based learning 🆕
-├── agents/                          # Agent definitions with SOP (14 roles)
+├── agents/                          # Agent definitions with SOP (13 roles)
 │   ├── pm.md                        # Project Manager
 │   ├── po.md                        # Product Owner
 │   ├── architect.md                 # Architect
@@ -530,7 +530,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── strategic-compact/           # 战略性上下文压缩 🆕
 │   ├── gan-harness/                 # GAN 开发循环 🆕
 │   └── continuous-learning/         # 基于本能的持续学习 🆕
-├── agents/                          # 代理定义（14 个角色，各含 SOP）
+├── agents/                          # 代理定义（13 个角色，各含 SOP）
 │   ├── pm.md                        # 项目经理
 │   ├── po.md                        # 产品负责人
 │   ├── architect.md                 # 架构师

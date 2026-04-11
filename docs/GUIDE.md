@@ -25,7 +25,7 @@ Claude Enterprise Starter 是一个**企业级 Claude Code 配置模板**，将 
 ### 核心理念
 
 ```
-AI Agent Team（9 角色并行）
+AI Agent Team（13 角色并行）
   + TDD（测试驱动开发）
   + Quality Gates（质量门禁）
   + Document System（冻结/演化/ADR 三层文档）
