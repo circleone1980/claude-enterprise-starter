@@ -5,7 +5,8 @@
 # 用法:
 #   bash scripts/orchestrate.sh --phase all      # 全流程（Phase 0 → 5）
 #   bash scripts/orchestrate.sh --phase 1        # 仅 Phase 1（需求分析）
-#   bash scripts/orchestrate.sh --phase 2        # 仅 Phase 2（开发实现）
+#   bash scripts/orchestrate.sh --phase 0.5a     # GStack Think 阶段
+#   bash scripts/orchestrate.sh --phase 0.5b     # GStack Plan 阶段
 #   bash scripts/orchestrate.sh --dry-run        # 干跑模式，输出计划不执行
 #   bash scripts/orchestrate.sh --status         # 查看当前阶段状态
 #
@@ -27,6 +28,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 SSOT="$PROJECT_ROOT/automation/agent-orchestration.json"
 RAGE_MODE="$PROJECT_ROOT/automation/rage-mode.json"
 PHASE_GATES="$PROJECT_ROOT/automation/phase-gates.json"
+FEATURE_GATES="$PROJECT_ROOT/automation/feature-gates.json"
 PHASE_LOG="$PROJECT_ROOT/.claude/logs/current-phase.json"
 TEAM_MANAGER="$PROJECT_ROOT/scripts/team-manager.sh"
 
@@ -35,12 +37,14 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
+MAGENTA='\033[0;35m'
 NC='\033[0m'
 
 log_info()  { echo -e "${CYAN}[orchestrate]${NC} $1"; }
 log_ok()    { echo -e "${GREEN}[orchestrate]${NC} $1"; }
 log_warn()  { echo -e "${YELLOW}[orchestrate]${NC} $1"; }
 log_error() { echo -e "${RED}[orchestrate]${NC} $1"; }
+log_gstack() { echo -e "${MAGENTA}[gstack]${NC} $1"; }
 
 # --- 解析参数 ---
 PHASE_TARGET="status"
@@ -82,12 +86,20 @@ check_config() {
   fi
 }
 
+# --- 检查 GStack 是否启用 ---
+is_gstack_enabled() {
+  node -e "
+    const ssot = require('$SSOT');
+    console.log(ssot.gstackConfig && ssot.gstackConfig.enabled ? 'true' : 'false');
+  " 2>/dev/null
+}
+
 # --- 获取阶段信息 ---
 get_phase_info() {
   local phase_id="$1"
   node -e "
     const rage = require('$RAGE_MODE');
-    const phase = rage.phases.find(p => p.id === $phase_id);
+    const phase = rage.phases.find(p => String(p.id) === '$phase_id');
     if (phase) {
       console.log(JSON.stringify(phase));
     } else {
@@ -101,7 +113,7 @@ get_phase_agents() {
   local phase_id="$1"
   node -e "
     const rage = require('$RAGE_MODE');
-    const phase = rage.phases.find(p => p.id === $phase_id);
+    const phase = rage.phases.find(p => String(p.id) === '$phase_id');
     console.log(phase ? phase.requiredAgents.join(',') : '');
   " 2>/dev/null
 }
@@ -184,6 +196,27 @@ run_phase() {
   log_ok "Phase $phase_id 指令已生成"
 }
 
+# --- GStack Phase 0.5 执行 ---
+run_gstack_phase() {
+  local phase_id="$1"
+  local enabled
+  enabled=$(is_gstack_enabled)
+
+  if [ "$enabled" != "true" ]; then
+    log_gstack "GStack 未启用，跳过 Phase $phase_id"
+    return 0
+  fi
+
+  run_phase "$phase_id"
+
+  # Phase 0.5b 完成后自动运行 gstack-bridge
+  if [ "$phase_id" = "0.5b" ] && [ "$DRY_RUN" = false ]; then
+    log_gstack "Phase 0.5b 完成，执行 gstack-bridge 交接..."
+    log_gstack "请确认 Design Reviewer 已运行: Skill gstack-bridge"
+    log_gstack "交接完成后将自动进入 Phase 1"
+  fi
+}
+
 # --- 清理上阶段 Team ---
 cleanup_team() {
   local phase_id="$1"
@@ -197,7 +230,7 @@ cleanup_team() {
 save_phase() {
   local phase_id="$1"
   mkdir -p "$(dirname "$PHASE_LOG")"
-  echo "{\"currentPhase\": $phase_id, \"updatedAt\": \"$(date -Iseconds)\"}" > "$PHASE_LOG"
+  echo "{\"currentPhase\": \"$phase_id\", \"updatedAt\": \"$(date -Iseconds)\"}" > "$PHASE_LOG"
 }
 
 # --- 查看状态 ---
@@ -207,6 +240,15 @@ cmd_status() {
   log_info "========================================"
   log_info "  当前项目状态"
   log_info "========================================"
+
+  # GStack 状态
+  local enabled
+  enabled=$(is_gstack_enabled)
+  if [ "$enabled" = "true" ]; then
+    log_gstack "GStack: 已启用 ✓"
+  else
+    log_info "GStack: 未启用（默认）"
+  fi
 
   # 当前阶段
   if [ -f "$PHASE_LOG" ]; then
@@ -222,7 +264,9 @@ cmd_status() {
     const rage = require('$RAGE_MODE');
     const ssot = require('$SSOT');
     const thresholds = ssot.modeThresholds;
+    const enabled = '$enabled' === 'true';
     rage.phases.forEach(p => {
+      if (p.gstackOnly && !enabled) return;
       const agents = p.requiredAgents || [];
       const modes = agents.map(name => {
         const a = ssot.agents[name];
@@ -231,7 +275,8 @@ cmd_status() {
         const total = Object.values(s).reduce((a,b) => a+b, 0);
         return total >= (thresholds.team||6) ? 'Team' : total >= (thresholds.subagentParallel||3) ? 'Parallel' : 'Sequential';
       });
-      console.log('  Phase ' + p.id + ': ' + p.name + ' [' + agents.join(', ') + '] → ' + modes.join(', '));
+      const gstackTag = p.gstackOnly ? ' [GStack]' : '';
+      console.log('  Phase ' + p.id + ': ' + p.name + gstackTag + ' [' + agents.join(', ') + '] → ' + modes.join(', '));
     });
     if (rage.ganPhase) {
       console.log('  GAN: ' + rage.ganPhase.name + ' [' + rage.ganPhase.requiredAgents.join(', ') + '] → Sequential');
@@ -291,16 +336,49 @@ main() {
       cmd_status
       ;;
     all)
-      log_info "全流程模式: Phase 0 → 5"
-      for phase_id in 0 1 2 3 4 5; do
-        run_phase "$phase_id"
-        if [ "$DRY_RUN" = false ]; then
-          save_phase "$phase_id"
-          run_codex_phase_hook "$phase_id"
-          cleanup_team "$((phase_id + 1))"
-        fi
-      done
+      local enabled
+      enabled=$(is_gstack_enabled)
+
+      if [ "$enabled" = "true" ]; then
+        log_info "全流程模式（含 GStack）: Phase 0 → 0.5a → 0.5b → 1 → 2 → 3 → 4 → 5"
+        # Phase 0
+        run_phase "0"
+        [ "$DRY_RUN" = false ] && save_phase "0"
+
+        # Phase 0.5a (Think)
+        run_gstack_phase "0.5a"
+        [ "$DRY_RUN" = false ] && save_phase "0.5a"
+
+        # Phase 0.5b (Plan + Bridge)
+        run_gstack_phase "0.5b"
+        [ "$DRY_RUN" = false ] && save_phase "0.5b"
+
+        # Phase 1-5
+        for phase_id in 1 2 3 4 5; do
+          run_phase "$phase_id"
+          if [ "$DRY_RUN" = false ]; then
+            save_phase "$phase_id"
+            run_codex_phase_hook "$phase_id"
+            cleanup_team "$((phase_id + 1))"
+          fi
+        done
+      else
+        log_info "全流程模式: Phase 0 → 5（GStack 未启用）"
+        for phase_id in 0 1 2 3 4 5; do
+          run_phase "$phase_id"
+          if [ "$DRY_RUN" = false ]; then
+            save_phase "$phase_id"
+            run_codex_phase_hook "$phase_id"
+            cleanup_team "$((phase_id + 1))"
+          fi
+        done
+      fi
       log_ok "全流程完成!"
+      ;;
+    0.5a|0.5b)
+      # GStack 指定阶段
+      run_gstack_phase "$PHASE_TARGET"
+      [ "$DRY_RUN" = false ] && save_phase "$PHASE_TARGET"
       ;;
     gan)
       log_info "GAN 模式"

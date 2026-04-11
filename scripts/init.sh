@@ -3,7 +3,8 @@
 # 使用方法:
 #   ./init.sh                                    # 传统模式：复制到当前目录
 #   ./init.sh /path/to/project                   # 传统模式：复制到指定目录
-#   ./init.sh --workspace [dir] --type [node|java|python]  # workspace 模式
+#   ./init.sh --workspace [dir] --type [type]    # workspace 模式
+#   ./init.sh --gstack                           # 启用 GStack 产品设计层
 
 set -e
 
@@ -12,6 +13,7 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
 NC='\033[0m' # No Color
 
 # 模板目录
@@ -22,6 +24,7 @@ TARGET_DIR="."
 WORKSPACE_MODE=false
 WORKSPACE_DIR="workspace"
 PROJECT_TYPE="node"
+GSTACK_MODE=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -38,6 +41,10 @@ while [[ $# -gt 0 ]]; do
       PROJECT_TYPE="$1"
       shift
       ;;
+    --gstack)
+      GSTACK_MODE=true
+      shift
+      ;;
     --flat)
       WORKSPACE_MODE=false
       shift
@@ -48,12 +55,14 @@ while [[ $# -gt 0 ]]; do
       echo "选项:"
       echo "  --workspace [dir]  启用 workspace 模式 (默认目录: workspace)"
       echo "  --type <type>      项目类型: node|java|python (默认: node)"
+      echo "  --gstack           启用 GStack 产品设计层 (Phase 0.5)"
       echo "  --flat             传统模式（直接复制到目标目录）"
       echo "  -h, --help         显示帮助"
       echo ""
       echo "示例:"
       echo "  ./init.sh                                    # 传统模式"
       echo "  ./init.sh --workspace --type java            # workspace 模式"
+      echo "  ./init.sh --workspace --gstack               # workspace + GStack"
       echo "  ./init.sh /path/to/project --flat            # 传统模式到指定目录"
       exit 0
       ;;
@@ -85,6 +94,9 @@ if [ "$WORKSPACE_MODE" = true ]; then
     echo -e "${GREEN}项目类型: $PROJECT_TYPE${NC}"
 else
     echo -e "${GREEN}模式: 传统（flat）${NC}"
+fi
+if [ "$GSTACK_MODE" = true ]; then
+    echo -e "${MAGENTA}GStack 产品设计层: 已启用${NC}"
 fi
 echo ""
 
@@ -141,6 +153,12 @@ if [ "$WORKSPACE_MODE" = true ]; then
         cp -r "$TEMPLATE_DIR/docs/templates/fixes/"* "$DOCS_BASE/fixes/" 2>/dev/null || true
         cp -r "$TEMPLATE_DIR/docs/templates/sql/"* "$DOCS_BASE/sql/" 2>/dev/null || true
         echo -e "${GREEN}  ✓ workspace/docs/ 已创建${NC}"
+    fi
+
+    # GStack 设计目录
+    if [ "$GSTACK_MODE" = true ]; then
+        mkdir -p "$DOCS_BASE/design/prototype"
+        echo -e "${MAGENTA}  ✓ workspace/docs/design/prototype/ 已创建（GStack 原型输出目录）${NC}"
     fi
 
     # 生成 workspace.json
@@ -255,6 +273,12 @@ else
     else
         echo -e "${YELLOW}  ⚠ 跳过文档目录创建（模板文件不存在）${NC}"
     fi
+
+    # GStack 设计目录（传统模式）
+    if [ "$GSTACK_MODE" = true ]; then
+        mkdir -p docs/design/prototype
+        echo -e "${MAGENTA}  ✓ docs/design/prototype/ 已创建（GStack 原型输出目录）${NC}"
+    fi
 fi
 
 # ─── 本地配置和 .gitignore ────────────────────────
@@ -269,6 +293,16 @@ fi
 if [ -f "$TEMPLATE_DIR/settings.local.json.example" ]; then
     cp "$TEMPLATE_DIR/settings.local.json.example" .claude/settings.local.json
     echo -e "${GREEN}  ✓ 创建 .claude/settings.local.json${NC}"
+fi
+
+# GStack 启用时自动开启
+if [ "$GSTACK_MODE" = true ]; then
+    echo -e "${MAGENTA}  启用 GStack 产品设计层...${NC}"
+    if [ -f "$TEMPLATE_DIR/scripts/gstack-toggle.js" ]; then
+        node "$TEMPLATE_DIR/scripts/gstack-toggle.js" --enable 2>/dev/null && \
+            echo -e "${MAGENTA}  ✓ GStack 已启用（gstackConfig.enabled: true）${NC}" || \
+            echo -e "${YELLOW}  ⚠ GStack 启用失败，请手动运行: node scripts/gstack-toggle.js --enable${NC}"
+    fi
 fi
 
 # 更新 .gitignore
@@ -312,9 +346,20 @@ if [ "$WORKSPACE_MODE" = true ]; then
     echo -e "  automation/workspace.json ${YELLOW}← 工作区配置${NC}"
 fi
 
+if [ "$GSTACK_MODE" = true ]; then
+    echo ""
+    echo -e "${MAGENTA}GStack 模式:${NC}"
+    echo -e "  Phase 0.5 已启用: Think → Plan → Bridge"
+    echo -e "  使用 /office-hours 开始产品构思"
+    echo -e "  或 bash scripts/orchestrate.sh --phase 0.5a"
+fi
+
 echo ""
 echo -e "${BLUE}下一步:${NC}"
 echo -e "  1. 编辑 CLAUDE.local.md 设置个人偏好"
 echo -e "  2. 编辑 .mcp.json 配置 MCP 服务器"
 echo -e "  3. 运行 ${GREEN}/doctor${NC} 验证配置"
+if [ "$GSTACK_MODE" = true ]; then
+    echo -e "  4. 运行 ${MAGENTA}/office-hours${NC} 开始产品设计"
+fi
 echo ""

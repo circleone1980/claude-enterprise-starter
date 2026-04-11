@@ -8,6 +8,8 @@
  *   3. phase-gates.json 的 check 命令语法正确
  *   4. modeSelection 分数计算正确
  *   5. 无硬编码 agent 列表的漂移
+ *   6. AC Tracker 一致性
+ *   7. GStack 配置一致性（仅在启用时验证）
  *
  * 用法: node scripts/validate-config.js
  *
@@ -21,7 +23,9 @@ const PROJECT_ROOT = path.resolve(__dirname, '..');
 const SSOT_PATH = path.join(PROJECT_ROOT, 'automation', 'agent-orchestration.json');
 const RAGE_MODE_PATH = path.join(PROJECT_ROOT, 'automation', 'rage-mode.json');
 const PHASE_GATES_PATH = path.join(PROJECT_ROOT, 'automation', 'phase-gates.json');
+const FEATURE_GATES_PATH = path.join(PROJECT_ROOT, 'automation', 'feature-gates.json');
 const AGENTS_DIR = path.join(PROJECT_ROOT, 'agents');
+const SKILLS_DIR = path.join(PROJECT_ROOT, 'skills');
 
 let passed = 0;
 let failed = 0;
@@ -36,7 +40,7 @@ console.log('  配置一致性验证');
 console.log('========================================\n');
 
 // === 加载配置 ===
-let ssot, rageMode, phaseGates;
+let ssot, rageMode, phaseGates, featureGates;
 
 try {
   ssot = JSON.parse(fs.readFileSync(SSOT_PATH, 'utf-8'));
@@ -60,6 +64,14 @@ try {
   log_fail(`phase-gates.json 加载失败: ${e.message}`);
 }
 
+try {
+  featureGates = JSON.parse(fs.readFileSync(FEATURE_GATES_PATH, 'utf-8'));
+  log_ok(`feature-gates.json loaded`);
+} catch (e) {
+  log_warn(`feature-gates.json 加载失败: ${e.message}`);
+  featureGates = null;
+}
+
 console.log('');
 
 // === 检查 1: agent 名称一致性 ===
@@ -67,7 +79,11 @@ console.log('--- 检查 1: Agent 名称一致性 ---');
 
 const ssotAgents = Object.keys(ssot.agents);
 const rageAgents = [];
+const gstackEnabled = ssot.gstackConfig && ssot.gstackConfig.enabled;
+
 for (const phase of (rageMode.phases || [])) {
+  // Skip gstack-only phases when gstack is disabled
+  if (phase.gstackOnly && !gstackEnabled) continue;
   for (const name of (phase.requiredAgents || [])) {
     rageAgents.push({ name, phase: phase.id });
   }
@@ -89,6 +105,9 @@ for (const { name, phase } of rageAgents) {
 
 // 检查 SSOT 中有但 rage-mode 中没有的 agent
 for (const name of ssotAgents) {
+  const agent = ssot.agents[name];
+  // gstackOnly agents are only expected when gstack is enabled
+  if (agent.gstackOnly && !gstackEnabled) continue;
   const inRage = rageAgents.some(r => r.name === name);
   if (!inRage) {
     log_warn(`SSOT agent "${name}" 未出现在 rage-mode 的任何 phase 中`);
@@ -134,6 +153,11 @@ console.log('');
 console.log('--- 检查 3: Phase Gates Check 命令 ---');
 
 for (const [gateKey, gate] of Object.entries(phaseGates.gates || {})) {
+  // Skip gstack gates when gstack is disabled
+  if (gateKey.includes('phase0.5') && !gstackEnabled) {
+    log_ok(`${gateKey}: 跳过（GStack 未启用）`);
+    continue;
+  }
   for (const cond of (gate.conditions || [])) {
     if (cond.check) {
       // 基本语法检查：不能有未闭合的引号
@@ -159,6 +183,10 @@ const thresholds = ssot.modeThresholds || {};
 log_ok(`modeThresholds: team=${thresholds.team || '?'}, subagentParallel=${thresholds.subagentParallel || '?'}`);
 
 for (const [name, agent] of Object.entries(ssot.agents)) {
+  if (agent.gstackOnly && !gstackEnabled) {
+    log_ok(`${name}: 跳过（GStack agent，未启用）`);
+    continue;
+  }
   const ms = agent.modeSelection;
   if (!ms) {
     log_warn(`${name} 未定义 modeSelection`);
@@ -297,6 +325,85 @@ if (fs.existsSync(AC_TRACKER_PATH)) {
   }
 } else {
   log_warn('ac-tracker.json 不存在（运行 node scripts/ac-tracker-sync.js 创建）');
+}
+
+console.log('');
+
+// === 检查 7: GStack 配置一致性 ===
+console.log('--- 检查 7: GStack 配置一致性 ---');
+
+const GSTACK_SKILLS = [
+  'office-hours', 'design-consultation', 'design-shotgun', 'design-html',
+  'autoplan', 'plan-ceo-review', 'plan-design-review', 'plan-eng-review',
+  'plan-devex-review', 'gstack-bridge'
+];
+
+const GSTACK_AGENTS = ['Product-Designer', 'Design-Reviewer'];
+
+// 检查 GStack agents 在 SSOT 中定义
+for (const agentName of GSTACK_AGENTS) {
+  if (ssot.agents[agentName]) {
+    log_ok(`GStack agent "${agentName}" 存在于 SSOT`);
+    if (ssot.agents[agentName].gstackOnly) {
+      log_ok(`  ${agentName} 标记为 gstackOnly: true`);
+    } else {
+      log_warn(`  ${agentName} 未标记 gstackOnly（建议标记以避免 GStack 禁用时被调用）`);
+    }
+  } else {
+    log_fail(`GStack agent "${agentName}" 不在 SSOT 中`);
+  }
+}
+
+// 检查 GStack skills 目录存在
+for (const skillName of GSTACK_SKILLS) {
+  const skillDir = path.join(SKILLS_DIR, skillName);
+  const skillMd = path.join(skillDir, 'SKILL.md');
+  if (fs.existsSync(skillMd)) {
+    log_ok(`GStack skill "${skillName}" 存在`);
+  } else {
+    log_fail(`GStack skill "${skillName}" 不存在: ${skillMd}`);
+  }
+}
+
+// 检查 GStack toggle 脚本
+const toggleScript = path.join(PROJECT_ROOT, 'scripts', 'gstack-toggle.js');
+if (fs.existsSync(toggleScript)) {
+  log_ok('gstack-toggle.js 存在');
+} else {
+  log_warn('gstack-toggle.js 不存在');
+}
+
+// 检查 feature-gates.json 中 gstack 开关
+if (featureGates && featureGates.features && featureGates.features.gstack) {
+  log_ok(`feature-gates.json 中 gstack 开关存在: enabled=${featureGates.features.gstack.enabled}`);
+  // 一致性：agent-orchestration.json 和 feature-gates.json 应该同步
+  if (gstackEnabled !== featureGates.features.gstack.enabled) {
+    log_fail(`gstackConfig.enabled (${gstackEnabled}) 与 feature-gates.gstack.enabled (${featureGates.features.gstack.enabled}) 不一致`);
+  } else {
+    log_ok('agent-orchestration.json 和 feature-gates.json 的 gstack 状态一致');
+  }
+} else {
+  log_warn('feature-gates.json 中未找到 gstack 特性开关');
+}
+
+// 检查 phase-gates.json 中 Phase 0.5 门禁
+const phase05Gates = ['phase0_to_phase0.5', 'phase0.5_to_phase1'];
+for (const gateKey of phase05Gates) {
+  if (phaseGates.gates && phaseGates.gates[gateKey]) {
+    log_ok(`phase-gates.json 中 ${gateKey} 门禁存在`);
+  } else {
+    log_fail(`phase-gates.json 中缺少 ${gateKey} 门禁`);
+  }
+}
+
+// 仅在 GStack 启用时验证 GStack 输出目录
+if (gstackEnabled) {
+  const designDir = path.join(PROJECT_ROOT, 'workspace', 'docs', 'design');
+  if (fs.existsSync(designDir)) {
+    log_ok('GStack 输出目录 workspace/docs/design/ 存在');
+  } else {
+    log_warn('GStack 输出目录 workspace/docs/design/ 不存在（将在首次运行时创建）');
+  }
 }
 
 console.log('');
