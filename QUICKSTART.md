@@ -49,7 +49,8 @@ cd my-project
 
 ```
 my-project/
-├── .claude/                       ← Claude 配置
+├── .claude/                       ← Claude Code 本地配置
+│   └── settings.local.json        ← 你的个人设置（gitignored）
 ├── workspace/                     ← 你的项目（已创建好骨架）
 │   ├── src/                       ← 空的，等你写代码
 │   ├── docs/                      ← 空的文档模板
@@ -59,8 +60,21 @@ my-project/
 │   │   └── ...
 │   ├── package.json               ← 项目依赖（node 类型）
 │   └── .gitignore
-├── automation/workspace.json      ← 告诉引擎 workspace/ 在哪
-└── ...引擎文件...
+├── CLAUDE.md                      ← Claude 行为指令（引擎核心）
+├── agents/                        ← 14 个 AI 角色定义（PM/前端/后端/QA...）
+├── skills/                        ← 27 个技能（TDD/代码审查/UI设计...）
+├── rules/                         ← 9 条开发规则（注释/安全/质量门禁...）
+├── hooks/                         ← 自动钩子（安全检查/门禁/格式化...）
+│   └── scripts/                   ← 钩子脚本（16 个）
+├── automation/                    ← 自动化配置
+│   ├── workspace.json             ← 告诉引擎 workspace/ 在哪
+│   ├── phase-gates.json           ← 5 阶段质量门禁条件
+│   └── ac-tracker.json            ← 验收标准追踪器
+├── scripts/                       ← 工具脚本
+│   ├── init.sh / init.ps1         ← 初始化脚本
+│   └── validate-config.js         ← 配置验证
+├── templates/code-headers/        ← 代码注释模板（TS/Java/Python）
+└── docs/GUIDE.md                  ← 完整使用手册
 ```
 
 ---
