@@ -1,6 +1,6 @@
 # Claude Enterprise Starter 使用手册
 
-> 版本: 2.5.0 | 最后更新: 2026-04-11
+> 版本: 2.6.0 | 最后更新: 2026-04-11
 
 本手册帮助团队成员快速上手 Claude Enterprise Starter 模板项目。
 
@@ -15,17 +15,17 @@ Claude Enterprise Starter 是一个**企业级 Claude Code 配置模板**，将 
 ### 解决什么问题
 
 | 痛点 | 解决方案 |
-|------|---------|
+|------|----------|
 | AI 开发缺乏规范，代码质量不稳定 | 强制 TDD + 代码审查 + 质量门禁 |
 | 需求理解偏差导致返工 | PM/PO/Architect 分角色协作，冻结层文档 |
 | 前后端风格不统一 | 固化技术栈 + UI 风格选择机制 |
 | 大型项目难以管理 | 5 阶段开发流程 + Agent 并行开发 |
-| 重复造轮子 | 27 个内置技能覆盖常见开发场景 |
+| 重复造轮子 | 37 个内置技能覆盖常见开发场景 |
 
 ### 核心理念
 
 ```
-AI Agent Team（13 角色并行）
+AI Agent Team（15 角色并行）
   + TDD（测试驱动开发）
   + Quality Gates（质量门禁）
   + Document System（冻结/演化/ADR 三层文档）
@@ -39,7 +39,7 @@ AI Agent Team（13 角色并行）
 ### 2.1 前置条件
 
 | 工具 | 版本要求 | 用途 |
-|------|---------|------|
+|------|----------|------|
 | **Claude Code CLI** | 最新版 | AI 开发工具 |
 | **Node.js** | 18+ | 运行钩子脚本 |
 | **Git** | 2.30+ | 版本管理 |
@@ -63,7 +63,6 @@ bash scripts/init.sh /path/to/your-project
 ```
 
 **方式二：手动复制**
-
 ```bash
 # 进入你的项目目录
 cd /path/to/your-project
@@ -89,7 +88,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example CLAUDE.local.md
 `.mcp.json` 配置了 5 个 MCP 服务器：
 
 | 服务 | 用途 | 使用角色 |
-|------|------|---------|
+|------|------|----------|
 | **github** | 创建仓库、推送代码、管理 PR/Issue | DevOps, PM |
 | **figma** | 导入 Figma 设计稿 | UI Designer |
 | **playwright** | E2E 自动化测试 | QA, 产品体验师 |
@@ -130,10 +129,10 @@ CLAUDE.local.md
 
 ### 3.2 规则系统 (`rules/`)
 
-9 个模块化规则文件，按需加载：
+10 个模块化规则文件，按需加载：
 
 | 文件 | 内容 | 关键规则 |
-|------|------|---------|
+|------|------|----------|
 | `00_global.md` | 全局规则 | 中文交互、项目启动约束 |
 | `01_development.md` | 开发约束 | 禁止硬编码/mock/MVP、技术栈固化 |
 | `02_database.md` | 数据库规范 | SQL 设计范式 |
@@ -146,11 +145,11 @@ CLAUDE.local.md
 
 ### 3.3 技能系统 (`skills/`)
 
-27 个自定义技能，详见[第五章](#五技能系统skills)。
+37 个技能（来自 ECC/superpowers/gstack/official/custom），详见[第五章](#五技能系统skills)。
 
 ### 3.4 代理系统 (`agents/`)
 
-13 个角色定义文件，每个包含：
+15 个角色定义文件，每个包含：
 - 角色职责描述
 - 必调技能列表
 - 标准操作流程（SOP）
@@ -163,14 +162,17 @@ CLAUDE.local.md
 | `agent-orchestration.json` | **SSOT**：角色-技能映射的唯一权威定义 |
 | `rage-mode.json` | 狂暴模式：5 阶段自动推进配置 |
 | `phase-gates.json` | 质量门禁：每阶段通过条件 |
+| `feature-gates.json` | 功能点级 AC 门禁 |
 | `github-integration.json` | GitHub 集成：自动推送、分支保护 |
 
 ### 3.6 钩子系统 (`hooks/`)
 
 | 脚本 | 触发时机 | 功能 |
-|------|---------|------|
+|------|----------|------|
 | `safety-guard.js` | Bash/Edit/Write 前 | 安全边界检查 |
 | `phase-controller.js` | TaskUpdate 后 | 阶段门禁验证 |
+| `gstack-phase-guard.js` | TaskUpdate 后 | GStack Phase 0.5 门禁 |
+| `gstack-output-validator.js` | Write 后 | GStack 输出校验 |
 | `auto-github-push.js` | 每 30 分钟 | 自动推送代码 |
 | `agent-health-monitor.js` | 每 5 分钟 | Agent 健康检查 |
 | `auto-start-agents.js` | TeamCreate 后 | 自动启动 Agent |
@@ -194,24 +196,28 @@ CLAUDE.local.md
 
 ### 4.1 CLAUDE.md — 核心指令
 
-CLAUDE.md 是 Claude Code 的主要配置文件，包含 12 个章节：
+CLAUDE.md 是 Claude Code 的主要配置文件，包含 17 个章节：
 
 | 章节 | 内容 |
 |------|------|
+| 零、GStack 产品设计层 | Phase 0.5 产品设计（可选，默认禁用） |
 | 一、基础规则 | 语言、启动约束、问题处理、开发约束、数据库变更 |
 | 一-B、技术栈约束 | React + TypeScript + Vite 固定 |
 | 二、系统设计标准 | 企业级生产系统要求 |
-| 三、上下文管理 | 上下文阈值策略（50%/70%/90%） |
+| 三、上下文管理策略 | 上下文阈值策略（50%/70%/90%） |
 | 四、文档体系 | 冻结层/演化层/ADR 层 |
-| 五、需求分析 | Business Capability → Technical Implementation |
-| 六、质量门禁 | 功能完整性、代码评审、编译测试、文档更新 |
-| 七、Agent Team | 角色-技能映射、启动格式、禁止行为 |
-| 八、狂暴模式 | 自动化能力、阶段推进、安全边界 |
-| 九、规则加载 | 9 个模块化规则文件 |
-| 十、代理定义 | 13 个角色定义文件路径 |
-| 十一、技能文件 | 27 个技能文件路径 |
-| 十二、验证与信任 | 验证策略、信任校准 |
-
+| 五、需求分析方法 | Business Capability → Technical Implementation |
+| 六、系统设计粒度要求 | 功能树结构：Module → Feature → Capability → API |
+| 七、开发质量流程 | 功能完整性、代码评审、编译测试、文档更新、注释合规 |
+| 八、Agent Team Skills | 角色-技能映射（15 角色）、启动格式、禁止行为 |
+| 九、狂暴模式 | 自动化能力、阶段推进（含 Phase 0.5）、安全边界 |
+| 十、模组化规则加载 | 9 个模块化规则文件 |
+| 十一、代理定义 | 15 个角色定义文件路径 |
+| 十二、技能文件 | 37 个技能文件路径 |
+| 十三、验证与信任 | 验证策略、信任校准 |
+| 十四、Agent Team 清理机制 | TeamDelete Bug 修复、强制清理流程 |
+| 十五、智能模式选择引擎 | 评分因子、决策规则、各阶段自动决策 |
+| 十六、双模型协作策略 | GLM-5 + GPT-5.4 Codex、4 层触发架构 |
 ### 4.2 settings.json — 权限与钩子
 
 **权限控制**：
@@ -269,7 +275,7 @@ CLAUDE.md 是 Claude Code 的主要配置文件，包含 12 个章节：
 ### 5.1 技能总览
 
 | 技能 | 类型 | effort | 自动激活 | 核心用途 |
-|------|------|--------|---------|---------|
+|------|------|--------|----------|----------|
 | **tdd** | 流程控制 | - | 否 | Red-Green-Refactor TDD 流程 |
 | **tdd-workflow** | 操作手册 | low | 否 | TDD 详细操作步骤 |
 | **code-review** | 流程控制 | high | 否 | 多维度代码审查 |
@@ -288,7 +294,6 @@ CLAUDE.md 是 Claude Code 的主要配置文件，包含 12 个章节：
 | **springboot-security** | 流程控制 | high | 否 | SpringBoot 安全配置 |
 | **jpa-patterns** | 背景知识 | - | 否 | JPA 数据访问模式 |
 | **java-coding-standards** | 背景知识 | - | 否 | Java 编码规范 |
-| **writing-plans** | 流程控制 | high | 否 | 架构设计与实施计划 |
 | **llm-integration** | 背景知识 | - | 否 | LLM API 集成模式 |
 | **vlm-integration** | 背景知识 | - | 否 | VLM 视觉语言模型集成 |
 | **workflow-engine** | 背景知识 | high | 否 | 工作流编排模式 |
@@ -298,6 +303,16 @@ CLAUDE.md 是 Claude Code 的主要配置文件，包含 12 个章节：
 | **strategic-compact** | 辅助工具 | low | 否 | 战略性上下文压缩 |
 | **gan-harness** | 流程控制 | high | 否 | GAN 生成对抗网络式开发 |
 | **continuous-learning** | 辅助工具 | low | 否 | 持续学习本能系统 |
+| **office-hours** | GStack | high | 否 | YC 6 问产品构思 |
+| **design-consultation** | GStack | high | 否 | 竞品研究+设计系统 |
+| **design-shotgun** | GStack | high | 否 | 4-6 UI 变体对比探索 |
+| **design-html** | GStack | high | 否 | 模型转生产 HTML/CSS |
+| **autoplan** | GStack | high | 否 | 自动全流程审查 |
+| **plan-ceo-review** | GStack | high | 否 | CEO 范围挑战 |
+| **plan-design-review** | GStack | high | 否 | 设计评分审查 |
+| **plan-eng-review** | GStack | high | 否 | 工程架构审查 |
+| **plan-devex-review** | GStack | high | 否 | 开发者体验审查 |
+| **gstack-bridge** | GStack | high | 否 | Phase 0.5→1 交接（非用户调用） |
 
 ### 5.2 Frontmatter 配置说明
 
@@ -353,7 +368,7 @@ Skill product-requirements --effort high
 **显式调用**（按场景）：
 
 | 场景 | 触发技能 |
-|------|---------|
+|------|----------|
 | 开始新功能开发 | `tdd` |
 | 完成代码编写 | `code-review` |
 | 需求分析 | `product-requirements` |
@@ -365,7 +380,7 @@ Skill product-requirements --effort high
 **内置技能**（Claude Code 自带，无需安装）：
 
 | 命令 | 用途 | 触发场景 |
-|------|------|---------|
+|------|------|----------|
 | `/batch` | 并行重构 | 涉及 5+ 文件的大规模重构 |
 | `/simplify` | 代码质量审查 | 完成代码审查后的进一步优化 |
 
@@ -373,23 +388,25 @@ Skill product-requirements --effort high
 
 ## 六、Agent Team 系统
 
-### 6.1 十三个角色
+### 6.1 十五个角色
 
 | 角色 | 职责 | Agent 类型 | 可并行 | 模式 | 评分 |
-|------|------|-----------|--------|------|------|
+|------|------|------------|--------|------|------|
 | **PM** | 需求拆解、任务分配、Sprint 规划 | planner | 否 | Team | 6-7 |
 | **PO** | 需求分析、用户故事、用户引导 | general-purpose | 是 | Team | 6-7 |
 | **Architect** | 系统设计、技术选型、架构规划 | architect | 是 | Team | 6-7 |
 | **UI Designer** | 界面设计、交互规范、风格选择 | general-purpose | 是 | Subagent | 0-2 |
-| **Frontend** | 前端开发（React + TS + Vite） | typescript-reviewer | 是 ×3 | Subagent | 0-2 |
-| **Backend-Java** | Java 后端开发（SpringBoot + JPA） | java-reviewer | 是 ×2 | Subagent | 0-2 |
-| **Backend-Python** | Python 后端开发（Prisma + LLM） | python-reviewer | 是 ×1 | Subagent | 0-2 |
+| **Frontend** | 前端开发（React + TS + Vite） | typescript-reviewer | 是 x3 | Subagent | 0-2 |
+| **Backend-Java** | Java 后端开发（SpringBoot + JPA） | java-reviewer | 是 x2 | Subagent | 0-2 |
+| **Backend-Python** | Python 后端开发（Prisma + LLM） | python-reviewer | 是 x1 | Subagent | 0-2 |
 | **QA** | 测试验证、Bug 追踪 | tdd-guide | 否 | Subagent | 1 |
 | **DevOps** | 部署、CI/CD、GitHub 管理 | general-purpose | 否 | Subagent | 1 |
 | **产品体验师** | 用户视角测试、体验评估 | planner | 否 | Subagent | 0 |
 | **GAN Planner** | 产品规格设计、功能拆解 | general-purpose | 否 | Subagent | 1 |
 | **GAN Generator** | 代码实现、开发服务器维护 | general-purpose | 是 | Subagent | 1 |
 | **GAN Evaluator** | 质量评估、评分反馈 | general-purpose | 否 | Subagent | 1 |
+| **Product Designer** | GStack 产品构思与 UI 探索 | general-purpose | 是 | Subagent | 1 |
+| **Design Reviewer** | GStack 计划审查与交接 | general-purpose | 否 | Subagent | 1 |
 
 > **模式说明**：
 > - **Team**: 通过 `TeamCreate` 创建协作团队，Agent 之间可互相通信、共享任务列表
@@ -399,7 +416,7 @@ Skill product-requirements --effort high
 ### 6.2 Agent 类型说明
 
 | Agent 类型 | 适用场景 | 可用工具 |
-|-----------|---------|---------|
+|------------|----------|----------|
 | `planner` | 规划类角色（PM、产品体验师） | 只读 + 规划工具 |
 | `architect` | 架构设计 | 读写 + 系统设计工具 |
 | `typescript-reviewer` | 前端开发 | 全部工具，专注 TS/React |
@@ -415,8 +432,8 @@ Skill product-requirements --effort high
 Agent --name "Backend-Java-1" \
   --subagent-type "everything-claude-code:java-reviewer" \
   --prompt "你是 Java 后端开发。必须遵循以下流程：
-    1. 🔴 调用 Skill springboot-patterns 获取 SpringBoot 架构模式
-    2. 🔴 调用 Skill springboot-tdd 启动 TDD 流程
+    1. 调用 Skill springboot-patterns 获取 SpringBoot 架构模式
+    2. 调用 Skill springboot-tdd 启动 TDD 流程
     3. 编写测试用例（Red 阶段）
     4. 实现代码（Green 阶段）
     5. 重构优化（Refactor 阶段）
@@ -487,7 +504,7 @@ Backend-Python-1 ─── ← 1 个 Python 后端 Agent
 系统根据 **5 个评分因子** 自动决定每个角色使用 Team 还是 Subagent 模式：
 
 | 评分因子 | 说明 | 权重 |
-|---------|------|------|
+|----------|------|------|
 | **任务复杂度** | 是否涉及多步骤、多文件变更 | 高 |
 | **协作需求** | 是否需要与其他角色实时通信 | 高 |
 | **决策自主性** | 是否需要独立决策能力 | 中 |
@@ -497,7 +514,7 @@ Backend-Python-1 ─── ← 1 个 Python 后端 Agent
 **3 个决策阈值**：
 
 | 总分范围 | 推荐模式 | 适用阶段 |
-|---------|---------|---------|
+|----------|----------|----------|
 | **0-2** | Subagent | Phase 2/3/4/5 — 独立执行明确任务 |
 | **3-5** | Subagent + 受控通信 | 需要轻量协调的任务 |
 | **6-7** | Team | Phase 1 — 需求分析、架构设计等需要深度协作的场景 |
@@ -511,7 +528,7 @@ Backend-Python-1 ─── ← 1 个 Python 后端 Agent
 项目支持 **GLM-5 + Codex GPT-5.4** 双模型协作：
 
 | 模型 | 定位 | 优势场景 |
-|------|------|---------|
+|------|------|----------|
 | **GLM-5**（主模型） | 代码开发、架构设计、复杂推理 | 所有 Agent 任务的默认模型 |
 | **Codex GPT-5.4**（辅助模型） | 代码审查、对抗审查、Bug 修复 | 功能完成后、部署前 |
 
@@ -523,7 +540,7 @@ GLM-5（开发实现）→ GPT-5.4（代码审查）→ GLM-5（修复）→ GPT
 **4 层触发架构**：
 
 | 层 | 触发点 | 方法 | 时机 | 可跳过？ |
-|---|--------|------|------|---------|
+|----|--------|------|------|----------|
 | **L1 自动** | Phase 2→3 门禁 | `orchestrate.sh` 调用 `codex review --wait` | Feature 全部完成后 | 否（硬编码） |
 | **L1 自动** | Phase 4→5 门禁 | `orchestrate.sh` 调用 `codex adversarial-review --wait` | 部署前 | 否（硬编码） |
 | **L2 提醒** | Agent prompt | `generatePrompt()` 注入 Codex 提醒 | Agent 任务完成时 | 是（主 Claude 决定） |
@@ -533,12 +550,12 @@ GLM-5（开发实现）→ GPT-5.4（代码审查）→ GLM-5（修复）→ GPT
 **Codex 集成角色**（`agent-orchestration.json` 中含 `codexIntegration`）：
 
 | 角色 | reviewCommand | rescueCommand | triggerAfterFeature | triggerAfterPhase |
-|------|--------------|---------------|--------------------|--------------------|
-| Frontend | `/codex:review` | `/codex:rescue` | ✅ | ✅ |
-| Backend-Java | `/codex:review` | `/codex:rescue` | ✅ | ✅ |
-| Backend-Python | `/codex:review` | `/codex:rescue` | ✅ | ✅ |
-| QA | `/codex:review` | - | ✅ | - |
-| DevOps | `/codex:adversarial-review` | - | - | ✅ |
+|------|---------------|---------------|---------------------|-------------------|
+| Frontend | `/codex:review` | `/codex:rescue` | 是 | 是 |
+| Backend-Java | `/codex:review` | `/codex:rescue` | 是 | 是 |
+| Backend-Python | `/codex:review` | `/codex:rescue` | 是 | 是 |
+| QA | `/codex:review` | - | 是 | - |
+| DevOps | `/codex:adversarial-review` | - | - | 是 |
 
 **不触发 Codex 的场景**：
 
@@ -591,7 +608,7 @@ bash scripts/team-manager.sh nuke
 推荐的环境变量配置，优化 Claude Code 运行效率：
 
 | 变量 | 推荐值 | 说明 |
-|------|-------|------|
+|------|--------|------|
 | `AUTOCOMPACT_PCT` | `80` | 上下文使用率达 80% 时自动压缩 |
 | `MAX_THINKING_TOKENS` | `16000` | 限制思考 token 数量，控制成本 |
 | `SUBAGENT_MODEL` | `sonnet` | Subagent 使用 sonnet 模型，平衡速度与质量 |
@@ -618,6 +635,10 @@ bash scripts/orchestrate.sh --phase 2    # Phase 2: 开发实现
 bash scripts/orchestrate.sh --phase 3    # Phase 3: 测试验证
 bash scripts/orchestrate.sh --phase 4    # Phase 4: 产品体验
 bash scripts/orchestrate.sh --phase 5    # Phase 5: 部署发布
+
+# GStack Phase 0.5（需先启用）
+bash scripts/orchestrate.sh --phase 0.5a  # Think 阶段
+bash scripts/orchestrate.sh --phase 0.5b  # Plan 阶段
 
 # 查看当前阶段状态
 bash scripts/orchestrate.sh --status
@@ -647,36 +668,42 @@ Planner（规格设计）→ Generator（代码实现）→ Evaluator（质量�
 
 ```
 Phase 0: 项目初始化
-│  创建目录结构、配置环境、创建 GitHub 仓库
-│  门禁: 目录结构已创建 + 环境已配置 + 仓库已创建
-↓
+|  创建目录结构、配置环境、创建 GitHub 仓库
+|  门禁: 目录结构已创建 + 环境已配置 + 仓库已创建
+|
+Phase 0.5: 产品设计 [GStack，可选]
+|  0.5a Think: office-hours → design-consultation → design-shotgun → design-html
+|  0.5b Plan: autoplan → 品味决策审批
+|  Bridge: gstack-bridge 转换输出为 PRD 格式
+|  门禁: DESIGN.md + IMPLEMENTATION_PLAN.md + 各维度评分 ≥ 7.0
+|
 Phase 1: 需求分析（PM / PO / Architect / UI Designer 并行）
-│  PM → /product-requirements → /sprint-planning
-│  PO → /product-requirements → /user-onboarding
-│  Architect → /writing-plans → /ui-style-selector（确认 UI 风格）
-│  门禁: PRD + 用户故事 + 验收标准 + 架构设计 + DB + API + UI 设计 + 冻结层锁定
-↓
-Phase 2: 开发实现（Frontend ×3 / Backend-Java ×2 / Backend-Python ×1 并行）
-│  Frontend → /design-context → /ui-ux-pro-max → /tdd → 开发 → /code-review
-│  Backend-Java → /springboot-patterns → /springboot-tdd → /jpa-patterns → 开发 → /code-review
-│  Backend-Python → /design-context → /prisma-database-setup → /tdd → 开发 → /code-review
-│  自动激活: 编辑 .tsx → react-best-practices + antfu; 编辑 .prisma → prisma-database-setup
-│  内置: 大型重构(5+文件) → /batch
-│  门禁: 代码实现完成 + 单元测试通过 + 代码审查通过
-↓
+|  PM -> /product-requirements -> /sprint-planning
+|  PO -> /product-requirements -> /user-onboarding
+|  Architect -> /writing-plans -> /ui-style-selector（确认 UI 风格）
+|  门禁: PRD + 用户故事 + 验收标准 + 架构设计 + DB + API + UI 设计 + 冻结层锁定
+|
+Phase 2: 开发实现（Frontend x3 / Backend-Java x2 / Backend-Python x1 并行）
+|  Frontend -> /design-context -> /ui-ux-pro-max -> /tdd -> 开发 -> /code-review
+|  Backend-Java -> /springboot-patterns -> /springboot-tdd -> /jpa-patterns -> 开发 -> /code-review
+|  Backend-Python -> /design-context -> /prisma-database-setup -> /tdd -> 开发 -> /code-review
+|  自动激活: 编辑 .tsx -> react-best-practices + antfu; 编辑 .prisma -> prisma-database-setup
+|  内置: 大型重构(5+文件) -> /batch
+|  门禁: 代码实现完成 + 单元测试通过 + 代码审查通过
+|
 Phase 3: 测试验证（QA）
-│  QA → /tdd → 测试执行 → /code-review
-│  门禁: 覆盖率 >80% + 所有测试通过 + 无 P0/P1 Bug
-↓
+|  QA -> /tdd -> 测试执行 -> /code-review
+|  门禁: 覆盖率 >80% + 所有测试通过 + 无 P0/P1 Bug
+|
 Phase 4: 产品体验（产品体验师）
-│  产品体验师 → /user-onboarding → /ui-ux-pro-max
-│  门禁: 体验测试完成 + 体验报告输出
-↓
+|  产品体验师 -> /user-onboarding -> /ui-ux-pro-max
+|  门禁: 体验测试完成 + 体验报告输出
+|
 Phase 5: 部署发布（DevOps）
-│  DevOps → /code-review → /simplify（合并前最终检查）
-│  门禁: 部署成功 + 健康检查通过 + 代码已推送
-↓
-完成: GitHub 推送 → 完成报告
+|  DevOps -> /code-review -> /simplify（合并前最终检查）
+|  门禁: 部署成功 + 健康检查通过 + 代码已推送
+|
+完成: GitHub 推送 -> 完成报告
 ```
 
 ### 7.2 阶段门禁（Quality Gates）
@@ -684,8 +711,10 @@ Phase 5: 部署发布（DevOps）
 每个阶段的通过条件定义在 `automation/phase-gates.json` 中：
 
 | 阶段转换 | 关键条件 |
-|---------|---------|
-| Phase 0 → 1 | 目录结构、环境、GitHub 仓库 |
+|----------|----------|
+| Phase 0 → 0.5 | GStack 已启用（可选） |
+| Phase 0.5 → 1 | DESIGN.md + IMPLEMENTATION_PLAN.md + 评分 ≥ 7.0 |
+| Phase 0 → 1 | 目录结构、环境、GitHub 仓库（GStack 禁用时） |
 | Phase 1 → 2 | 7 份设计文档完成 + 冻结层锁定 + 任务已分配 |
 | Phase 2 → 3 | 代码完成 + 覆盖率 >80% + 代码审查通过 |
 | Phase 3 → 4 | 所有测试通过 + 测试报告输出 |
@@ -695,33 +724,33 @@ Phase 5: 部署发布（DevOps）
 ### 7.3 文档生命周期
 
 ```
-┌─────────────────────────────────────────────────┐
-│ 冻结层 (docs/requirements/, docs/design/)        │
-│ Phase 1 产出，Phase 2 开始前冻结                  │
-│ 修改必须通过 ADR 流程                              │
-├─────────────────────────────────────────────────┤
-│ 演化层 (docs/dev/, docs/test/, docs/fixes/)      │
-│ 持续更新，Agent 可自行修改                          │
-├─────────────────────────────────────────────────┤
-│ ADR 层 (docs/superpowers/decisions/)             │
-│ 架构决策记录，每次重大变更必须创建                    │
-└─────────────────────────────────────────────────┘
++-------------------------------------------------+
+| 冻结层 (docs/requirements/, docs/design/)        |
+| Phase 1 产出，Phase 2 开始前冻结                  |
+| 修改必须通过 ADR 流程                              |
++-------------------------------------------------+
+| 演化层 (docs/dev/, docs/test/, docs/fixes/)      |
+| 持续更新，Agent 可自行修改                          |
++-------------------------------------------------+
+| ADR 层 (docs/superpowers/decisions/)             |
+| 架构决策记录，每次重大变更必须创建                    |
++-------------------------------------------------+
 ```
 
 ### 7.4 TDD 工作流
 
 ```
-1. 🔴 Red Phase — 写失败测试
+1. Red Phase -- 写失败测试
    - 理解需求
    - 编写测试用例表达预期行为
    - 运行确认失败
 
-2. 🟢 Green Phase — 最小实现
+2. Green Phase -- 最小实现
    - 编写刚好通过测试的代码
    - 不过度设计
    - 运行确认通过
 
-3. 🔵 Refactor Phase — 清理优化
+3. Refactor Phase -- 清理优化
    - 去重、改善命名、优化结构
    - 每次重构后运行测试确认通过
 ```
@@ -733,6 +762,127 @@ Phase 5: 部署发布（DevOps）
 | 核心业务逻辑 | 100% |
 | 关键路径 | 100% |
 | 新增代码 | > 90% |
+
+---
+
+## 七-A、GStack 产品设计层（Phase 0.5，可选）
+
+> 当 GStack 启用时，Phase 0.5 在 Phase 0 和 Phase 1 之间执行。
+> 当 GStack 禁用时（默认），Phase 0 直接进入 Phase 1，行为不变。
+
+### 启用 GStack
+
+```bash
+# 一键启用
+node scripts/gstack-toggle.js --enable
+
+# 查看状态
+node scripts/gstack-toggle.js --status
+
+# 禁用（恢复默认）
+node scripts/gstack-toggle.js --disable
+```
+
+### Phase 0.5 架构
+
+```
+Phase 0:   Init                        (不变)
+    |
+Phase 0.5: Product Design [GStack]     (新增 - 可选)
+    |        |- 0.5a Think: 产品构思
+    |        |- 0.5b Plan:  规划审查
+    |        |- Bridge:   交接转换
+    |
+Phase 1-5: Requirements -> Development -> Testing -> Experience -> Deployment (不变)
+```
+
+### Phase 0.5a: Think（构思阶段）
+
+**角色**: Product Designer
+**SOP**: office-hours → design-consultation → design-shotgun → design-html
+
+| 步骤 | 技能 | 功能 | 输出 |
+|------|------|------|------|
+| 1 | `/office-hours` | YC 6 问挑战假设 | OFFICE_HOURS.md |
+| 2 | `/design-consultation` | 竞品研究+设计系统 | DESIGN.md |
+| 3 | `/design-shotgun` | 4-6 UI 变体对比 | .taste-memory.json |
+| 4 | `/design-html` | 模型转生产 HTML | workspace/docs/design/prototype/ |
+
+**使用流程**：
+```
+1. 描述你的产品想法（可以很模糊）
+2. /office-hours → AI 挑战你的假设，重新定义产品
+3. /design-consultation → 研究竞品，构建设计系统
+4. /design-shotgun → 生成 4-6 个 UI 方案，选择喜欢的
+5. /design-html → 将选中的方案转为 HTML/CSS
+```
+
+### Phase 0.5b: Plan（规划阶段）
+
+**角色**: Design Reviewer
+**SOP**: autoplan → 品味决策审批 → gstack-bridge
+
+| 步骤 | 技能 | 功能 | 输出 |
+|------|------|------|------|
+| 1 | `/autoplan` | 自动 CEO→设计→工程→DX 审查 | 评分报告 |
+| 2 | 用户批准 | 品味决策审批（各维度 ≥ 7.0） | — |
+| 3 | `gstack-bridge` | 交接：转换 GStack 输出为 PRD 格式 | PRD.md 预填充 |
+
+**也可手动审查**（替代 /autoplan）：
+- `/plan-ceo-review` — CEO 范围挑战（4 种模式：扩展/保持/缩减）
+- `/plan-design-review` — 设计评分（6 维度 0-10）
+- `/plan-eng-review` — 工程架构审查（架构图+数据流+测试矩阵）
+- `/plan-devex-review` — 开发者体验审查（TTHW 基准+摩擦点）
+
+### gstack-bridge 交接协议
+
+gstack-bridge 是整个 Phase 0.5 到 Phase 1 的关键衔接点。它将 GStack 的输出转换为现有 PRD 格式：
+
+```
+GStack 输出                    →  现有项目文档
+-------------------------------------------------
+OFFICE_HOURS.md "问题"          →  PRD.md S1 产品背景
+OFFICE_HOURS.md "用户"          →  PRD.md S2 目标用户
+OFFICE_HOURS.md "现有方案"      →  PRD.md S7 竞品分析
+OFFICE_HOURS.md "差异化"        →  PRD.md S1 核心差异化
+DESIGN.md 设计令牌              →  04_UI设计规范.md 颜色/字体/间距
+DESIGN.md 组件清单              →  04_UI设计规范.md 组件库
+IMPLEMENTATION_PLAN CEO 审查    →  PRD.md S3 功能需求
+IMPLEMENTATION_PLAN 工程架构    →  01_系统架构设计.md
+IMPLEMENTATION_PLAN 数据流      →  02_数据库设计.md
+IMPLEMENTATION_PLAN DX 审查     →  PRD.md S4 非功能需求
+```
+
+**合并策略**: 非破坏性——如果 PRD.md 已存在，在顶部追加 `## GStack 产品设计输入` 区段，用 `<!-- GSTACK-GENERATED -->` 标注。PM agent 在 Phase 1 中精炼而非重建。
+
+### Phase 0.5 门禁条件
+
+Phase 0.5 → Phase 1 的门禁条件：
+- DESIGN.md 已生成
+- IMPLEMENTATION_PLAN.md 已生成
+- 各维度评分 ≥ 7.0/10
+- 用户已批准品味决策
+
+### 典型使用场景
+
+**新项目从零开始**：
+```
+1. node scripts/gstack-toggle.js --enable
+2. /office-hours → 描述想法 → AI 挑战假设
+3. /design-consultation → 竞品研究 → 设计系统
+4. /design-shotgun → 选择 UI 方案
+5. /autoplan → 自动全流程审查
+6. gstack-bridge → 交接到 Phase 1
+7. Phase 1-5 正常执行（PM 精炼 PRD → 开发 → 测试 → 部署）
+```
+
+**已有产品添加新功能**：
+```
+1. /office-hours → 描述新功能想法
+2. /autoplan → 快速审查可行性
+3. gstack-bridge → 交接到 Phase 1
+4. Phase 2-5 执行开发
+```
 
 ---
 
@@ -756,7 +906,7 @@ Phase 5: 部署发布（DevOps）
 项目包含 **60 个品牌设计模板**，分为 7 大分类：
 
 | 分类 | 适用场景 |
-|------|---------|
+|------|----------|
 | AI | AI 产品、机器学习平台 |
 | 开发者工具 | IDE、API 平台、CLI 工具 |
 | 基础设施 | 云平台、DevOps 工具 |
@@ -810,7 +960,7 @@ Phase 5: 部署发布（DevOps）
 ### 9.2 自动化能力
 
 | 能力 | 触发条件 | 配置位置 |
-|------|---------|---------|
+|------|----------|----------|
 | **自动 GitHub 推送** | 每 30 分钟 / 阶段完成 | `github-integration.json` |
 | **Agent 健康监控** | 每 5 分钟 | `hooks.json` Scheduled |
 | **自动重启 Agent** | Agent 失败（最多 3 次） | `rage-mode.json` |
@@ -849,7 +999,7 @@ Phase 5: 部署发布（DevOps）
 
 1. 在 `agents/` 下创建新的角色定义文件
 2. 在 `automation/agent-orchestration.json` 中添加角色配置
-3. 在 `CLAUDE.md` 第七节和第十节添加引用
+3. 在 `CLAUDE.md` 第八节和第十节添加引用
 
 ### Q: 技能的 paths 自动激活不生效？
 
@@ -979,17 +1129,22 @@ Skill content and instructions here...
 | 命令 | 用途 |
 |------|------|
 | `node scripts/validate-config.js` | 验证项目配置完整性 |
+| `node scripts/gstack-toggle.js --enable` | 启用 GStack Phase 0.5 |
+| `node scripts/gstack-toggle.js --disable` | 禁用 GStack Phase 0.5 |
+| `node scripts/gstack-toggle.js --status` | 查看 GStack 状态 |
 | `bash scripts/team-manager.sh status` | 查看 Team 状态 |
 | `bash scripts/team-manager.sh clean` | 清理已关闭 Agent 的残留文件 |
 | `bash scripts/team-manager.sh nuke` | 完全清除所有 Team 数据 |
 | `bash scripts/orchestrate.sh --phase 1` | 启动指定阶段（1-5） |
+| `bash scripts/orchestrate.sh --phase 0.5a` | 启动 GStack Think 阶段 |
+| `bash scripts/orchestrate.sh --phase 0.5b` | 启动 GStack Plan 阶段 |
 | `bash scripts/orchestrate.sh --status` | 查看当前阶段状态 |
 | `bash scripts/gan-harness.sh "描述"` | 启动 GAN 生成对抗开发循环 |
 
 ### B. 技能触发速查表
 
 | 你在做什么 | 调用什么 |
-|-----------|---------|
+|------------|----------|
 | 分析需求 | `/product-requirements` |
 | 规划 Sprint | `/sprint-planning` |
 | 设计架构 | `/writing-plans` |
@@ -1002,11 +1157,14 @@ Skill content and instructions here...
 | 了解项目约束 | `Skill design-context --role {角色}` |
 | 大规模重构 | `/batch` |
 | 代码优化 | `/simplify` |
+| 产品构思 | `/office-hours`（GStack） |
+| 设计探索 | `/design-shotgun`（GStack） |
+| 计划审查 | `/autoplan`（GStack） |
 
 ### C. 环境变量清单
 
 | 变量 | 必需 | 获取方式 |
-|------|------|---------|
+|------|------|----------|
 | `GITHUB_TOKEN` | 是 | GitHub Settings → Developer Settings → Personal Access Tokens |
 | `FIGMA_ACCESS_TOKEN` | UI Designer | Figma → Settings → Personal access tokens |
 | `ANTHROPIC_API_KEY` | 视情况 | console.anthropic.com |
@@ -1016,4 +1174,4 @@ Skill content and instructions here...
 
 ---
 
-*使用手册版本: 2.5.0 | 项目模板: [GitHub](https://github.com/circleone1980/claude-enterprise-starter)*
+*使用手册版本: 2.6.0 | 项目模板: [GitHub](https://github.com/circleone1980/claude-enterprise-starter)*

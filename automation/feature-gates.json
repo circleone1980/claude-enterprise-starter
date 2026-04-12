@@ -1,6 +1,6 @@
 {
   "name": "feature-gates",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "enabled": true,
   "gateMode": "per_feature",
   "features": {},
@@ -21,6 +21,15 @@
       "checkType": "command_succeeds"
     }
   },
+  "gstack": {
+    "enabled": false,
+    "description": "GStack 产品设计层 (Phase 0.5)",
+    "toggleScript": "scripts/gstack-toggle.js",
+    "requiredOutputs": {
+      "phase0.5a": ["workspace/docs/design/DESIGN.md", "workspace/docs/design/OFFICE_HOURS.md"],
+      "phase0.5b": ["workspace/docs/design/IMPLEMENTATION_PLAN.md"]
+    }
+  },
   "phaseIntegration": {
     "phase2_to_phase3_ac_condition": {
       "description": "所有 Feature AC 通过",
@@ -28,5 +37,5 @@
       "checkType": "command_succeeds"
     }
   },
-  "_comment": "v1.0.0 - Feature-level gates, complements phase-gates.json. features 对象由 ac-tracker-sync.js 动态填充"
+  "_comment": "v1.1.0 - Added gstack feature toggle"
 }

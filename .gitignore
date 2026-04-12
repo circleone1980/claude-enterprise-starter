@@ -1,6 +1,7 @@
 # Claude Code 本地配置
 CLAUDE.local.md
 .claude/settings.local.json
+settings.local.json
 
 # 依赖
 node_modules/

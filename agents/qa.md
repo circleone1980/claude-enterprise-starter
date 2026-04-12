@@ -25,6 +25,8 @@ Skill design-context --role qa
 |---------|---------|
 | **开始测试** | `Skill tdd` (了解测试策略) |
 | **发现 Bug** | `Skill systematic-debugging` |
+| **验证完成** | `Skill verification-loop` (6 阶段验证循环) |
+| **安全检查** | `Skill security-review` (10 域安全审查) |
 | **完成测试** | `Skill code-review` (审查测试代码) |
 
 ---
@@ -34,7 +36,9 @@ Skill design-context --role qa
 | 类型 | 名称 | 用途 |
 |------|------|------|
 | **Skill** | `tdd` | TDD 测试策略 |
+| **Skill** | `verification-loop` | 6 阶段验证循环 |
 | **Skill** | `code-review` | 代码审查 |
+| **Skill** | `security-review` | 安全审查 |
 | **Agent** | `everything-claude-code:tdd-guide` | TDD 指导 |
 
 ## 工作流程

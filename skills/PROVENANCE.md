@@ -10,6 +10,7 @@
 |------|------|-----------|
 | `ECC` | [everything-claude-code](https://github.com/affaan-m/everything-claude-code) by Affaan Mustafa | MIT — 保留版权声明 |
 | `superpowers` | [Superpowers Plugin](https://github.com/anthropics/superpowers) by Anthropic | 参考原项目许可 |
+| `gstack` | [GStack](https://github.com/garrytan/gstack) by Garry Tan | MIT |
 | `claude-plugins-official` | [Anthropic Official Plugins](https://github.com/anthropics/claude-plugins-official) | 参考原项目许可 |
 | `antfu` | [Anthony Fu's Skills](https://github.com/antfu/skills) | MIT |
 | `prisma` | [Prisma](https://www.prisma.io) | MIT |
@@ -48,6 +49,21 @@
 | Skill | Origin | 说明 |
 |-------|--------|------|
 | writing-plans | superpowers | 实施计划编写指南 |
+
+### GStack 来源
+
+| Skill | Origin | 说明 |
+|-------|--------|------|
+| office-hours | gstack | YC 6 问挑战假设 |
+| design-consultation | gstack | 竞品研究+设计系统 |
+| design-html | gstack | 设计转生产级 HTML/CSS |
+| design-shotgun | gstack | 多 UI 变体+品味记忆 |
+| autoplan | gstack | 自动 CEO→设计→工程→DX 审查 |
+| plan-ceo-review | gstack | CEO 范围挑战 |
+| plan-design-review | gstack | 设计评分 6 维度 |
+| plan-eng-review | gstack | 工程架构审查 |
+| plan-devex-review | gstack | 开发者体验审查 |
+| gstack-bridge | gstack | Phase 0.5→1 交接协议 |
 
 ### claude-plugins-official 来源
 

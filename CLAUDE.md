@@ -4,6 +4,65 @@
 
 ---
 
+## 零、GStack 产品设计层 (Phase 0.5) 🔴
+
+> **状态**: 可选功能，通过 `automation/agent-orchestration.json` 的 `gstackConfig.enabled` 控制
+> **定位**: 产品构思与设计验证，在需求分析（Phase 1）之前
+> **来源**: GStack (Garry Tan, YC CEO) 开源框架 MIT 协议，66K stars
+
+### Phase 0.5 Pipeline
+
+```
+Phase 0.5a: Think (Product Ideation)
+  /office-hours → /design-consultation → /design-shotgun → /design-html
+  产出: DESIGN.md + HTML 原型
+
+Phase 0.5b: Plan (Architecture Review)
+  /autoplan (→ CEO → Design → Eng → DX 审查)
+  产出: IMPLEMENTATION_PLAN.md (各维度评分 ≥ 7.0/10)
+
+Bridge: gstack-bridge 自动将 Phase 0.5 输出转换为 Phase 1 PRD 格式
+```
+
+### GStack Agent 映射
+
+| 角色 | 核心技能 | Phase | Agent 类型 |
+|------|---------|-------|-----------|
+| **Product Designer** | office-hours 🔴, design-consultation 🔴, design-shotgun, design-html | 0.5a | general-purpose |
+| **Design Reviewer** | autoplan 🔴, plan-ceo-review, plan-design-review, plan-eng-review, plan-devex-review | 0.5b | general-purpose |
+
+### GStack 技能文件
+
+| 技能 | 路径 |
+|------|------|
+| office-hours | `skills/office-hours/SKILL.md` |
+| design-consultation | `skills/design-consultation/SKILL.md` |
+| design-shotgun | `skills/design-shotgun/SKILL.md` |
+| design-html | `skills/design-html/SKILL.md` |
+| autoplan | `skills/autoplan/SKILL.md` |
+| plan-ceo-review | `skills/plan-ceo-review/SKILL.md` |
+| plan-eng-review | `skills/plan-eng-review/SKILL.md` |
+| plan-design-review | `skills/plan-design-review/SKILL.md` |
+| plan-devex-review | `skills/plan-devex-review/SKILL.md` |
+| gstack-bridge | `skills/gstack-bridge/SKILL.md` |
+
+### 启用/禁用
+
+```bash
+# 启用 GStack（默认禁用，保证向后兼容）
+node scripts/gstack-toggle.js --enable
+
+# 禁用 GStack
+node scripts/gstack-toggle.js --disable
+
+# 查看状态
+node scripts/gstack-toggle.js --status
+```
+
+> **向后兼容**: GStack 默认禁用。未启用时 Phase 0.5 被跳过，Phase 0 → Phase 1 直接衔接，行为与 v2.5.0 完全一致。
+
+---
+
 ## 一、基础规则
 
 ### 规则1：语言
@@ -17,7 +76,7 @@
 
 ### 规则3：问题处理
 
-所有开发遇到的问题进行记录和总结，每次遇到问题先查询 `docx/fixed/` 文件夹下的错误记录
+所有开发遇到的问题进行记录和总结，每次遇到问题先查询 `docs/fixed/` 文件夹下的错误记录
 **Why**: 知识复用，避免重复踩坑
 
 ### 规则4：开发约束
@@ -35,7 +94,7 @@
 
 ### 规则5：数据库变更
 
-统一使用 Python 构建脚本插入，脚本统一放在 `docx/sql/` 文件夹下
+统一使用 Python 构建脚本插入，脚本统一放在 `docs/sql/` 文件夹下
 **Why**: 版本可控、可审计、可回滚
 
 ### 规则6：退出前文档同步 🔴
@@ -176,7 +235,7 @@ Business Capability
 
 ---
 
-## 五、系统设计粒度要求
+## 六、系统设计粒度要求
 
 所有功能必须拆解为完整 **功能树结构**：
 
@@ -192,7 +251,7 @@ Module
 
 ---
 
-## 六、开发质量流程（Quality Gates）
+## 七、开发质量流程（Quality Gates）
 
 每完成一个 Feature 必须执行四项检查：
 
@@ -208,7 +267,7 @@ Module
 
 ---
 
-## 七、Agent Team Skills 强制规则 🔴
+## 八、Agent Team Skills 强制规则 🔴
 
 > **角色-技能映射的定义源**: `automation/agent-orchestration.json`
 > 以下为简化视图，完整配置含 subagentType、dependencies、count 等字段详见上述文件
@@ -217,6 +276,8 @@ Module
 
 | 角色                     | 核心技能 🔴                               | 辅助技能                                                                                                                 | Agent 类型          |
 | ------------------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------- |
+| **Product Designer** | office-hours 🔴, design-consultation 🔴 | design-shotgun, design-html                                                                                              | general-purpose     |
+| **Design Reviewer**  | autoplan 🔴                               | plan-ceo-review, plan-design-review, plan-eng-review, plan-devex-review                                                  | general-purpose     |
 | **PM**             | product-requirements                      | sprint-planning                                                                                                          | planner             |
 | **PO**             | product-requirements                      | sprint-planning, user-onboarding                                                                                         | general-purpose     |
 | **Architect**      | writing-plans 🔴                          | product-requirements, react-best-practices, ui-ux-pro-max, ui-style-selector, code-review                                | architect           |
@@ -231,6 +292,8 @@ Module
 | **GAN Generator**  | gan-harness                               | tdd, code-review, springboot-patterns, antfu                                                                             | general-purpose     |
 | **GAN Evaluator**  | gan-harness, verification-loop 🔴         | code-review, security-review                                                                                            | general-purpose     |
 
+> **Product Designer** 和 **Design Reviewer** 仅在 GStack 启用时激活（gstackOnly: true）
+
 **Why**: 技能映射确保角色专业化，避免通用 Agent 能力稀释
 
 > 详细配置和启动命令模板见 `rules/04_agent_team.md`
@@ -239,6 +302,25 @@ Module
 ### 启动 Agent 标准格式
 
 ```bash
+# GStack Product Designer (Phase 0.5a)
+Agent --name "Product-Designer-1" \
+  --subagent-type "general-purpose" \
+  --prompt "你是 Product Designer。必须遵循以下流程：
+    1. 🔴 调用 Skill office-hours 挑战产品假设
+    2. 🔴 调用 Skill design-consultation 研究竞品 + 构建设计系统
+    3. 调用 Skill design-shotgun 生成 UI 变体
+    4. 调用 Skill design-html 转换为生产级 HTML
+    任务：..."
+
+# GStack Design Reviewer (Phase 0.5b)
+Agent --name "Design-Reviewer-1" \
+  --subagent-type "general-purpose" \
+  --prompt "你是 Design Reviewer。必须遵循以下流程：
+    1. 🔴 调用 Skill autoplan 运行完整审查流水线
+    2. 呈现品味决策给用户审批
+    3. 确认所有维度评分 ≥ 7.0/10
+    任务：..."
+
 # Java 后端开发 - 标准
 Agent --name "Backend-Java-1" \
   --subagent-type "everything-claude-code:java-reviewer" \
@@ -290,7 +372,7 @@ Agent --name "Frontend-1" \
 
 ---
 
-## 八、狂暴模式（Rage Mode）🔴
+## 九、狂暴模式（Rage Mode）🔴
 
 > **全自动开发模式**: Claude Code 全权接管开发任务，无需人为介入确认各阶段推进
 
@@ -309,7 +391,9 @@ Agent --name "Frontend-1" \
 
 ```
 Phase 0: 项目初始化
-    ↓ (自动)
+    ↓ (自动, IF gstack.enabled)
+Phase 0.5: 产品设计 (Product-Designer → Design-Reviewer)
+    ↓ (自动, gstack-bridge 转换输出)
 Phase 1: 需求分析 (PM/PO/Architect 并行)
     ↓ (自动验证通过后)
 Phase 2: 开发实现 (Frontend x3 / Backend-Java x2 / Backend-Python x1 / UI Designer 并行)
@@ -333,7 +417,7 @@ GitHub 推送 → 完成报告
 
 ---
 
-## 九、模组化规则加载
+## 十、模组化规则加载
 
 此项目使用模块化规则系统，按需加载：
 
@@ -346,15 +430,18 @@ GitHub 推送 → 完成报告
 - [文档生命周期规则](rules/06_document_lifecycle.md) - 文档分层、冻结/演化规则、ADR 流程 🔴
 - [技能触发规则](rules/07_skill_triggers.md) - 技能触发时机、动态调用指令 🔴
 - [代码注释规范](rules/08_code_comments.md) - 模块头注释、中文函数注释、版本控制 🔴
+- [GStack 集成规则](rules/09_gstack_integration.md) - Phase 0.5 触发规则、交接协议 🔴
 
 **Why**: 模块化减少主文件大小，提高规则可维护性和可发现性
 
 ---
 
-## 十、代理定义文件
+## 十一、代理定义文件
 
 | 角色           | 路径                             |
 | -------------- | -------------------------------- |
+| Product Designer | `agents/product-designer.md` |
+| Design Reviewer | `agents/design-reviewer.md` |
 | PM             | `agents/pm.md`                 |
 | PO             | `agents/po.md`                 |
 | Architect      | `agents/architect.md`          |
@@ -371,10 +458,20 @@ GitHub 推送 → 完成报告
 
 ---
 
-## 十一、技能文件位置
+## 十二、技能文件位置
 
 | 技能                             | 路径                                      |
 | -------------------------------- | ----------------------------------------- |
+| office-hours                     | `skills/office-hours/SKILL.md`          |
+| design-consultation              | `skills/design-consultation/SKILL.md`   |
+| design-shotgun                   | `skills/design-shotgun/SKILL.md`        |
+| design-html                      | `skills/design-html/SKILL.md`           |
+| autoplan                         | `skills/autoplan/SKILL.md`              |
+| plan-ceo-review                  | `skills/plan-ceo-review/SKILL.md`       |
+| plan-eng-review                  | `skills/plan-eng-review/SKILL.md`       |
+| plan-design-review               | `skills/plan-design-review/SKILL.md`    |
+| plan-devex-review                | `skills/plan-devex-review/SKILL.md`     |
+| gstack-bridge                    | `skills/gstack-bridge/SKILL.md`         |
 | product-requirements             | `skills/product-requirements/SKILL.md`  |
 | sprint-planning                  | `skills/sprint-planning/SKILL.md`       |
 | tdd                              | `skills/tdd/SKILL.md`                   |
@@ -409,11 +506,11 @@ GitHub 推送 → 完成报告
 |------|------|
 | `templates/code-headers/typescript.ts.template` | TypeScript / JavaScript |
 | `templates/code-headers/java.java.template` | Java |
-| `templates/code-headers/python.py.template` Python |
+| `templates/code-headers/python.py.template` | Python |
 
 ---
 
-## 十二、验证与信任 🔴
+## 十三、验证与信任 🔴
 
 > **Why**: Claude Code 生成的代码可能比人工代码多 1.75x 逻辑错误 (ACM 2025)
 
@@ -434,7 +531,7 @@ GitHub 推送 → 完成报告
 
 ---
 
-## 十三-A、Agent Team 清理机制 🔴
+## 十四、Agent Team 清理机制 🔴
 
 > **已知 Bug**: TeamDelete 在 Agent 上下文耗尽/僵尸化后永久失败（5 个已确认 Bug）
 >
@@ -466,7 +563,7 @@ bash scripts/team-manager.sh nuke     # 清除所有非 default 团队
 
 ---
 
-## 十三-B、智能模式选择引擎 🔴
+## 十五、智能模式选择引擎 🔴
 
 > **定义源**: `automation/agent-orchestration.json` → `modeSelection` + `modeThresholds`
 
@@ -492,6 +589,8 @@ bash scripts/team-manager.sh nuke     # 清除所有非 default 团队
 
 | 阶段      | 角色                          | 总分 | 模式           |
 | --------- | ----------------------------- | ---- | -------------- |
+| Phase 0.5a | Product-Designer               | 1    | Subagent 顺序  |
+| Phase 0.5b | Design-Reviewer                | 1    | Subagent 顺序  |
 | Phase 1   | PM+PO+Architect               | 7    | **Team** |
 | Phase 2A  | Frontend+Backend 接口对齐     | 7    | **Team** |
 | Phase 2B  | 各角色独立开发                | 0-2  | Subagent 顺序  |
@@ -500,7 +599,7 @@ bash scripts/team-manager.sh nuke     # 清除所有非 default 团队
 
 ---
 
-## 十三-C、双模型协作策略
+## 十六、双模型协作策略
 
 ### 模型分工
 
@@ -513,6 +612,11 @@ bash scripts/team-manager.sh nuke     # 清除所有非 default 团队
 | **后台审查** | Stop Hook（Codex Review Gate） | GPT-5.4 | 每次会话结束自动审查 |
 
 ### 使用时机
+
+**Phase 0.5（GStack 产品设计）**:
+
+- 产品构思 → GLM-5
+- 架构审查 → `/codex:review`
 
 **Phase 1（需求分析）**:
 
@@ -558,7 +662,7 @@ bash scripts/team-manager.sh nuke     # 清除所有非 default 团队
 
 ---
 
-*模板版本: 2.5.0*
+*模板版本: 2.6.0*
 *最后更新: 2026-04-11*
-*重大变更: workspace/ 目标项目目录 + 代码中文注释与版本控制标准*
+*重大变更: GStack Phase 0.5 产品设计层集成（15 Agent + 37 Skills）*
 *基于: [DataCamp CLAUDE.md Guide](https://www.datacamp.com/tutorial/writing-the-best-claude-md), [eesel AI Best Practices](https://www.eesel.ai/blog/claude-code-best-practices), [FlorianBruniaux Ultimate Guide](https://github.com/FlorianBruniaux/claude-code-ultimate-guide)*

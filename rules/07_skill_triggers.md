@@ -14,6 +14,49 @@
 
 ---
 
+## 零-B、GStack Phase 0.5 触发规则
+
+> 当 GStack 启用时（`gstackConfig.enabled: true`），Phase 0.5 在 Phase 0 和 Phase 1 之间执行。
+> 当 GStack 禁用时（默认），Phase 0 直接进入 Phase 1，行为不变。
+
+### Phase 0.5a: Think（构思）
+
+| 触发场景 | 调用技能 | 适用角色 | 说明 |
+|---------|---------|---------|------|
+| 用户描述**模糊产品想法** | `Skill office-hours` 🔴 | Product Designer | YC 6 问挑战假设，输出 OFFICE_HOURS.md |
+| office-hours 完成，需要**设计系统** | `Skill design-consultation` 🔴 | Product Designer | 竞品研究+设计令牌，输出 DESIGN.md |
+| 需要探索**多个 UI 方案** | `Skill design-shotgun` 🔴 | Product Designer | 4-6 变体+品味记忆 |
+| 选定模型需要**转 HTML** | `Skill design-html` 🔴 | Product Designer | 生产级 HTML/CSS，零依赖 |
+
+**标准 Think 流程**：
+```
+1. Skill office-hours          # 挑战假设，定义产品
+2. Skill design-consultation   # 研究竞品，构建设计系统
+3. Skill design-shotgun        # 生成 UI 变体，收集反馈
+4. Skill design-html           # 模型转生产 HTML/CSS
+```
+
+### Phase 0.5b: Plan（规划）
+
+| 触发场景 | 调用技能 | 适用角色 | 说明 |
+|---------|---------|---------|------|
+| Think 阶段完成，需要**全面审查** | `Skill autoplan` 🔴 | Design Reviewer | 自动 CEO→设计→工程→DX 审查 |
+| 仅需 **CEO 范围挑战** | `Skill plan-ceo-review` | Design Reviewer | 4 种模式扩展/保持/缩减 |
+| 仅需 **设计评分** | `Skill plan-design-review` | Design Reviewer | 6 维度 0-10 评分 |
+| 仅需 **工程架构审查** | `Skill plan-eng-review` | Design Reviewer | 架构图+数据流+测试矩阵 |
+| 仅需 **开发者体验审查** | `Skill plan-devex-review` | Design Reviewer | TTHW 基准+摩擦点 |
+| Plan 完成，准备**交接** | `Skill gstack-bridge` 🔴 | Design Reviewer | 转换 GStack 输出为 PRD 格式 |
+
+**标准 Plan 流程**：
+```
+1. Skill autoplan              # 自动全流程审查（推荐）
+   # 或手动: plan-ceo-review → plan-design-review → plan-eng-review → plan-devex-review
+2. 用户批准品味决策（各维度 ≥ 7.0）
+3. Skill gstack-bridge         # 交接：转换输出为 Phase 1 PRD 格式
+```
+
+---
+
 ## 一、设计阶段触发规则
 
 ### 1.1 方案探索与选型
@@ -161,6 +204,8 @@ Agent --name "{角色名称}" \
 | **QA** | 开始时调用 `Skill tdd`（了解测试策略），验证时调用 `Skill verification-loop` |
 | **Architect** | 完成设计初稿后调用 `Skill writing-plans` |
 | **DevOps** | 涉及安全操作时调用 `Skill security-review` |
+| **Product Designer** | Phase 0.5a: `office-hours` → `design-consultation` → `design-shotgun` → `design-html` |
+| **Design Reviewer** | Phase 0.5b: `autoplan` → 品味决策审批 → `gstack-bridge` |
 
 ---
 
@@ -169,7 +214,7 @@ Agent --name "{角色名称}" \
 当多个技能可能同时适用时，按以下顺序调用：
 
 1. **Process skills**（流程技能）: `brainstorming`, `systematic-debugging` — 决定 HOW to approach
-2. **Implementation skills**（实现技能）: `tdd`, `backend-patterns` — 指导 execution
+2. **Implementation skills**（实现技能）: `tdd`, `springboot-patterns` — 指导 execution
 
 **示例**：
 - "Let's build X" → `brainstorming` first, then `tdd`
@@ -182,7 +227,7 @@ Agent --name "{角色名称}" \
 | 类型 | 技能 | 使用方式 |
 |------|------|---------|
 | **Rigid（刚性）** | `tdd`, `systematic-debugging` | 严格遵循，不要跳过步骤 |
-| **Flexible（灵活）** | `brainstorming`, `backend-patterns` | 根据上下文适配原则 |
+| **Flexible（灵活）** | `brainstorming`, `springboot-patterns` | 根据上下文适配原则 |
 
 ---
 
@@ -216,10 +261,39 @@ Claude Code 内置技能无需安装，直接通过 `/` 命令调用：
 
 ## 十一、全局阶段流程图
 
+### Phase 0: Init
+
+```
+前置: 无
+显式调用: 无（手动初始化）
+完成: .claude/ 目录结构就绪 + settings.json 已配置
+```
+
+### Phase 0.5a: Think（GStack，可选）
+
+```
+前置: Phase 0 完成 + gstackConfig.enabled = true
+显式调用:
+  Product Designer → Skill office-hours → Skill design-consultation → Skill design-shotgun → Skill design-html
+输出: OFFICE_HOURS.md, DESIGN.md, .taste-memory.json, workspace/docs/design/prototype/
+```
+
+### Phase 0.5b: Plan（GStack，可选）
+
+```
+前置: Phase 0.5a 完成
+显式调用:
+  Design Reviewer → Skill autoplan（或手动 plan-ceo-review → plan-design-review → plan-eng-review → plan-devex-review）
+  用户批准品味决策（各维度 ≥ 7.0）
+  Design Reviewer → Skill gstack-bridge（交接）
+输出: IMPLEMENTATION_PLAN.md + .json, PRD.md 已预填充
+门禁: DESIGN.md 存在 + IMPLEMENTATION_PLAN.md 存在 + 评分 ≥ 7.0
+```
+
 ### Phase 1: 需求分析
 
 ```
-前置: 项目初始化完成
+前置: Phase 0 完成（GStack 禁用）或 Phase 0.5b 完成（GStack 启用）
 显式调用:
   PM → /product-requirements (effort:high) → /sprint-planning (effort:medium)
   PO → /product-requirements (effort:high) → /user-onboarding (effort:high)

@@ -9,16 +9,16 @@
 > 🚀 Enterprise-grade Claude Code configuration template with Agent Team orchestration, Rage Mode automation, TDD workflow, and production-ready configurations.
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-blue)](https://code.claude.com)
-[![Version](https://img.shields.io/badge/Version-2.5.0-green)](./CLAUDE.md)
+[![Version](https://img.shields.io/badge/Version-2.6.0-green)](./CLAUDE.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 ### Core Architecture
 
 **What It Does**: This is not an application framework — it's a **development engine configuration layer** for Claude Code. It provides AI Agent orchestration, quality gates, automated pipelines, and production-ready configurations that let Claude Code autonomously develop enterprise-grade projects.
 
-**How It Works**: Projects go through a 5-phase pipeline (Phase 0: Init → Phase 1: Requirements → Phase 2: Development → Phase 3: Testing → Phase 4: UX Review → Phase 5: Deployment), with each phase requiring quality gate passage. A separate GAN Harness loop (Planner → Generator → Evaluator) handles quality-driven feature development.
+**How It Works**: Projects go through a 5-phase pipeline (Phase 0: Init → Phase 0.5: Product Design [optional, GStack] → Phase 1: Requirements → Phase 2: Development → Phase 3: Testing → Phase 4: UX Review → Phase 5: Deployment), with each phase requiring quality gate passage. A separate GAN Harness loop (Planner → Generator → Evaluator) handles quality-driven feature development.
 
-**Key Metrics**: 13 Agent roles | 27 Skills | 16 Hook scripts | 9 Rule files | 7 Automation configs
+**Key Metrics**: 15 Agent roles | 37 Skills | 18 Hook scripts | 10 Rule files | 7 Automation configs
 
 ### Module Dependency Topology
 
@@ -28,7 +28,7 @@ graph TB
     SETTINGS["settings.json — Permissions + Hooks + Rage Mode"]
     MCP[".mcp.json — MCP Servers"]
 
-    subgraph Rules["Rules (9)"]
+    subgraph Rules["Rules (10)"]
         R0["00_global"]
         R1["01_development"]
         R2["02_database"]
@@ -38,18 +38,20 @@ graph TB
         R6["06_document_lifecycle"]
         R7["07_skill_triggers"]
         R8["08_code_comments"]
+        R9["09_gstack_integration"]
     end
 
-    subgraph Skills["Skills (27)"]
+    subgraph Skills["Skills (37)"]
         S_REQ["Requirements: product-requirements, sprint-planning"]
         S_DEV["Development: tdd, antfu, springboot-*"]
         S_UI["UI: ui-ux-pro-max, ui-style-selector"]
         S_ARCH["Architecture: writing-plans, code-review"]
         S_AI["AI/ML: llm, vlm, workflow-engine"]
         S_GAN["GAN: gan-harness"]
+        S_GSTACK["GStack: office-hours, design-shotgun, autoplan, gstack-bridge"]
     end
 
-    subgraph Agents["Agent Roles (13)"]
+    subgraph Agents["Agent Roles (15)"]
         A_PM["PM / PO"]
         A_ARCH["Architect"]
         A_UI["UI Designer"]
@@ -60,14 +62,17 @@ graph TB
         A_DO["DevOps"]
         A_PX["Product Experience"]
         A_GAN["GAN Planner / Generator / Evaluator"]
+        A_GS_PD["GStack Product Designer"]
+        A_GS_DR["GStack Design Reviewer"]
     end
 
-    subgraph Hooks["Hook Scripts (16)"]
+    subgraph Hooks["Hook Scripts (18)"]
         H_SAFETY["safety-guard"]
         H_PHASE["phase-controller"]
         H_QUALITY["commit-quality, console-warn"]
         H_AUTO["auto-github-push, agent-health-monitor, auto-start-agents"]
         H_AC["ac-gate-check, ac-status-update"]
+        H_GSTACK["gstack-phase-guard, gstack-output-validator"]
         H_STOP["format-typecheck, doc-sync-check, session-evaluate"]
     end
 
@@ -99,20 +104,20 @@ graph TB
 
 | Feature | Description |
 |---------|-------------|
-| **Agent Team** | 13 specialized roles collaborating in parallel (PM, PO, Architect, Designer, Frontend, Backend-Java, Backend-Python, QA, DevOps, Product Experience, GAN Planner/Generator/Evaluator) |
+| **Agent Team** | 15 specialized roles collaborating in parallel (PM, PO, Architect, Designer, Frontend, Backend-Java, Backend-Python, QA, DevOps, Product Experience, GAN Planner/Generator/Evaluator, GStack Product Designer, GStack Design Reviewer) |
 | **Rage Mode** 🔴 | Full automation - auto GitHub push, agent health monitoring, phase advancement |
 | **TDD Workflow** | Enforced Test-Driven Development with Red-Green-Refactor cycle |
 | **Quality Gates** | 4-stage verification: functionality, code review, testing, documentation |
-| **Skills System** | 27 integrated skills with advanced frontmatter configuration |
+| **Skills System** | 37 integrated skills with advanced frontmatter configuration |
 | **Backend Dual-Stack** 🆕 | Java + Python backend (SpringBoot + Prisma + LLM + VLM + Workflow) |
 | **GAN Harness** 🆕 | Planner→Generator→Evaluator loop for quality-driven development |
-| **Hook Reinforcement** 🆕 | 16 hooks covering full lifecycle (commit quality, config protection, edit accumulator) |
+| **Hook Reinforcement** 🆕 | 18 hooks covering full lifecycle (commit quality, config protection, edit accumulator, GStack guards) |
 | **Continuous Learning** 🆕 | Instinct-based learning system with confidence scoring |
 | **Frontmatter Config** | `effort`, `paths`, `allowed-tools`, `user-invocable` for precise skill control |
 | **UI Style Selector** | 60 brand design templates with auto-scenario matching |
 | **Tech Stack** | React + TypeScript + Vite 6 (frontend fixed), Java + SpringBoot + Python (backend) |
 | **SSOT Architecture** | `automation/agent-orchestration.json` as single source of truth |
-| **Per-Role SOP** | Standard Operating Procedure for all 13 agent roles |
+| **Per-Role SOP** | Standard Operating Procedure for all 15 agent roles |
 | **Document System** | Frozen/Evolution/ADR document layers with design-context skill for auto-loading |
 | **Skill Triggers** | Global phase flowchart (Phase 1-5) + dynamic trigger rules |
 | **Commands** | Custom slash commands: `/commit`, `/pr`, `/review` |
@@ -120,6 +125,9 @@ graph TB
 | **Team Cleanup** 🆕 | `team-manager.sh` — resolves 5 TeamDelete bugs, safe cleanup workflow |
 | **Codex Dual-Model** 🆕 | GLM-5 for development + GPT-5.4 for review via Codex integration |
 | **Env Optimization** 🆕 | `AUTOCOMPACT_PCT=80`, `MAX_THINKING_TOKENS=16000` for optimal performance |
+| **GStack Integration** 🆕 | Phase 0.5 Product Design layer - YC-style ideation, design exploration, automated review, seamless handoff to PRD |
+| **Design Shotgun** 🆕 | Generate 4-6 UI variants, browser comparison panel, taste memory for iterative design |
+| **Auto Plan Review** 🆕 | Automated CEO→Design→Engineering→DX review pipeline with scoring ≥7.0 threshold |
 
 ### Technology Stack (Inferred from Configuration)
 
@@ -135,7 +143,7 @@ graph TB
 | MCP Tools | GitHub / Figma / Playwright / Context7 | `.mcp.json` |
 | Hook Runtime | Node.js | `hooks/scripts/*.js` |
 | Config Validation | Node.js | `scripts/validate-config.js` |
-| Code Review | GLM-5 (dev) + GPT-5.4 via Codex (review) | `CLAUDE.md` Section XIII-C |
+| Code Review | GLM-5 (dev) + GPT-5.4 via Codex (review) | `CLAUDE.md` Section XVI |
 | Lint / Format | ESLint flat config (antfu style) | `CLAUDE.md` Section I-B |
 
 ### Navigation Guide
@@ -157,7 +165,8 @@ graph TB
 | Adjust AC acceptance flow | `automation/feature-gates.json` + `automation/ac-tracker.json` + `scripts/ac-*.js` |
 | Change UI design workflow | `skills/ui-style-selector/` + `tips/UI设计风格/` |
 | Configure workspace path | `automation/workspace.json` + `hooks/scripts/lib/workspace-resolver.js` |
-| Dual-model Codex integration | `CLAUDE.md` Section XIII-C + Codex plugin hooks |
+| Dual-model Codex integration | `CLAUDE.md` Section XVI + Codex plugin hooks |
+| Enable/disable GStack | `scripts/gstack-toggle.js` + `automation/agent-orchestration.json` gstackConfig |
 
 ### Quick Start
 
@@ -180,7 +189,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 ├── CLAUDE.md                        # Core instructions (12 sections)
 ├── settings.json                    # Permissions, hooks, rage mode config
 ├── settings.local.json              # Local overrides (gitignored)
-├── rules/                           # Modular rules (8 files)
+├── rules/                           # Modular rules (10 files)
 │   ├── 00_global.md                 # Language, startup constraints
 │   ├── 01_development.md            # Development constraints + tech stack
 │   ├── 02_database.md               # Database standards
@@ -189,8 +198,9 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── 05_security.md               # Security standards
 │   ├── 06_document_lifecycle.md     # Document lifecycle (Frozen/Evolution/ADR)
 │   ├── 07_skill_triggers.md         # Skill triggers + global phase flowchart
-│   └── 08_code_comments.md          # Code comment standards (Chinese + versioning) 🆕
-├── skills/                          # Custom skills (27 skills)
+│   ├── 08_code_comments.md          # Code comment standards (Chinese + versioning) 🆕
+│   └── 09_gstack_integration.md     # GStack Phase 0.5 integration rules 🆕
+├── skills/                          # Skills (37 skills from ECC/superpowers/gstack/official/custom)
 │   ├── ui-style-selector/           # UI style auto-selection (60 templates)
 │   ├── design-context/              # Auto-load design docs by role
 │   ├── tdd/                         # TDD workflow
@@ -217,8 +227,18 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── security-review/             # 10-domain security audit 🆕
 │   ├── strategic-compact/           # Strategic context compression 🆕
 │   ├── gan-harness/                 # GAN development loop 🆕
-│   └── continuous-learning/         # Instinct-based learning 🆕
-├── agents/                          # Agent definitions with SOP (13 roles)
+│   ├── continuous-learning/         # Instinct-based learning 🆕
+│   ├── office-hours/               # YC 6 问产品构思 🆕
+│   ├── design-consultation/        # 竞品研究+设计系统 🆕
+│   ├── design-shotgun/             # UI 变体对比探索 🆕
+│   ├── design-html/                # 模型转 HTML/CSS 🆕
+│   ├── autoplan/                   # 自动全流程审查 🆕
+│   ├── plan-ceo-review/            # CEO 范围挑战 🆕
+│   ├── plan-design-review/         # 设计评分审查 🆕
+│   ├── plan-eng-review/            # 工程架构审查 🆕
+│   ├── plan-devex-review/          # 开发者体验审查 🆕
+│   └── gstack-bridge/              # Phase 0.5→1 交接 🆕
+├── agents/                          # Agent definitions with SOP (15 roles)
 │   ├── pm.md                        # Project Manager
 │   ├── po.md                        # Product Owner
 │   ├── architect.md                 # Architect
@@ -231,7 +251,9 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── product-experience.md        # Product Experience Tester
 │   ├── gan-planner.md               # GAN Product Spec Designer 🆕
 │   ├── gan-generator.md             # GAN Code Generator 🆕
-│   └── gan-evaluator.md             # GAN Quality Evaluator 🆕
+│   ├── gan-evaluator.md             # GAN Quality Evaluator 🆕
+│   ├── product-designer.md         # GStack Product Designer 🆕
+│   └── design-reviewer.md          # GStack Design Reviewer 🆕
 ├── automation/                      # Automation configs
 │   ├── agent-orchestration.json     # SSOT: role-skill mapping
 │   ├── rage-mode.json               # Rage mode phases & features
@@ -242,7 +264,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   └── github-integration.json      # GitHub auto-push config
 ├── hooks/                           # Hook system
 │   ├── hooks.json                   # Hook definitions
-│   └── scripts/                     # Hook scripts (16 scripts)
+│   └── scripts/                     # Hook scripts (18 scripts)
 │       ├── lib/workspace-resolver.js # Workspace path resolver 🆕
 │       ├── safety-guard.js          # Pre-tool safety check
 │       ├── phase-controller.js      # Phase gate validator
@@ -259,7 +281,9 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │       ├── console-warn.js          # Detect console.log in edits 🆕
 │       ├── format-typecheck.js      # Batch format + typecheck on stop 🆕
 │       ├── doc-sync-check.js        # Remind to sync docs on stop 🆕
-│       └── session-evaluate.js      # Session evaluation on stop 🆕
+│       ├── session-evaluate.js      # Session evaluation on stop 🆕
+│       ├── gstack-phase-guard.js    # GStack phase boundary guard 🆕
+│       └── gstack-output-validator.js # GStack output schema validator 🆕
 ├── commands/                        # Slash commands
 │   ├── commit.md                    # /commit
 │   ├── pr.md                        # /pr
@@ -383,6 +407,8 @@ QUICKSTART.md                        # 5-minute quick start guide
 | GAN Planner | Product spec design | gan-harness | general-purpose |
 | GAN Generator | Code implementation | gan-harness | general-purpose |
 | GAN Evaluator | Quality evaluation | gan-harness | general-purpose |
+| Product Designer | GStack product ideation & UI exploration | office-hours 🔴, design-consultation, design-shotgun, design-html | general-purpose |
+| Design Reviewer | GStack plan review & handoff | autoplan 🔴, plan-*-review, gstack-bridge 🔴 | general-purpose |
 
 ### Frontend Tech Stack (Fixed)
 
@@ -422,6 +448,7 @@ Project Scenario Description
 ### Global Phase Flowchart
 
 ```
+Phase 0.5: Product Design [GStack, optional] → Think (office-hours → design-shotgun) → Plan (autoplan) → Bridge (gstack-bridge) → PRD pre-fill
 Phase 1: Requirements → PM/PO/Architect parallel → Freeze docs
 Phase 2: Development  → Frontend×3/Backend-Java×2/Backend-Python×1 parallel → TDD + Review
 Phase 3: Testing      → QA verification → Coverage >80%
@@ -570,9 +597,9 @@ Agent --name "Backend-Python-1" \
 
 **这个项目是什么**: 这不是一个应用框架，而是一套 **Claude Code 的开发引擎配置层**。它提供 AI Agent 编排、质量门禁、自动化流水线和生产级配置，让 Claude Code 能够自主开发企业级项目。
 
-**工作原理**: 项目经历 5 阶段流水线（Phase 0: 初始化 → Phase 1: 需求分析 → Phase 2: 开发实现 → Phase 3: 测试验证 → Phase 4: 产品体验 → Phase 5: 部署发布），每个阶段必须通过质量门禁才能推进。独立的 GAN Harness 循环（Planner → Generator → Evaluator）负责质量驱动的功能开发。
+**工作原理**: 项目经历 5 阶段流水线（Phase 0: 初始化 → Phase 0.5: 产品设计 [可选, GStack] → Phase 1: 需求分析 → Phase 2: 开发实现 → Phase 3: 测试验证 → Phase 4: 产品体验 → Phase 5: 部署发布），每个阶段必须通过质量门禁才能推进。独立的 GAN Harness 循环（Planner → Generator → Evaluator）负责质量驱动的功能开发。
 
-**关键指标**: 13 个 Agent 角色 | 27 个技能 | 16 个 Hook 脚本 | 9 个规则文件 | 7 个自动化配置
+**关键指标**: 15 个 Agent 角色 | 37 个技能 | 18 个 Hook 脚本 | 10 个规则文件 | 7 个自动化配置
 
 ### 模块依赖拓扑
 
@@ -582,7 +609,7 @@ graph TB
     SETTINGS["settings.json — 权限 + Hook + 狂暴模式"]
     MCP[".mcp.json — MCP 服务器"]
 
-    subgraph Rules["规则系统 (9)"]
+    subgraph Rules["规则系统 (10)"]
         R0["00_global"]
         R1["01_development"]
         R2["02_database"]
@@ -592,18 +619,20 @@ graph TB
         R6["06_document_lifecycle"]
         R7["07_skill_triggers"]
         R8["08_code_comments"]
+        R9["09_gstack_integration"]
     end
 
-    subgraph Skills["技能系统 (27)"]
+    subgraph Skills["技能系统 (37)"]
         S_REQ["需求类: product-requirements, sprint-planning"]
         S_DEV["开发类: tdd, antfu, springboot-*"]
         S_UI["UI类: ui-ux-pro-max, ui-style-selector"]
         S_ARCH["架构类: writing-plans, code-review"]
         S_AI["AI类: llm, vlm, workflow-engine"]
         S_GAN["GAN类: gan-harness"]
+        S_GSTACK["GStack类: office-hours, design-shotgun, autoplan, gstack-bridge"]
     end
 
-    subgraph Agents["Agent 角色 (13)"]
+    subgraph Agents["Agent 角色 (15)"]
         A_PM["PM / PO"]
         A_ARCH["架构师"]
         A_UI["UI 设计师"]
@@ -614,14 +643,17 @@ graph TB
         A_DO["DevOps"]
         A_PX["产品体验师"]
         A_GAN["GAN 规划/生成/评估"]
+        A_GS_PD["GStack 产品设计师"]
+        A_GS_DR["GStack 设计审查员"]
     end
 
-    subgraph Hooks["Hook 脚本 (16)"]
+    subgraph Hooks["Hook 脚本 (18)"]
         H_SAFETY["safety-guard"]
         H_PHASE["phase-controller"]
         H_QUALITY["commit-quality, console-warn"]
         H_AUTO["auto-github-push, agent-health-monitor, auto-start-agents"]
         H_AC["ac-gate-check, ac-status-update"]
+        H_GSTACK["gstack-phase-guard, gstack-output-validator"]
         H_STOP["format-typecheck, doc-sync-check, session-evaluate"]
     end
 
@@ -653,20 +685,20 @@ graph TB
 
 | 功能 | 说明 |
 |------|------|
-| **Agent Team** | 13 个专业角色并行协作（PM、PO、架构师、设计师、前端、Java后端、Python后端、QA、DevOps、产品体验师、GAN 规划/生成/评估） |
+| **Agent Team** | 15 个专业角色并行协作（PM、PO、架构师、设计师、前端、Java后端、Python后端、QA、DevOps、产品体验师、GAN 规划/生成/评估、GStack 产品设计师、GStack 设计审查员） |
 | **狂暴模式** 🔴 | 全自动开发 - 自动 GitHub 推送、Agent 监控、阶段推进 |
 | **TDD 工作流** | 强制测试驱动开发，Red-Green-Refactor 循环 |
 | **质量门禁** | 4 阶段验证：功能、代码审查、测试、文档 |
-| **技能系统** | 27 个集成技能，全部配置高级 Frontmatter |
+| **技能系统** | 37 个集成技能（ECC/superpowers/gstack/official/custom），全部配置高级 Frontmatter |
 | **后端双栈** 🆕 | Java + Python 后端（SpringBoot + Prisma + LLM + VLM + Workflow） |
 | **GAN Harness** 🆕 | Planner→Generator→Evaluator 循环，质量驱动开发 |
-| **Hook 强化** 🆕 | 16 个 Hooks 覆盖全生命周期（提交质量、配置保护、编辑累积器） |
+| **Hook 强化** 🆕 | 18 个 Hooks 覆盖全生命周期（提交质量、配置保护、编辑累积器、GStack 守卫） |
 | **持续学习** 🆕 | 基于本能的学习系统，置信度评分 |
 | **Frontmatter 配置** | `effort`、`paths`、`allowed-tools`、`user-invocable` 精准控制技能调用 |
 | **UI 风格选择** | 60 个品牌设计模板，基于场景自动匹配 |
 | **技术栈** | React + TypeScript + Vite 6（前端固化），Java + SpringBoot + Python（后端） |
 | **SSOT 架构** | `automation/agent-orchestration.json` 单一真相源 |
-| **角色 SOP** | 全部 13 个角色标准化操作流程 |
+| **角色 SOP** | 全部 15 个角色标准化操作流程 |
 | **文档体系** | 冻结层/演化层/ADR 三层文档体系 |
 | **技能触发** | 全局阶段流程图（Phase 1-5）+ 动态触发规则 |
 | **命令系统** | 自定义斜杠命令：`/commit`、`/pr`、`/review` |
@@ -674,6 +706,9 @@ graph TB
 | **Team 清除机制** 🆕 | `team-manager.sh` — 解决 5 个 TeamDelete Bug，安全清理工作流 |
 | **Codex 双模型** 🆕 | GLM-5 开发 + GPT-5.4 审查的 Codex 双模型集成 |
 | **环境变量优化** 🆕 | `AUTOCOMPACT_PCT=80`、`MAX_THINKING_TOKENS=16000` 性能优化 |
+| **GStack 集成** 🆕 | Phase 0.5 产品设计屋 — YC 式构思、设计探索、自动审查、无缝交接 PRD |
+| **Design Shotgun** 🆕 | 生成 4-6 个 UI 变体，浏览器对比面板，品味记忆迭代设计 |
+| **自动计划审查** 🆕 | 自动 CEO→设计→工程→DX 审查流水线，评分阈值 ≥7.0 |
 
 ### 技术栈全景（从配置文件推断）
 
@@ -689,7 +724,7 @@ graph TB
 | MCP 工具 | GitHub / Figma / Playwright / Context7 | `.mcp.json` |
 | Hook 运行时 | Node.js | `hooks/scripts/*.js` |
 | 配置验证 | Node.js | `scripts/validate-config.js` |
-| 代码审查 | GLM-5（开发）+ GPT-5.4 via Codex（审查） | `CLAUDE.md` 十三-C 节 |
+| 代码审查 | GLM-5（开发）+ GPT-5.4 via Codex（审查） | `CLAUDE.md` 十六节 |
 | Lint / 格式化 | ESLint flat config (antfu 风格) | `CLAUDE.md` 一-B 节 |
 
 ### 导航指南
@@ -711,7 +746,7 @@ graph TB
 | 调整 AC 验收流程 | `automation/feature-gates.json` + `automation/ac-tracker.json` + `scripts/ac-*.js` |
 | 修改 UI 设计流程 | `skills/ui-style-selector/` + `tips/UI设计风格/` |
 | 工作区路径配置 | `automation/workspace.json` + `hooks/scripts/lib/workspace-resolver.js` |
-| Codex 双模型集成 | `CLAUDE.md` 十三-C 节 + Codex 插件钩子 |
+| Codex 双模型集成 | `CLAUDE.md` 十六节 + Codex 插件钩子 |
 
 ### 快速开始
 
@@ -734,7 +769,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 ├── CLAUDE.md                        # 核心指令文件（12 个章节）
 ├── settings.json                    # 权限、钩子、狂暴模式配置
 ├── settings.local.json              # 本地覆盖配置（gitignored）
-├── rules/                           # 模块化规则（8 个文件）
+├── rules/                           # 模块化规则（10 个文件）
 │   ├── 00_global.md                 # 语言、启动约束
 │   ├── 01_development.md            # 开发约束 + 技术栈固化
 │   ├── 02_database.md               # 数据库规范
@@ -743,8 +778,9 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── 05_security.md               # 安全规范
 │   ├── 06_document_lifecycle.md     # 文档生命周期（冻结/演化/ADR）
 │   ├── 07_skill_triggers.md         # 技能触发 + 全局流程图
-│   └── 08_code_comments.md          # 代码注释规范（中文注释 + 版本控制） 🆕
-├── skills/                          # 自定义技能（27 个）
+│   ├── 08_code_comments.md          # 代码注释规范（中文注释 + 版本控制） 🆕
+│   └── 09_gstack_integration.md     # GStack Phase 0.5 集成规则 🆕
+├── skills/                          # 技能系统（37 个，来自 ECC/superpowers/gstack/official/custom）
 │   ├── ui-style-selector/           # UI 风格自动选择（60 模板）
 │   ├── design-context/              # 按角色自动加载设计文档
 │   ├── tdd/                         # TDD 工作流
@@ -771,8 +807,18 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── security-review/             # 10 域安全审查 🆕
 │   ├── strategic-compact/           # 战略性上下文压缩 🆕
 │   ├── gan-harness/                 # GAN 开发循环 🆕
-│   └── continuous-learning/         # 基于本能的持续学习 🆕
-├── agents/                          # 代理定义（13 个角色，各含 SOP）
+│   ├── continuous-learning/         # 基于本能的持续学习 🆕
+│   ├── office-hours/               # YC 6 问产品构思 🆕
+│   ├── design-consultation/        # 竞品研究+设计系统 🆕
+│   ├── design-shotgun/             # UI 变体对比探索 🆕
+│   ├── design-html/                # 模型转 HTML/CSS 🆕
+│   ├── autoplan/                   # 自动全流程审查 🆕
+│   ├── plan-ceo-review/            # CEO 范围挑战 🆕
+│   ├── plan-design-review/         # 设计评分审查 🆕
+│   ├── plan-eng-review/            # 工程架构审查 🆕
+│   ├── plan-devex-review/          # 开发者体验审查 🆕
+│   └── gstack-bridge/              # Phase 0.5→1 交接 🆕
+├── agents/                          # 代理定义（15 个角色，各含 SOP）
 │   ├── pm.md                        # 项目经理
 │   ├── po.md                        # 产品负责人
 │   ├── architect.md                 # 架构师
@@ -785,7 +831,9 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── product-experience.md        # 产品体验师
 │   ├── gan-planner.md               # GAN 产品规格设计 🆕
 │   ├── gan-generator.md             # GAN 代码生成 🆕
-│   └── gan-evaluator.md             # GAN 质量评估 🆕
+│   ├── gan-evaluator.md             # GAN 质量评估 🆕
+│   ├── product-designer.md         # GStack 产品设计师 🆕
+│   └── design-reviewer.md          # GStack 设计审查员 🆕
 ├── automation/                      # 自动化配置
 │   ├── agent-orchestration.json     # SSOT：角色-技能映射唯一真相源
 │   ├── rage-mode.json               # 狂暴模式阶段与功能
@@ -796,7 +844,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   └── github-integration.json      # GitHub 自动推送配置
 ├── hooks/                           # 钩子系统
 │   ├── hooks.json                   # 钩子定义
-│   └── scripts/                     # 钩子脚本（16 个）
+│   └── scripts/                     # 钩子脚本（18 个）
 │       ├── lib/workspace-resolver.js # 工作区路径解析模块 🆕
 │       ├── safety-guard.js          # 工具调用前安全检查
 │       ├── phase-controller.js      # 阶段门禁验证
@@ -813,7 +861,9 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │       ├── console-warn.js          # 检测 console.log 🆕
 │       ├── format-typecheck.js      # Stop 时批量格式化+类型检查 🆕
 │       ├── doc-sync-check.js        # Stop 时提醒同步文档 🆕
-│       └── session-evaluate.js      # Stop 时评估会话 🆕
+│       ├── session-evaluate.js      # Stop 时评估会话 🆕
+│       ├── gstack-phase-guard.js    # GStack 阶段边界守卫 🆕
+│       └── gstack-output-validator.js # GStack 输出 Schema 验证器 🆕
 ├── commands/                        # 斜杠命令
 │   ├── commit.md                    # /commit
 │   ├── pr.md                        # /pr
@@ -907,6 +957,8 @@ QUICKSTART.md                        # 5 分钟快速开始
 | GAN 规划器 | 产品规格设计 | gan-harness | general-purpose |
 | GAN 生成器 | 代码实现 | gan-harness | general-purpose |
 | GAN 评估器 | 质量评估 | gan-harness | general-purpose |
+| 产品设计师 | GStack 产品构思与 UI 探索 | office-hours 🔴, design-consultation, design-shotgun, design-html | general-purpose |
+| 设计审查员 | GStack 计划审查与交接 | autoplan 🔴, plan-*-review, gstack-bridge 🔴 | general-purpose |
 
 ### 技能 Frontmatter 高级配置
 
@@ -978,6 +1030,7 @@ QUICKSTART.md                        # 5 分钟快速开始
 ### 全局阶段流程图
 
 ```
+Phase 0.5: 产品设计 [GStack，可选] → Think (office-hours → design-shotgun) → Plan (autoplan) → Bridge (gstack-bridge) → PRD 预填充
 Phase 1: 需求分析 → PM/PO/Architect 并行 → 冻结层文档
 Phase 2: 开发实现 → Frontend×3/Backend-Java×2/Backend-Python×1 并行 → TDD + 代码审查
 Phase 3: 测试验证 → QA 验证 → 覆盖率 >80%
@@ -1145,5 +1198,5 @@ MIT License
 
 ---
 
-*Template Version: 2.5.0*
+*Template Version: 2.6.0*
 *Last Updated: 2026-04-11*

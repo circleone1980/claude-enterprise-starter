@@ -9,6 +9,31 @@
 
 > **注意**: 以下仅列出各角色的**核心技能**，完整技能列表（含辅助技能）见 `automation/agent-orchestration.json` (SSOT)
 
+### Product Designer (GStack, Phase 0.5a)
+
+> 仅当 `gstackConfig.enabled: true` 时激活
+
+- `office-hours` 🔴 - **入口技能**，YC 6 问挑战假设
+- `design-consultation` 🔴 - 竞品研究+设计系统构建
+- `design-shotgun` - 4-6 UI 变体+品味记忆
+- `design-html` - 模型转生产级 HTML/CSS
+- Superpowers `brainstorming` - 创意探索
+
+**SOP**: `office-hours` → `design-consultation` → `design-shotgun` → `design-html`
+
+### Design Reviewer (GStack, Phase 0.5b)
+
+> 仅当 `gstackConfig.enabled: true` 时激活
+
+- `autoplan` 🔴 - **入口技能**，自动全流程审查
+- `plan-ceo-review` - CEO 范围挑战（4 种模式）
+- `plan-design-review` - 设计评分（6 维度 0-10）
+- `plan-eng-review` - 工程架构审查
+- `plan-devex-review` - 开发者体验审查
+- `gstack-bridge` 🔴 - **交接技能**，GStack→PRD 格式转换
+
+**SOP**: `autoplan` → 品味决策审批 → `gstack-bridge`
+
 ### PM (项目经理)
 - `product-requirements` - 需求理解和拆解
 - `sprint-planning` - Sprint 规划和任务分配
@@ -64,6 +89,17 @@
 - `ui-ux-pro-max` - UX 评估标准
 - Superpowers `brainstorming` - 体验优化脑暴
 - MCP `playwright` - 用户体验自动化测试
+
+---
+
+## GStack 与现有角色关系
+
+| GStack 输出 | 接收角色 | 说明 |
+|------------|---------|------|
+| OFFICE_HOURS.md | PM | 产品背景、目标用户作为 PRD 输入 |
+| DESIGN.md | UI Designer, Frontend | 设计令牌和组件库作为设计约束 |
+| IMPLEMENTATION_PLAN.md | Architect, Backend | 架构图和数据流作为工程参考 |
+| PRD.md（预填充） | PM | PM 精炼而非重建 |
 
 ---
 
