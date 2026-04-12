@@ -39,7 +39,7 @@
     },
     "PM": {
       "subagentType": "everything-claude-code:planner",
-      "requiredSkills": ["product-requirements", "sprint-planning"],
+      "requiredSkills": ["product-requirements", "autoplan"],
       "parallelizable": false,
       "dependencies": [],
       "count": 1,
@@ -55,7 +55,7 @@
     },
     "PO": {
       "subagentType": "general-purpose",
-      "requiredSkills": ["product-requirements", "sprint-planning", "user-onboarding"],
+      "requiredSkills": ["product-requirements", "autoplan", "user-onboarding"],
       "parallelizable": true,
       "dependencies": [],
       "count": 1,
@@ -104,7 +104,7 @@
     },
     "Frontend": {
       "subagentType": "everything-claude-code:typescript-reviewer",
-      "requiredSkills": ["tdd", "antfu", "ui-ux-pro-max", "code-review"],
+      "requiredSkills": ["tdd", "antfu", "vitest", "ui-ux-pro-max", "code-review"],
       "parallelizable": true,
       "dependencies": ["PM", "Architect"],
       "count": 3,
@@ -126,7 +126,7 @@
     },
     "Backend-Java": {
       "subagentType": "everything-claude-code:java-reviewer",
-      "requiredSkills": ["springboot-patterns", "springboot-tdd", "springboot-security", "jpa-patterns", "java-coding-standards", "llm-integration", "vlm-integration", "workflow-engine", "code-review"],
+      "requiredSkills": ["springboot-patterns", "springboot-tdd", "springboot-security", "jpa-patterns", "java-coding-standards", "llm-integration", "vlm-integration", "code-review"],
       "parallelizable": true,
       "dependencies": ["PM", "Architect"],
       "count": 2,
@@ -155,7 +155,7 @@
     },
     "Backend-Python": {
       "subagentType": "everything-claude-code:python-reviewer",
-      "requiredSkills": ["tdd", "prisma-database-setup", "llm-integration", "vlm-integration", "workflow-engine", "code-review"],
+      "requiredSkills": ["tdd", "prisma-database-setup", "llm-integration", "vlm-integration", "code-review"],
       "parallelizable": true,
       "dependencies": ["PM", "Architect"],
       "count": 1,

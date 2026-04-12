@@ -14,7 +14,7 @@
 |------|------|------|------|------|
 | `CLAUDE.md` | 项目 + 全局 | ✓ | ✅ 已有 | 核心指令文件 |
 | `CLAUDE.local.md` | 仅项目 | ✗ | ✅ 已补充 | 个人项目偏好模板 |
-| `rules/*.md` | 项目 + 全局 | ✓ | ✅ 已有 | 9 个规则文件 |
+| `rules/*.md` | 项目 + 全局 | ✓ | ✅ 已有 | 10 个规则文件 |
 | `settings.json` | 项目 + 全局 | ✓ | ✅ 已有 | 共享设置 |
 | `settings.local.json` | 仅项目 | ✗ | ✅ 已补充 | 个人设置覆盖模板 |
 | `.mcp.json` | 仅项目 | ✓ | ✅ 已有 | MCP 工具集成 |
@@ -75,8 +75,8 @@ claude-enterprise-starter/
 ├── commands/                    # ✅ 已补充
 ├── hooks/                       # ✨ 项目扩展（18 个钩子脚本）
 ├── output-styles/               # ✅ 已补充
-├── rules/                       # ✅ 9 个规则文件
-├── skills/                      # ✅ 37 个技能
+├── rules/                       # ✅ 10 个规则文件
+├── skills/                      # ✅ 36 个技能
 ├── templates/                   # ✨ 项目扩展（含 code-headers/）
 ├── workspace/                   # ✨ 目标项目工作区
 ├── .mcp.json                    # ✅
@@ -191,11 +191,11 @@ CLAUDE.local.md
 - [x] `CLAUDE.local.md` (模板)
 - [x] `settings.local.json` (模板)
 - [x] `.worktreeinclude`
-- [x] `rules/*.md` (9 个)
-- [x] `skills/*/SKILL.md` (27 个)
+- [x] `rules/*.md` (10 个)
+- [x] `skills/*/SKILL.md` (36 个)
 - [x] `commands/*.md` (3 个)
 - [x] `output-styles/*.md` (3 个)
-- [x] `agents/*.md` (13 个)
+- [x] `agents/*.md` (15 个)
 - [x] `agent-memory/*/MEMORY.md` (3 个)
 
 ### 项目扩展 ✨

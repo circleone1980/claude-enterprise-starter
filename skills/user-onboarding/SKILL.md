@@ -1,233 +1,220 @@
 ---
-name: codebase-onboarding
-description: Analyze an unfamiliar codebase and generate a structured onboarding guide with architecture map, key entry points, conventions, and a starter CLAUDE.md. Use when joining a new project or setting up Claude Code for the first time in a repo.
-origin: ECC
+name: onboarding-cro
+description: When the user wants to optimize post-signup onboarding, user activation, first-run experience, or time-to-value. Also use when the user mentions "onboarding flow," "activation rate," "user activation," "first-run experience," "empty states," "onboarding checklist," "aha moment," "new user experience," "users aren't activating," "nobody completes setup," "low activation rate," "users sign up but don't use the product," "time to value," or "first session experience." Use this whenever users are signing up but not sticking around. For signup/registration optimization, see signup-flow-cro. For ongoing email sequences, see email-sequence.
+metadata:
+  version: 1.1.0
 ---
 
-# Codebase Onboarding
+# Onboarding CRO
 
-Systematically analyze an unfamiliar codebase and produce a structured onboarding guide. Designed for developers joining a new project or setting up Claude Code in an existing repo for the first time.
+You are an expert in user onboarding and activation. Your goal is to help users reach their "aha moment" as quickly as possible and establish habits that lead to long-term retention.
 
-## When to Use
+## Initial Assessment
 
-- First time opening a project with Claude Code
-- Joining a new team or repository
-- User asks "help me understand this codebase"
-- User asks to generate a CLAUDE.md for a project
-- User says "onboard me" or "walk me through this repo"
+**Check for product marketing context first:**
+If `.agents/product-marketing-context.md` exists (or `.claude/product-marketing-context.md` in older setups), read it before asking questions. Use that context and only ask for information not already covered or specific to this task.
 
-## How It Works
+Before providing recommendations, understand:
 
-### Phase 1: Reconnaissance
+1. **Product Context** - What type of product? B2B or B2C? Core value proposition?
+2. **Activation Definition** - What's the "aha moment"? What action indicates a user "gets it"?
+3. **Current State** - What happens after signup? Where do users drop off?
 
-Gather raw signals about the project without reading every file. Run these checks in parallel:
+---
 
+## Core Principles
+
+### 1. Time-to-Value Is Everything
+Remove every step between signup and experiencing core value.
+
+### 2. One Goal Per Session
+Focus first session on one successful outcome. Save advanced features for later.
+
+### 3. Do, Don't Show
+Interactive > Tutorial. Doing the thing > Learning about the thing.
+
+### 4. Progress Creates Motivation
+Show advancement. Celebrate completions. Make the path visible.
+
+---
+
+## Defining Activation
+
+### Find Your Aha Moment
+
+The action that correlates most strongly with retention:
+- What do retained users do that churned users don't?
+- What's the earliest indicator of future engagement?
+
+**Examples by product type:**
+- Project management: Create first project + add team member
+- Analytics: Install tracking + see first report
+- Design tool: Create first design + export/share
+- Marketplace: Complete first transaction
+
+### Activation Metrics
+- % of signups who reach activation
+- Time to activation
+- Steps to activation
+- Activation by cohort/source
+
+---
+
+## Onboarding Flow Design
+
+### Immediate Post-Signup (First 30 Seconds)
+
+| Approach | Best For | Risk |
+|----------|----------|------|
+| Product-first | Simple products, B2C, mobile | Blank slate overwhelm |
+| Guided setup | Products needing personalization | Adds friction before value |
+| Value-first | Products with demo data | May not feel "real" |
+
+**Whatever you choose:**
+- Clear single next action
+- No dead ends
+- Progress indication if multi-step
+
+### Onboarding Checklist Pattern
+
+**When to use:**
+- Multiple setup steps required
+- Product has several features to discover
+- Self-serve B2B products
+
+**Best practices:**
+- 3-7 items (not overwhelming)
+- Order by value (most impactful first)
+- Start with quick wins
+- Progress bar/completion %
+- Celebration on completion
+- Dismiss option (don't trap users)
+
+### Empty States
+
+Empty states are onboarding opportunities, not dead ends.
+
+**Good empty state:**
+- Explains what this area is for
+- Shows what it looks like with data
+- Clear primary action to add first item
+- Optional: Pre-populate with example data
+
+### Tooltips and Guided Tours
+
+**When to use:** Complex UI, features that aren't self-evident, power features users might miss
+
+**Best practices:**
+- Max 3-5 steps per tour
+- Dismissable at any time
+- Don't repeat for returning users
+
+---
+
+## Multi-Channel Onboarding
+
+### Email + In-App Coordination
+
+**Trigger-based emails:**
+- Welcome email (immediate)
+- Incomplete onboarding (24h, 72h)
+- Activation achieved (celebration + next step)
+- Feature discovery (days 3, 7, 14)
+
+**Email should:**
+- Reinforce in-app actions, not duplicate them
+- Drive back to product with specific CTA
+- Be personalized based on actions taken
+
+---
+
+## Handling Stalled Users
+
+### Detection
+Define "stalled" criteria (X days inactive, incomplete setup)
+
+### Re-engagement Tactics
+
+1. **Email sequence** - Reminder of value, address blockers, offer help
+2. **In-app recovery** - Welcome back, pick up where left off
+3. **Human touch** - For high-value accounts, personal outreach
+
+---
+
+## Measurement
+
+### Key Metrics
+
+| Metric | Description |
+|--------|-------------|
+| Activation rate | % reaching activation event |
+| Time to activation | How long to first value |
+| Onboarding completion | % completing setup |
+| Day 1/7/30 retention | Return rate by timeframe |
+
+### Funnel Analysis
+
+Track drop-off at each step:
 ```
-1. Package manifest detection
-   → package.json, go.mod, Cargo.toml, pyproject.toml, pom.xml, build.gradle,
-     Gemfile, composer.json, mix.exs, pubspec.yaml
-
-2. Framework fingerprinting
-   → next.config.*, nuxt.config.*, angular.json, vite.config.*,
-     django settings, flask app factory, fastapi main, rails config
-
-3. Entry point identification
-   → main.*, index.*, app.*, server.*, cmd/, src/main/
-
-4. Directory structure snapshot
-   → Top 2 levels of the directory tree, ignoring node_modules, vendor,
-     .git, dist, build, __pycache__, .next
-
-5. Config and tooling detection
-   → .eslintrc*, .prettierrc*, tsconfig.json, Makefile, Dockerfile,
-     docker-compose*, .github/workflows/, .env.example, CI configs
-
-6. Test structure detection
-   → tests/, test/, __tests__/, *_test.go, *.spec.ts, *.test.js,
-     pytest.ini, jest.config.*, vitest.config.*
+Signup → Step 1 → Step 2 → Activation → Retention
+100%      80%       60%       40%         25%
 ```
 
-### Phase 2: Architecture Mapping
+Identify biggest drops and focus there.
 
-From the reconnaissance data, identify:
+---
 
-**Tech Stack**
-- Language(s) and version constraints
-- Framework(s) and major libraries
-- Database(s) and ORMs
-- Build tools and bundlers
-- CI/CD platform
+## Output Format
 
-**Architecture Pattern**
-- Monolith, monorepo, microservices, or serverless
-- Frontend/backend split or full-stack
-- API style: REST, GraphQL, gRPC, tRPC
+### Onboarding Audit
+For each issue: Finding → Impact → Recommendation → Priority
 
-**Key Directories**
-Map the top-level directories to their purpose:
+### Onboarding Flow Design
+- Activation goal
+- Step-by-step flow
+- Checklist items (if applicable)
+- Empty state copy
+- Email sequence triggers
+- Metrics plan
 
-<!-- Example for a React project — replace with detected directories -->
-```
-src/components/  → React UI components
-src/api/         → API route handlers
-src/lib/         → Shared utilities
-src/db/          → Database models and migrations
-tests/           → Test suites
-scripts/         → Build and deployment scripts
-```
+---
 
-**Data Flow**
-Trace one request from entry to response:
-- Where does a request enter? (router, handler, controller)
-- How is it validated? (middleware, schemas, guards)
-- Where is business logic? (services, models, use cases)
-- How does it reach the database? (ORM, raw queries, repositories)
+## Common Patterns by Product Type
 
-### Phase 3: Convention Detection
-
-Identify patterns the codebase already follows:
-
-**Naming Conventions**
-- File naming: kebab-case, camelCase, PascalCase, snake_case
-- Component/class naming patterns
-- Test file naming: `*.test.ts`, `*.spec.ts`, `*_test.go`
-
-**Code Patterns**
-- Error handling style: try/catch, Result types, error codes
-- Dependency injection or direct imports
-- State management approach
-- Async patterns: callbacks, promises, async/await, channels
-
-**Git Conventions**
-- Branch naming from recent branches
-- Commit message style from recent commits
-- PR workflow (squash, merge, rebase)
-- If the repo has no commits yet or only a shallow history (e.g. `git clone --depth 1`), skip this section and note "Git history unavailable or too shallow to detect conventions"
-
-### Phase 4: Generate Onboarding Artifacts
-
-Produce two outputs:
-
-#### Output 1: Onboarding Guide
-
-```markdown
-# Onboarding Guide: [Project Name]
-
-## Overview
-[2-3 sentences: what this project does and who it serves]
-
-## Tech Stack
-<!-- Example for a Next.js project — replace with detected stack -->
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| Language | TypeScript | 5.x |
-| Framework | Next.js | 14.x |
-| Database | PostgreSQL | 16 |
-| ORM | Prisma | 5.x |
-| Testing | Jest + Playwright | - |
-
-## Architecture
-[Diagram or description of how components connect]
-
-## Key Entry Points
-<!-- Example for a Next.js project — replace with detected paths -->
-- **API routes**: `src/app/api/` — Next.js route handlers
-- **UI pages**: `src/app/(dashboard)/` — authenticated pages
-- **Database**: `prisma/schema.prisma` — data model source of truth
-- **Config**: `next.config.ts` — build and runtime config
-
-## Directory Map
-[Top-level directory → purpose mapping]
-
-## Request Lifecycle
-[Trace one API request from entry to response]
-
-## Conventions
-- [File naming pattern]
-- [Error handling approach]
-- [Testing patterns]
-- [Git workflow]
-
-## Common Tasks
-<!-- Example for a Node.js project — replace with detected commands -->
-- **Run dev server**: `npm run dev`
-- **Run tests**: `npm test`
-- **Run linter**: `npm run lint`
-- **Database migrations**: `npx prisma migrate dev`
-- **Build for production**: `npm run build`
-
-## Where to Look
-<!-- Example for a Next.js project — replace with detected paths -->
-| I want to... | Look at... |
+| Product Type | Key Steps |
 |--------------|-----------|
-| Add an API endpoint | `src/app/api/` |
-| Add a UI page | `src/app/(dashboard)/` |
-| Add a database table | `prisma/schema.prisma` |
-| Add a test | `tests/` matching the source path |
-| Change build config | `next.config.ts` |
-```
+| B2B SaaS | Setup wizard → First value action → Team invite → Deep setup |
+| Marketplace | Complete profile → Browse → First transaction → Repeat loop |
+| Mobile App | Permissions → Quick win → Push setup → Habit loop |
+| Content Platform | Follow/customize → Consume → Create → Engage |
 
-#### Output 2: Starter CLAUDE.md
+---
 
-Generate or update a project-specific CLAUDE.md based on detected conventions. If `CLAUDE.md` already exists, read it first and enhance it — preserve existing project-specific instructions and clearly call out what was added or changed.
+## Experiment Ideas
 
-```markdown
-# Project Instructions
+When recommending experiments, consider tests for:
+- Flow simplification (step count, ordering)
+- Progress and motivation mechanics
+- Personalization by role or goal
+- Support and help availability
 
-## Tech Stack
-[Detected stack summary]
+**For comprehensive experiment ideas**: See [references/experiments.md](references/experiments.md)
 
-## Code Style
-- [Detected naming conventions]
-- [Detected patterns to follow]
+---
 
-## Testing
-- Run tests: `[detected test command]`
-- Test pattern: [detected test file convention]
-- Coverage: [if configured, the coverage command]
+## Task-Specific Questions
 
-## Build & Run
-- Dev: `[detected dev command]`
-- Build: `[detected build command]`
-- Lint: `[detected lint command]`
+1. What action most correlates with retention?
+2. What happens immediately after signup?
+3. Where do users currently drop off?
+4. What's your activation rate target?
+5. Do you have cohort analysis on successful vs. churned users?
 
-## Project Structure
-[Key directory → purpose map]
+---
 
-## Conventions
-- [Commit style if detectable]
-- [PR workflow if detectable]
-- [Error handling patterns]
-```
+## Related Skills
 
-## Best Practices
-
-1. **Don't read everything** — reconnaissance should use Glob and Grep, not Read on every file. Read selectively only for ambiguous signals.
-2. **Verify, don't guess** — if a framework is detected from config but the actual code uses something different, trust the code.
-3. **Respect existing CLAUDE.md** — if one already exists, enhance it rather than replacing it. Call out what's new vs existing.
-4. **Stay concise** — the onboarding guide should be scannable in 2 minutes. Details belong in the code, not the guide.
-5. **Flag unknowns** — if a convention can't be confidently detected, say so rather than guessing. "Could not determine test runner" is better than a wrong answer.
-
-## Anti-Patterns to Avoid
-
-- Generating a CLAUDE.md that's longer than 100 lines — keep it focused
-- Listing every dependency — highlight only the ones that shape how you write code
-- Describing obvious directory names — `src/` doesn't need an explanation
-- Copying the README — the onboarding guide adds structural insight the README lacks
-
-## Examples
-
-### Example 1: First time in a new repo
-**User**: "Onboard me to this codebase"
-**Action**: Run full 4-phase workflow → produce Onboarding Guide + Starter CLAUDE.md
-**Output**: Onboarding Guide printed directly to the conversation, plus a `CLAUDE.md` written to the project root
-
-### Example 2: Generate CLAUDE.md for existing project
-**User**: "Generate a CLAUDE.md for this project"
-**Action**: Run Phases 1-3, skip Onboarding Guide, produce only CLAUDE.md
-**Output**: Project-specific `CLAUDE.md` with detected conventions
-
-### Example 3: Enhance existing CLAUDE.md
-**User**: "Update the CLAUDE.md with current project conventions"
-**Action**: Read existing CLAUDE.md, run Phases 1-3, merge new findings
-**Output**: Updated `CLAUDE.md` with additions clearly marked
+- **signup-flow-cro**: For optimizing the signup before onboarding
+- **email-sequence**: For onboarding email series
+- **paywall-upgrade-cro**: For converting to paid during/after onboarding
+- **ab-test-setup**: For testing onboarding changes

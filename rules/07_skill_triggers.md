@@ -74,7 +74,7 @@
 |---------|---------|---------|
 | Architect 完成**架构设计初稿** | `Skill writing-plans` | Architect |
 | Architect 需要创建**实施计划** | `Skill writing-plans` | Architect |
-| PM 需要创建**Sprint 计划** | `Skill sprint-planning` | PM |
+| PM 需要创建**Sprint 计划** | `Skill autoplan` | PM |
 | **UI 风格选择**（项目初始或新模块） | `Skill ui-style-selector` | Architect, UI Designer |
 
 ---
@@ -85,9 +85,9 @@
 
 | 角色 | 必调技能 | 辅助技能 |
 |------|---------|---------|
-| **Frontend** | `Skill tdd` 🔴 | `Skill ui-ux-pro-max --stack react` |
-| **Backend-Java** | `Skill springboot-tdd` 🔴, `Skill springboot-patterns` 🔴 | `Skill jpa-patterns`, `Skill springboot-security`, `Skill llm-integration`, `Skill vlm-integration`, `Skill workflow-engine` |
-| **Backend-Python** | `Skill tdd` 🔴 | `Skill prisma-database-setup`, `Skill llm-integration`, `Skill vlm-integration`, `Skill workflow-engine` |
+| **Frontend** | `Skill tdd` 🔴 | `Skill ui-ux-pro-max --stack react`, `Skill vitest` |
+| **Backend-Java** | `Skill springboot-tdd` 🔴, `Skill springboot-patterns` 🔴 | `Skill jpa-patterns`, `Skill springboot-security`, `Skill llm-integration`, `Skill vlm-integration` |
+| **Backend-Python** | `Skill tdd` 🔴 | `Skill prisma-database-setup`, `Skill llm-integration`, `Skill vlm-integration` |
 | **QA** | `Skill tdd` | `Skill verification-loop` 🔴, `Skill security-review`, `Skill product-requirements` |
 
 **标准开发流程**：
@@ -95,9 +95,10 @@
 # Frontend 标准
 1. Skill ui-ux-pro-max --stack react  # 获取 UI 最佳实践
 2. Skill tdd                           # 启动 TDD 流程
-3. 编写测试用例（Red 阶段）
-4. 实现组件代码（Green 阶段）
-5. 重构优化（Refactor 阶段）
+3. Skill vitest                        # 获取 Vitest 测试框架指导
+4. 编写测试用例（Red 阶段）
+5. 实现组件代码（Green 阶段）
+6. 重构优化（Refactor 阶段）
 
 # Backend-Java 标准
 1. Skill springboot-patterns           # 获取 SpringBoot 架构指导
@@ -107,7 +108,6 @@
 5. 重构优化（Refactor 阶段）
 6. IF 安全相关 → Skill springboot-security
 7. IF AI 功能 → Skill llm-integration / vlm-integration
-8. IF 工作流 → Skill workflow-engine
 
 # Backend-Python 标准
 1. Skill prisma-database-setup        # 获取数据库配置指导
@@ -116,7 +116,6 @@
 4. 实现代码（Green 阶段）
 5. 重构优化（Refactor 阶段）
 6. IF AI 功能 → Skill llm-integration / vlm-integration
-7. IF 工作流 → Skill workflow-engine
 ```
 
 ### 2.2 遇到问题
@@ -198,7 +197,7 @@ Agent --name "{角色名称}" \
 
 | 角色 | 角色特定技能 |
 |------|------------|
-| **Frontend** | 开始时调用 `Skill ui-ux-pro-max --stack react` |
+| **Frontend** | 开始时调用 `Skill ui-ux-pro-max --stack react`，测试时调用 `Skill vitest` |
 | **Backend-Java** | 开始时调用 `Skill springboot-patterns`，数据访问时调用 `Skill jpa-patterns` |
 | **Backend-Python** | 开始时调用 `Skill prisma-database-setup`，AI 功能时调用 `Skill llm-integration` |
 | **QA** | 开始时调用 `Skill tdd`（了解测试策略），验证时调用 `Skill verification-loop` |
@@ -295,7 +294,7 @@ Claude Code 内置技能无需安装，直接通过 `/` 命令调用：
 ```
 前置: Phase 0 完成（GStack 禁用）或 Phase 0.5b 完成（GStack 启用）
 显式调用:
-  PM → /product-requirements (effort:high) → /sprint-planning (effort:medium)
+  PM → /product-requirements (effort:high) → /autoplan (effort:medium)
   PO → /product-requirements (effort:high) → /user-onboarding (effort:high)
   Architect → /writing-plans (effort:high) → /ui-style-selector (确认视觉方向)
 自动激活: 无（设计文档阶段无代码文件）

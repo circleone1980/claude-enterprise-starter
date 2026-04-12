@@ -66,7 +66,7 @@ my-project/
 │   └── .gitignore
 ├── CLAUDE.md                      ← Claude 行为指令（引擎核心）
 ├── agents/                        ← 15 个 AI 角色定义（含 GStack 2 个）
-├── skills/                        ← 38 个技能（含 GStack 10 个）
+├── skills/                        ← 36 个技能（含 GStack 10 个）
 ├── rules/                         ← 10 条开发规则（含 GStack 集成规则）
 ├── hooks/                         ← 自动钩子（安全检查/门禁/格式化...）
 │   └── scripts/                   ← 钩子脚本（18 个）

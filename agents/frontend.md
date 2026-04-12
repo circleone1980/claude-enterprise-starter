@@ -27,6 +27,7 @@ team: Development
 |------|------|------|
 | **Skill** | `tdd` | 🔴 TDD 开发流程（Red-Green-Refactor） |
 | **Skill** | `antfu` | 🔴 Anthony Fu 前端工具链规范（ESLint、TypeScript、pnpm、Vitest） |
+| **Skill** | `vitest` | Vitest 测试框架最佳实践 |
 | **Skill** | `ui-ux-pro-max` | UI/UX 设计指导（React 栈） |
 | **Skill** | `code-review` | 代码审查 |
 | **Agent** | `everything-claude-code:typescript-reviewer` | TypeScript 代码审查 |
@@ -60,7 +61,7 @@ Skill tdd
 
 1. **🔴 设计理解** - 调用 `Skill design-context --role frontend` 获取设计约束
 2. **UI 最佳实践** - 调用 `ui-ux-pro-max --stack react` 获取 React 最佳实践
-3. **工具规范** - 调用 `antfu` 获取前端工具链规范（ESLint、TypeScript、pnpm）
+3. **工具规范** - 调用 `antfu` 获取前端工具链规范（ESLint、TypeScript、pnpm），调用 `vitest` 获取 Vitest 测试框架指导
 4. **🔴 TDD 启动** - 调用 `tdd` skill 启动 TDD 流程
 5. **Red** - 编写失败的测试用例
 5. **Green** - 实现代码使测试通过

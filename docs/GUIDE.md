@@ -20,7 +20,7 @@ Claude Enterprise Starter 是一个**企业级 Claude Code 配置模板**，将 
 | 需求理解偏差导致返工 | PM/PO/Architect 分角色协作，冻结层文档 |
 | 前后端风格不统一 | 固化技术栈 + UI 风格选择机制 |
 | 大型项目难以管理 | 5 阶段开发流程 + Agent 并行开发 |
-| 重复造轮子 | 37 个内置技能覆盖常见开发场景 |
+| 重复造轮子 | 36 个内置技能覆盖常见开发场景 |
 
 ### 核心理念
 
@@ -145,7 +145,7 @@ CLAUDE.local.md
 
 ### 3.3 技能系统 (`skills/`)
 
-37 个技能（来自 ECC/superpowers/gstack/official/custom），详见[第五章](#五技能系统skills)。
+36 个技能（来自 ECC/superpowers/gstack/official/custom），详见[第五章](#五技能系统skills)。
 
 ### 3.4 代理系统 (`agents/`)
 
@@ -213,7 +213,7 @@ CLAUDE.md 是 Claude Code 的主要配置文件，包含 17 个章节：
 | 九、狂暴模式 | 自动化能力、阶段推进（含 Phase 0.5）、安全边界 |
 | 十、模组化规则加载 | 9 个模块化规则文件 |
 | 十一、代理定义 | 15 个角色定义文件路径 |
-| 十二、技能文件 | 37 个技能文件路径 |
+| 十二、技能文件 | 36 个技能文件路径 |
 | 十三、验证与信任 | 验证策略、信任校准 |
 | 十四、Agent Team 清理机制 | TeamDelete Bug 修复、强制清理流程 |
 | 十五、智能模式选择引擎 | 评分因子、决策规则、各阶段自动决策 |
@@ -277,16 +277,16 @@ CLAUDE.md 是 Claude Code 的主要配置文件，包含 17 个章节：
 | 技能 | 类型 | effort | 自动激活 | 核心用途 |
 |------|------|--------|----------|----------|
 | **tdd** | 流程控制 | - | 否 | Red-Green-Refactor TDD 流程 |
-| **tdd-workflow** | 操作手册 | low | 否 | TDD 详细操作步骤 |
 | **code-review** | 流程控制 | high | 否 | 多维度代码审查 |
 | **writing-plans** | 流程控制 | high | 否 | 架构设计与实施计划 |
 | **product-requirements** | 流程控制 | high | 否 | 需求拆解与分析 |
 | **user-onboarding** | 流程控制 | high | 否 | FTUE 用户引导设计 |
-| **sprint-planning** | 流程控制 | medium | 否 | Sprint 规划 |
 | **ui-style-selector** | 创意生成 | high | 否 | 60 模板场景匹配 |
 | **ui-ux-pro-max** | 背景知识 | - | paths: *.tsx | 50+ 设计风格、161 配色方案 |
 | **react-best-practices** | 背景知识 | - | paths: *.tsx | React 架构模式 |
 | **antfu** | 背景知识 | - | paths: *.ts | ESLint/TS/pnpm/Vitest 规范 |
+| **vitest** | 背景知识 | - | paths: *.test.ts | Vitest 测试模式 🆕 |
+| **pnpm** | 背景知识 | - | paths: pnpm-workspace.yaml | pnpm 工作区 & monorepo 🆕 |
 | **prisma-database-setup** | 背景知识 | - | paths: *.prisma | 数据库配置指导 |
 | **design-context** | 辅助工具 | low | 否 | 按角色加载设计文档 |
 | **springboot-patterns** | 流程控制 | high | 否 | SpringBoot 架构模式 |
@@ -296,7 +296,6 @@ CLAUDE.md 是 Claude Code 的主要配置文件，包含 17 个章节：
 | **java-coding-standards** | 背景知识 | - | 否 | Java 编码规范 |
 | **llm-integration** | 背景知识 | - | 否 | LLM API 集成模式 |
 | **vlm-integration** | 背景知识 | - | 否 | VLM 视觉语言模型集成 |
-| **workflow-engine** | 背景知识 | high | 否 | 工作流编排模式 |
 | **verification-loop** | 流程控制 | high | 否 | 6 阶段验证循环 |
 | **search-first** | 流程控制 | medium | 否 | 编码前先研究 |
 | **security-review** | 流程控制 | high | 否 | 10 域安全审查 |
@@ -678,7 +677,7 @@ Phase 0.5: 产品设计 [GStack，可选]
 |  门禁: DESIGN.md + IMPLEMENTATION_PLAN.md + 各维度评分 ≥ 7.0
 |
 Phase 1: 需求分析（PM / PO / Architect / UI Designer 并行）
-|  PM -> /product-requirements -> /sprint-planning
+|  PM -> /product-requirements -> /autoplan
 |  PO -> /product-requirements -> /user-onboarding
 |  Architect -> /writing-plans -> /ui-style-selector（确认 UI 风格）
 |  门禁: PRD + 用户故事 + 验收标准 + 架构设计 + DB + API + UI 设计 + 冻结层锁定
@@ -1146,7 +1145,7 @@ Skill content and instructions here...
 | 你在做什么 | 调用什么 |
 |------------|----------|
 | 分析需求 | `/product-requirements` |
-| 规划 Sprint | `/sprint-planning` |
+| 规划 Sprint | `/autoplan` |
 | 设计架构 | `/writing-plans` |
 | 选择 UI 风格 | `/ui-style-selector` |
 | 开始开发 | `/tdd` |

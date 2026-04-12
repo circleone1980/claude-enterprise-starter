@@ -408,6 +408,44 @@ if (gstackEnabled) {
 
 console.log('');
 
+// === 检查 8: Skill 存在性全面检查 ===
+console.log('--- 检查 8: Skill 存在性（所有 Agent requiredSkills） ---');
+
+let skillErrors = 0;
+const allSkills = new Set();
+
+for (const [name, agent] of Object.entries(ssot.agents)) {
+  if (agent.gstackOnly && !gstackEnabled) continue;
+  for (const skill of (agent.requiredSkills || [])) {
+    allSkills.add(skill);
+    const skillPath = path.join(SKILLS_DIR, skill, 'SKILL.md');
+    if (fs.existsSync(skillPath)) {
+      log_ok(`${name} → skills/${skill}/SKILL.md 存在`);
+    } else {
+      log_fail(`${name} → skills/${skill}/SKILL.md 不存在`);
+      skillErrors++;
+    }
+  }
+}
+
+// 检查 skills/ 目录下的每个子目录都有 SKILL.md
+if (fs.existsSync(SKILLS_DIR)) {
+  const skillDirs = fs.readdirSync(SKILLS_DIR).filter(f => {
+    return fs.statSync(path.join(SKILLS_DIR, f)).isDirectory();
+  });
+  for (const dir of skillDirs) {
+    const skillMd = path.join(SKILLS_DIR, dir, 'SKILL.md');
+    if (!fs.existsSync(skillMd)) {
+      log_warn(`skills/${dir}/ 缺少 SKILL.md`);
+    }
+  }
+  log_ok(`Skills 目录总数: ${skillDirs.length}，注册表引用: ${allSkills.size}`);
+} else {
+  log_fail('skills/ 目录不存在');
+}
+
+console.log('');
+
 // === 总结 ===
 console.log('========================================');
 console.log(`  结果: ${passed} PASS, ${failed} FAIL, ${warnings} WARN`);

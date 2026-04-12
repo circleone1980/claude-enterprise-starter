@@ -38,7 +38,7 @@ Skill design-context --role backend-python
 | **开始开发** | `Skill tdd` + `Skill prisma-database-setup` |
 | **涉及 LLM** | `Skill llm-integration` |
 | **涉及 VLM** | `Skill vlm-integration` |
-| **涉及工作流** | `Skill workflow-engine` |
+| **涉及工作流** | 按 CLAUDE.md 技术栈使用 Prefect |
 | **涉及数据库变更** | `Skill prisma-database-setup` |
 | **完成代码** | `Skill code-review` |
 
@@ -52,7 +52,6 @@ Skill design-context --role backend-python
 | **Skill** | `prisma-database-setup` | 🔴 数据库配置指导 |
 | **Skill** | `llm-integration` | 🔴 LLM API 集成 |
 | **Skill** | `vlm-integration` | 🔴 VLM 视觉模型集成 |
-| **Skill** | `workflow-engine` | 工作流编排 |
 | **Skill** | `code-review` | 代码审查 |
 | **Agent** | `everything-claude-code:python-reviewer` | Python 代码审查 |
 
@@ -81,7 +80,7 @@ Skill design-context --role backend-python
   - IF 数据库 → `Skill prisma-database-setup`
   - IF LLM 功能 → `Skill llm-integration`
   - IF 视觉 AI → `Skill vlm-integration`
-  - IF 工作流 → `Skill workflow-engine`
+  - IF 工作流 → 按 CLAUDE.md 技术栈使用 Prefect
 - **代码注释**: 每个源文件必须有模块头注释和函数中文 docstring（详见 rules/08_code_comments.md）
 
 ### 3. 完成阶段
@@ -96,7 +95,7 @@ Skill design-context --role backend-python
 | 数据库操作 | → prisma-database-setup |
 | LLM 集成 | → llm-integration |
 | 图像识别 | → vlm-integration |
-| 工作流/审批 | → workflow-engine |
+| 工作流/审批 | → 按 CLAUDE.md 技术栈使用 Prefect |
 | 完成代码 | → code-review |
 | 卡住 >15min | → brainstorming |
 

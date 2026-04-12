@@ -18,7 +18,7 @@
 
 **How It Works**: Projects go through a 5-phase pipeline (Phase 0: Init → Phase 0.5: Product Design [optional, GStack] → Phase 1: Requirements → Phase 2: Development → Phase 3: Testing → Phase 4: UX Review → Phase 5: Deployment), with each phase requiring quality gate passage. A separate GAN Harness loop (Planner → Generator → Evaluator) handles quality-driven feature development.
 
-**Key Metrics**: 15 Agent roles | 37 Skills | 18 Hook scripts | 10 Rule files | 7 Automation configs
+**Key Metrics**: 15 Agent roles | 36 Skills | 18 Hook scripts | 10 Rule files | 7 Automation configs
 
 ### Module Dependency Topology
 
@@ -41,12 +41,12 @@ graph TB
         R9["09_gstack_integration"]
     end
 
-    subgraph Skills["Skills (37)"]
-        S_REQ["Requirements: product-requirements, sprint-planning"]
+    subgraph Skills["Skills (36)"]
+        S_REQ["Requirements: product-requirements, autoplan"]
         S_DEV["Development: tdd, antfu, springboot-*"]
         S_UI["UI: ui-ux-pro-max, ui-style-selector"]
         S_ARCH["Architecture: writing-plans, code-review"]
-        S_AI["AI/ML: llm, vlm, workflow-engine"]
+        S_AI["AI/ML: llm, vlm"]
         S_GAN["GAN: gan-harness"]
         S_GSTACK["GStack: office-hours, design-shotgun, autoplan, gstack-bridge"]
     end
@@ -108,7 +108,7 @@ graph TB
 | **Rage Mode** 🔴 | Full automation - auto GitHub push, agent health monitoring, phase advancement |
 | **TDD Workflow** | Enforced Test-Driven Development with Red-Green-Refactor cycle |
 | **Quality Gates** | 4-stage verification: functionality, code review, testing, documentation |
-| **Skills System** | 37 integrated skills with advanced frontmatter configuration |
+| **Skills System** | 36 integrated skills with advanced frontmatter configuration |
 | **Backend Dual-Stack** 🆕 | Java + Python backend (SpringBoot + Prisma + LLM + VLM + Workflow) |
 | **GAN Harness** 🆕 | Planner→Generator→Evaluator loop for quality-driven development |
 | **Hook Reinforcement** 🆕 | 18 hooks covering full lifecycle (commit quality, config protection, edit accumulator, GStack guards) |
@@ -200,19 +200,19 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── 07_skill_triggers.md         # Skill triggers + global phase flowchart
 │   ├── 08_code_comments.md          # Code comment standards (Chinese + versioning) 🆕
 │   └── 09_gstack_integration.md     # GStack Phase 0.5 integration rules 🆕
-├── skills/                          # Skills (37 skills from ECC/superpowers/gstack/official/custom)
+├── skills/                          # Skills (36 skills from ECC/superpowers/gstack/official/custom)
 │   ├── ui-style-selector/           # UI style auto-selection (60 templates)
 │   ├── design-context/              # Auto-load design docs by role
 │   ├── tdd/                         # TDD workflow
-│   ├── tdd-workflow/                # TDD operation manual
 │   ├── code-review/                 # Code review (effort: high)
 │   ├── writing-plans/               # Architecture planning (effort: high)
 │   ├── product-requirements/        # Requirements analysis (effort: high)
 │   ├── user-onboarding/             # FTUE design (effort: high)
-│   ├── sprint-planning/             # Sprint planning (effort: medium)
 │   ├── ui-ux-pro-max/               # UI/UX best practices (paths: *.tsx)
 │   ├── react-best-practices/        # React patterns (auto-activate on .tsx)
 │   ├── antfu/                       # ESLint/TS/pnpm/Vitest (auto-activate)
+│   ├── vitest/                      # Vitest testing patterns 🆕
+│   ├── pnpm/                        # pnpm workspace & monorepo config 🆕
 │   ├── prisma-database-setup/       # Prisma DB config (paths: *.prisma)
 │   ├── springboot-patterns/         # SpringBoot architecture patterns 🆕
 │   ├── springboot-tdd/              # SpringBoot TDD workflow 🆕
@@ -221,7 +221,6 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── java-coding-standards/       # Java coding standards 🆕
 │   ├── llm-integration/             # LLM API integration 🆕
 │   ├── vlm-integration/             # VLM vision model integration 🆕
-│   ├── workflow-engine/             # Workflow orchestration 🆕
 │   ├── verification-loop/           # 6-phase verification cycle 🆕
 │   ├── search-first/                # Research before coding 🆕
 │   ├── security-review/             # 10-domain security audit 🆕
@@ -371,10 +370,10 @@ QUICKSTART.md                        # 5-minute quick start guide
 | **writing-plans** | high | - | Architecture trade-offs |
 | **product-requirements** | high | - | Business logic analysis |
 | **user-onboarding** | high | - | User psychology analysis |
-| **sprint-planning** | medium | - | Structured process |
 | **ui-style-selector** | high | - | 60 templates scenario matching |
 | **tdd** | - | - | Core TDD methodology |
-| **tdd-workflow** | low | - | Operation manual level |
+| **vitest** | - | `**/*.test.ts,**/*.spec.ts` | Vitest testing patterns 🆕 |
+| **pnpm** | - | `pnpm-workspace.yaml` | pnpm workspace & monorepo 🆕 |
 | **springboot-patterns** | high | - | SpringBoot architecture patterns 🆕 |
 | **springboot-tdd** | high | - | SpringBoot TDD workflow 🆕 |
 | **springboot-security** | high | - | SpringBoot security config 🆕 |
@@ -382,7 +381,6 @@ QUICKSTART.md                        # 5-minute quick start guide
 | **java-coding-standards** | - | - | Java coding standards 🆕 |
 | **llm-integration** | - | - | LLM API integration 🆕 |
 | **vlm-integration** | - | - | VLM vision model integration 🆕 |
-| **workflow-engine** | high | - | Workflow orchestration 🆕 |
 | **verification-loop** | high | - | 6-phase verification cycle 🆕 |
 | **search-first** | medium | - | Research before coding 🆕 |
 | **security-review** | high | - | 10-domain security audit 🆕 |
@@ -394,11 +392,11 @@ QUICKSTART.md                        # 5-minute quick start guide
 
 | Role | Responsibilities | Core Skills | Agent Type |
 |------|------------------|-------------|------------|
-| PM | Project management, task distribution | product-requirements, sprint-planning | planner |
+| PM | Project management, task distribution | product-requirements, autoplan | planner |
 | PO | Requirements analysis, user stories | product-requirements, user-onboarding | general-purpose |
 | Architect | System design, technical solutions | writing-plans 🔴, ui-style-selector, code-review | architect |
 | UI Designer | Interface design, interaction | ui-ux-pro-max 🔴, ui-style-selector | general-purpose |
-| Frontend | Frontend development | tdd 🔴, antfu 🔴, ui-ux-pro-max | typescript-reviewer |
+| Frontend | Frontend development | tdd 🔴, antfu 🔴, vitest 🔴, ui-ux-pro-max | typescript-reviewer |
 | Backend-Java | Java backend (SpringBoot + JPA) | springboot-patterns 🔴, springboot-tdd 🔴, jpa-patterns | java-reviewer |
 | Backend-Python | Python backend (Prisma + LLM) | tdd 🔴, prisma-database-setup 🔴, llm-integration | python-reviewer |
 | QA | Testing, verification | tdd, verification-loop 🔴, code-review | tdd-guide |
@@ -599,7 +597,7 @@ Agent --name "Backend-Python-1" \
 
 **工作原理**: 项目经历 5 阶段流水线（Phase 0: 初始化 → Phase 0.5: 产品设计 [可选, GStack] → Phase 1: 需求分析 → Phase 2: 开发实现 → Phase 3: 测试验证 → Phase 4: 产品体验 → Phase 5: 部署发布），每个阶段必须通过质量门禁才能推进。独立的 GAN Harness 循环（Planner → Generator → Evaluator）负责质量驱动的功能开发。
 
-**关键指标**: 15 个 Agent 角色 | 37 个技能 | 18 个 Hook 脚本 | 10 个规则文件 | 7 个自动化配置
+**关键指标**: 15 个 Agent 角色 | 36 个技能 | 18 个 Hook 脚本 | 10 个规则文件 | 7 个自动化配置
 
 ### 模块依赖拓扑
 
@@ -622,12 +620,12 @@ graph TB
         R9["09_gstack_integration"]
     end
 
-    subgraph Skills["技能系统 (37)"]
-        S_REQ["需求类: product-requirements, sprint-planning"]
+    subgraph Skills["技能系统 (36)"]
+        S_REQ["需求类: product-requirements, autoplan"]
         S_DEV["开发类: tdd, antfu, springboot-*"]
         S_UI["UI类: ui-ux-pro-max, ui-style-selector"]
         S_ARCH["架构类: writing-plans, code-review"]
-        S_AI["AI类: llm, vlm, workflow-engine"]
+        S_AI["AI类: llm, vlm"]
         S_GAN["GAN类: gan-harness"]
         S_GSTACK["GStack类: office-hours, design-shotgun, autoplan, gstack-bridge"]
     end
@@ -689,7 +687,7 @@ graph TB
 | **狂暴模式** 🔴 | 全自动开发 - 自动 GitHub 推送、Agent 监控、阶段推进 |
 | **TDD 工作流** | 强制测试驱动开发，Red-Green-Refactor 循环 |
 | **质量门禁** | 4 阶段验证：功能、代码审查、测试、文档 |
-| **技能系统** | 37 个集成技能（ECC/superpowers/gstack/official/custom），全部配置高级 Frontmatter |
+| **技能系统** | 36 个集成技能（ECC/superpowers/gstack/official/custom），全部配置高级 Frontmatter |
 | **后端双栈** 🆕 | Java + Python 后端（SpringBoot + Prisma + LLM + VLM + Workflow） |
 | **GAN Harness** 🆕 | Planner→Generator→Evaluator 循环，质量驱动开发 |
 | **Hook 强化** 🆕 | 18 个 Hooks 覆盖全生命周期（提交质量、配置保护、编辑累积器、GStack 守卫） |
@@ -780,19 +778,19 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── 07_skill_triggers.md         # 技能触发 + 全局流程图
 │   ├── 08_code_comments.md          # 代码注释规范（中文注释 + 版本控制） 🆕
 │   └── 09_gstack_integration.md     # GStack Phase 0.5 集成规则 🆕
-├── skills/                          # 技能系统（37 个，来自 ECC/superpowers/gstack/official/custom）
+├── skills/                          # 技能系统（36 个，来自 ECC/superpowers/gstack/official/custom）
 │   ├── ui-style-selector/           # UI 风格自动选择（60 模板）
 │   ├── design-context/              # 按角色自动加载设计文档
 │   ├── tdd/                         # TDD 工作流
-│   ├── tdd-workflow/                # TDD 操作手册
 │   ├── code-review/                 # 代码审查 (effort: high)
 │   ├── writing-plans/               # 架构规划 (effort: high)
 │   ├── product-requirements/        # 需求分析 (effort: high)
 │   ├── user-onboarding/             # 用户引导设计 (effort: high)
-│   ├── sprint-planning/             # Sprint 规划 (effort: medium)
 │   ├── ui-ux-pro-max/               # UI/UX 最佳实践 (paths: *.tsx)
 │   ├── react-best-practices/        # React 模式（编辑 .tsx 自动激活）
 │   ├── antfu/                       # ESLint/TS/pnpm/Vitest（编辑自动激活）
+│   ├── vitest/                      # Vitest 测试模式 🆕
+│   ├── pnpm/                        # pnpm 工作区 & monorepo 配置 🆕
 │   ├── prisma-database-setup/       # Prisma 数据库配置 (paths: *.prisma)
 │   ├── springboot-patterns/         # SpringBoot 架构模式 🆕
 │   ├── springboot-tdd/              # SpringBoot TDD 工作流 🆕
@@ -801,7 +799,6 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── java-coding-standards/       # Java 编码规范 🆕
 │   ├── llm-integration/             # LLM API 集成 🆕
 │   ├── vlm-integration/             # VLM 视觉模型集成 🆕
-│   ├── workflow-engine/             # 工作流编排 🆕
 │   ├── verification-loop/           # 6 阶段验证循环 🆕
 │   ├── search-first/                # 编码前先研究 🆕
 │   ├── security-review/             # 10 域安全审查 🆕
@@ -944,7 +941,7 @@ QUICKSTART.md                        # 5 分钟快速开始
 
 | 角色 | 职责 | 核心技能 | Agent 类型 |
 |------|------|---------|-----------|
-| PM | 项目管理、任务分配 | product-requirements, sprint-planning | planner |
+| PM | 项目管理、任务分配 | product-requirements, autoplan | planner |
 | PO | 需求分析、用户故事 | product-requirements, user-onboarding | general-purpose |
 | 架构师 | 系统设计、技术方案 | writing-plans 🔴, ui-style-selector, code-review | architect |
 | UI 设计师 | 界面设计、交互规范 | ui-ux-pro-max 🔴, ui-style-selector | general-purpose |
@@ -973,10 +970,10 @@ QUICKSTART.md                        # 5 分钟快速开始
 | **writing-plans** | high | - | 架构选型权衡 |
 | **product-requirements** | high | - | 业务逻辑分析 |
 | **user-onboarding** | high | - | 用户心理分析 |
-| **sprint-planning** | medium | - | 结构化流程 |
 | **ui-style-selector** | high | - | 60 模板场景匹配 |
 | **tdd** | - | - | 核心 TDD 方法论 |
-| **tdd-workflow** | low | - | 操作手册级别 |
+| **vitest** | - | `**/*.test.ts,**/*.spec.ts` | Vitest 测试模式 🆕 |
+| **pnpm** | - | `pnpm-workspace.yaml` | pnpm 工作区 & monorepo 🆕 |
 | **springboot-patterns** | high | - | SpringBoot 架构模式 🆕 |
 | **springboot-tdd** | high | - | SpringBoot TDD 工作流 🆕 |
 | **springboot-security** | high | - | SpringBoot 安全配置 🆕 |
@@ -984,7 +981,6 @@ QUICKSTART.md                        # 5 分钟快速开始
 | **java-coding-standards** | - | - | Java 编码规范 🆕 |
 | **llm-integration** | - | - | LLM API 集成 🆕 |
 | **vlm-integration** | - | - | VLM 视觉模型集成 🆕 |
-| **workflow-engine** | high | - | 工作流编排 🆕 |
 | **verification-loop** | high | - | 6 阶段验证循环 🆕 |
 | **search-first** | medium | - | 编码前先研究 🆕 |
 | **security-review** | high | - | 10 域安全审查 🆕 |

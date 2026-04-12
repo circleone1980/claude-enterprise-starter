@@ -34,7 +34,7 @@ Agent --name "PM" \
   --prompt "你是项目经理。
     1. 调用 Skill writing-plans
 G; Skill product-requirements 分析需求
-    2. 调用 Skill sprint-planning 进行任务规划
+    2. 调用 Skill autoplan 进行任务规划
     3. 使用 TaskCreate 创建任务列表
     4. 使用 TaskUpdate 分配任务给对应角色
     5. 监控进度并处理阻塞
@@ -51,7 +51,7 @@ Agent --name "PO" \
   --prompt "你是产品经理。
     1. 调用 Skill writing-plans
 G; Skill product-requirements 进行需求拆解
-    2. 调用 Skill sprint-planning 确定优先级
+    2. 调用 Skill autoplan 确定优先级
     3. 调用 Skill user-onboarding 设计用户引导策略
     4. 按 Business Capability → Product Feature → System Capability → Technical Implementation 拆解
     5. 编写 PRD 和用户故事
@@ -116,11 +116,12 @@ Agent --name "Frontend-1" \
   --prompt "你是前端开发。必须遵循 TDD 流程：
     1. 调用 Skill ui-ux-pro-max --stack react 获取 React 最佳实践
     2. 🔴 调用 Skill tdd 启动 TDD（垂直切片模式）
-    3. 编写测试（Red）
-    4. 实现代码（Green）
-    5. 重构（Refactor）
-    6. 调用 Skill code-review 审查代码
-    7. 确保测试覆盖率 >80%
+    3. 🔴 调用 Skill vitest 配置 Vitest 测试框架
+    4. 编写测试（Red）
+    5. 实现代码（Green）
+    6. 重构（Refactor）
+    7. 调用 Skill code-review 审查代码
+    8. 确保测试覆盖率 >80%
     任务：[具体任务描述]"
 ```
 
@@ -192,11 +193,11 @@ TaskUpdate --taskId "3" --owner "QA"
 
 | 角色 | 核心技能 🔴 | 辅助技能 | Agent 类型 |
 |------|------------|---------|-----------|
-| PM | `product-requirements` | `sprint-planning` | planner |
-| PO | `product-requirements` | `sprint-planning`, `user-onboarding` | general-purpose |
+| PM | `product-requirements` | `autoplan` | planner |
+| PO | `product-requirements` | `autoplan`, `user-onboarding` | general-purpose |
 | Architect | `writing-plans` 🔴, `react-best-practices` 🔴 | `product-requirements`, `ui-ux-pro-max`, `code-review` | architect |
 | UI Designer | `ui-ux-pro-max` 🔴 | Figma MCP | general-purpose |
-| Frontend | `tdd` 🔴 | `ui-ux-pro-max --stack react`, `code-review` | typescript-reviewer |
+| Frontend | `tdd` 🔴, `vitest` 🔴 | `ui-ux-pro-max --stack react`, `code-review` | typescript-reviewer |
 | Backend | `tdd` 🔴 | `code-review`, database-reviewer | python-reviewer |
 | QA | `tdd` | `code-review`, Playwright MCP | tdd-guide |
 | DevOps | `code-review` | GitHub MCP | general-purpose |
@@ -216,5 +217,5 @@ TeamCreate --team-name "PROJECT-Dev-Team" --description "项目开发团队"
 
 ---
 
-*模板版本: 1.0.1*
-*最后更新: 2026-04-05*
+*模板版本: 1.0.2*
+*最后更新: 2026-04-12*

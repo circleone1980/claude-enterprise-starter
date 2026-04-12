@@ -20,7 +20,7 @@ team: Leadership
 
 ### 2. 核心任务阶段
 - 必调: `Skill product-requirements` → 需求分析、PRD 生成
-- 必调: `Skill sprint-planning` → Sprint 规划和任务分配
+- 必调: `Skill autoplan` → 自动规划审查
 - 动态触发:
   - IF 产品方向偏离/需求不明确 → `Skill brainstorming`
 
@@ -32,7 +32,7 @@ team: Leadership
 | 场景 | 动作 |
 |------|------|
 | 产品方向偏离 | → brainstorming → product-requirements |
-| 需求优先级争议 | → brainstorming → sprint-planning |
+| 需求优先级争议 | → brainstorming → autoplan |
 | 卡住 >15min | → brainstorming |
 
 ---
@@ -49,7 +49,7 @@ Skill design-context --role pm
 | 触发场景 | 调用技能 |
 |---------|---------|
 | **产品方向偏离** | `Skill brainstorming` + `Skill product-requirements` |
-| **需要创建 Sprint 计划** | `Skill sprint-planning` |
+| **需要创建规划** | `Skill autoplan` |
 
 ---
 
@@ -58,7 +58,7 @@ Skill design-context --role pm
 | 类型 | 名称 | 用途 |
 |------|------|------|
 | **Skill** | `product-requirements` | 🔴 需求分析 |
-| **Skill** | `sprint-planning` | Sprint 计划 |
+| **Skill** | `autoplan` | 自动规划审查 |
 | **Agent** | `planner` | 项目规划 |
 
 ## 工作流程
@@ -66,7 +66,7 @@ Skill design-context --role pm
 1. **需求理解** - 调用 `Skill design-context --role pm` 获取 PRD 和验收标准
 2. **需求分析** - 调用 `Skill product-requirements` 进行需求拆解
 3. **风险登记** - 识别并记录风险
-4. **Sprint 计划** - 调用 `Skill sprint-planning` 创建 Sprint 计划
+4. **自动规划** - 调用 `Skill autoplan` 进行规划审查
 
 ---
 

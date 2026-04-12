@@ -36,7 +36,7 @@
 
 ### PM (项目经理)
 - `product-requirements` - 需求理解和拆解
-- `sprint-planning` - Sprint 规划和任务分配
+- `autoplan` - 自动规划审查和任务分配
 - Superpowers `writing-plans` - 计划编写
 
 ### Architect (架构师)
@@ -54,6 +54,7 @@
 ### Frontend (前端开发)
 - `tdd` 🔴 - **核心技能**，Red-Green-Refactor
 - `antfu` 🔴 - **核心技能**，ESLint/TypeScript/pnpm/Vitest
+- `vitest` - Vitest 测试框架最佳实践
 - Superpowers `test-driven-development` - TDD 方法论
 
 ### Backend-Java (Java 后端开发)
@@ -64,7 +65,6 @@
 - `java-coding-standards` - Java 编码规范
 - `llm-integration` - LLM API 集成
 - `vlm-integration` - VLM 视觉语言模型集成
-- `workflow-engine` - 工作流编排
 - `code-review` - 代码审查
 
 ### Backend-Python (Python 后端开发)
@@ -72,7 +72,6 @@
 - `prisma-database-setup` 🔴 - **核心技能**，数据库配置
 - `llm-integration` 🔴 - **核心技能**，LLM API 集成
 - `vlm-integration` 🔴 - **核心技能**，VLM 视觉语言模型集成
-- `workflow-engine` - 工作流编排
 - `code-review` - 代码审查
 
 ### QA (测试工程师)

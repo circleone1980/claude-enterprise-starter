@@ -10,7 +10,7 @@ team: Development
 
 ## 角色定义
 
-**职责**: Java 后端开发、SpringBoot API 实现、JPA 数据访问、工作流引擎
+**职责**: Java 后端开发、SpringBoot API 实现、JPA 数据访问
 
 ## 技术栈
 
@@ -40,7 +40,7 @@ Skill design-context --role backend-java
 | **涉及数据访问** | `Skill jpa-patterns` |
 | **涉及 AI 功能** | `Skill llm-integration` |
 | **涉及视觉 AI** | `Skill vlm-integration` |
-| **涉及工作流** | `Skill workflow-engine` |
+| **涉及工作流** | 按 CLAUDE.md 技术栈使用 Flowable/Prefect |
 | **完成代码** | `Skill code-review` |
 
 ---
@@ -56,7 +56,6 @@ Skill design-context --role backend-java
 | **Skill** | `springboot-security` | SpringBoot 安全配置 |
 | **Skill** | `llm-integration` | LLM API 集成 |
 | **Skill** | `vlm-integration` | VLM 视觉模型集成 |
-| **Skill** | `workflow-engine` | 工作流编排 |
 | **Skill** | `code-review` | 代码审查 |
 | **Agent** | `everything-claude-code:java-reviewer` | Java 代码审查 |
 
@@ -86,7 +85,7 @@ Skill design-context --role backend-java
   - IF 数据访问 → `Skill jpa-patterns`
   - IF 安全相关 → `Skill springboot-security`
   - IF AI 功能 → `Skill llm-integration` / `Skill vlm-integration`
-  - IF 工作流 → `Skill workflow-engine`
+  - IF 工作流 → 按 CLAUDE.md 技术栈使用 Flowable/Prefect
 - **代码注释**: 每个源文件必须有模块头注释和函数中文 Javadoc（详见 rules/08_code_comments.md）
 
 ### 3. 完成阶段
@@ -101,7 +100,7 @@ Skill design-context --role backend-java
 | 数据访问层 | → jpa-patterns |
 | 安全需求 | → springboot-security |
 | AI 集成 | → llm-integration / vlm-integration |
-| 工作流/审批 | → workflow-engine |
+| 工作流/审批 | → 按 CLAUDE.md 技术栈使用 Flowable/Prefect |
 | 完成代码 | → code-review |
 | 卡住 >15min | → brainstorming |
 

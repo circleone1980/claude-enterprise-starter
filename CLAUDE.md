@@ -278,13 +278,13 @@ Module
 | ------------------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------- |
 | **Product Designer** | office-hours 🔴, design-consultation 🔴 | design-shotgun, design-html                                                                                              | general-purpose     |
 | **Design Reviewer**  | autoplan 🔴                               | plan-ceo-review, plan-design-review, plan-eng-review, plan-devex-review                                                  | general-purpose     |
-| **PM**             | product-requirements                      | sprint-planning                                                                                                          | planner             |
-| **PO**             | product-requirements                      | sprint-planning, user-onboarding                                                                                         | general-purpose     |
+| **PM**             | product-requirements                      | autoplan                                                                                                                 | planner             |
+| **PO**             | product-requirements                      | autoplan, user-onboarding                                                                                                | general-purpose     |
 | **Architect**      | writing-plans 🔴                          | product-requirements, react-best-practices, ui-ux-pro-max, ui-style-selector, code-review                                | architect           |
 | **UI Designer**    | ui-ux-pro-max 🔴, ui-style-selector       | Figma MCP                                                                                                                | general-purpose     |
-| **Frontend**       | tdd 🔴, antfu 🔴                          | ui-ux-pro-max, code-review                                                                                               | typescript-reviewer |
-| **Backend-Java**   | springboot-patterns 🔴, springboot-tdd 🔴 | jpa-patterns, springboot-security, java-coding-standards, llm-integration, vlm-integration, workflow-engine, code-review | java-reviewer       |
-| **Backend-Python** | tdd 🔴                                    | prisma-database-setup, llm-integration, vlm-integration, workflow-engine, code-review                                    | python-reviewer     |
+| **Frontend**       | tdd 🔴, antfu 🔴, vitest                  | ui-ux-pro-max, code-review                                                                                               | typescript-reviewer |
+| **Backend-Java**   | springboot-patterns 🔴, springboot-tdd 🔴 | jpa-patterns, springboot-security, java-coding-standards, llm-integration, vlm-integration, code-review                 | java-reviewer       |
+| **Backend-Python** | tdd 🔴                                    | prisma-database-setup, llm-integration, vlm-integration, code-review                                                     | python-reviewer     |
 | **QA**             | tdd, verification-loop 🔴                 | code-review, security-review, Playwright MCP                                                                             | tdd-guide           |
 | **DevOps**         | code-review                               | security-review, GitHub MCP                                                                                              | general-purpose     |
 | **产品体验师**     | user-onboarding 🔴                        | product-requirements, ui-ux-pro-max                                                                                      | planner             |
@@ -473,14 +473,14 @@ GitHub 推送 → 完成报告
 | plan-devex-review                | `skills/plan-devex-review/SKILL.md`     |
 | gstack-bridge                    | `skills/gstack-bridge/SKILL.md`         |
 | product-requirements             | `skills/product-requirements/SKILL.md`  |
-| sprint-planning                  | `skills/sprint-planning/SKILL.md`       |
 | tdd                              | `skills/tdd/SKILL.md`                   |
-| tdd-workflow                     | `skills/tdd-workflow/SKILL.md`          |
 | code-review                      | `skills/code-review/SKILL.md`           |
 | ui-ux-pro-max                    | `skills/ui-ux-pro-max/SKILL.md`         |
 | user-onboarding                  | `skills/user-onboarding/SKILL.md`       |
 | react-best-practices             | `skills/react-best-practices/SKILL.md`  |
 | antfu                            | `skills/antfu/SKILL.md`                 |
+| vitest                           | `skills/vitest/SKILL.md`                |
+| pnpm                             | `skills/pnpm/SKILL.md`                  |
 | prisma-database-setup            | `skills/prisma-database-setup/SKILL.md` |
 | design-context 🔴                | `skills/design-context/SKILL.md`        |
 | ui-style-selector                | `skills/ui-style-selector/SKILL.md`     |
@@ -492,7 +492,6 @@ GitHub 推送 → 完成报告
 | **java-coding-standards**  | `skills/java-coding-standards/SKILL.md` |
 | **llm-integration**        | `skills/llm-integration/SKILL.md`       |
 | **vlm-integration**        | `skills/vlm-integration/SKILL.md`       |
-| **workflow-engine**        | `skills/workflow-engine/SKILL.md`       |
 | **verification-loop** 🔴   | `skills/verification-loop/SKILL.md`     |
 | **search-first**           | `skills/search-first/SKILL.md`          |
 | **security-review**        | `skills/security-review/SKILL.md`       |

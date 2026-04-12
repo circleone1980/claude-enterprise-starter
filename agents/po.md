@@ -57,7 +57,7 @@ Skill design-context --role po
 | 类型 | 名称 | 用途 |
 |------|------|------|
 | **Skill** | `product-requirements` | 🔴 需求分析 |
-| **Skill** | `sprint-planning` | Sprint 计划 |
+| **Skill** | `autoplan` | 自动规划审查 |
 | **Skill** | `user-onboarding` | 用户引导 |
 | **Agent** | `general-purpose` | 通用代理 |
 
