@@ -1,0 +1,36 @@
+{
+  "name": "dev",
+  "description": "标准开发团队 - 覆盖需求分析到测试验证",
+  "members": [
+    {
+      "name": "pm",
+      "role": "产品经理",
+      "agentMd": "agents/pm.md",
+      "subagentType": "everything-claude-code:planner"
+    },
+    {
+      "name": "architect",
+      "role": "架构师",
+      "agentMd": "agents/architect.md",
+      "subagentType": "everything-claude-code:architect"
+    },
+    {
+      "name": "frontend",
+      "role": "前端开发",
+      "agentMd": "agents/frontend.md",
+      "subagentType": "everything-claude-code:typescript-reviewer"
+    },
+    {
+      "name": "backend",
+      "role": "后端开发",
+      "agentMd": "agents/backend-java.md",
+      "subagentType": "everything-claude-code:java-reviewer"
+    },
+    {
+      "name": "qa",
+      "role": "测试工程师",
+      "agentMd": "agents/qa.md",
+      "subagentType": "everything-claude-code:tdd-guide"
+    }
+  ]
+}

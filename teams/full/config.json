@@ -1,0 +1,96 @@
+{
+  "name": "full",
+  "description": "完整团队 - 包含所有15个agent角色，覆盖产品设计、开发、测试、运维全流程",
+  "members": [
+    {
+      "name": "product-designer",
+      "role": "产品设计师",
+      "agentMd": "agents/product-designer.md",
+      "subagentType": "general-purpose"
+    },
+    {
+      "name": "design-reviewer",
+      "role": "设计评审",
+      "agentMd": "agents/design-reviewer.md",
+      "subagentType": "general-purpose"
+    },
+    {
+      "name": "pm",
+      "role": "产品经理",
+      "agentMd": "agents/pm.md",
+      "subagentType": "everything-claude-code:planner"
+    },
+    {
+      "name": "po",
+      "role": "产品负责人",
+      "agentMd": "agents/po.md",
+      "subagentType": "general-purpose"
+    },
+    {
+      "name": "architect",
+      "role": "架构师",
+      "agentMd": "agents/architect.md",
+      "subagentType": "everything-claude-code:architect"
+    },
+    {
+      "name": "ui-designer",
+      "role": "UI设计师",
+      "agentMd": "agents/ui-designer.md",
+      "subagentType": "general-purpose"
+    },
+    {
+      "name": "frontend",
+      "role": "前端开发",
+      "agentMd": "agents/frontend.md",
+      "subagentType": "everything-claude-code:typescript-reviewer"
+    },
+    {
+      "name": "backend-java",
+      "role": "后端开发(Java)",
+      "agentMd": "agents/backend-java.md",
+      "subagentType": "everything-claude-code:java-reviewer"
+    },
+    {
+      "name": "backend-python",
+      "role": "后端开发(Python)",
+      "agentMd": "agents/backend-python.md",
+      "subagentType": "everything-claude-code:python-reviewer"
+    },
+    {
+      "name": "qa",
+      "role": "测试工程师",
+      "agentMd": "agents/qa.md",
+      "subagentType": "everything-claude-code:tdd-guide"
+    },
+    {
+      "name": "devops",
+      "role": "运维工程师",
+      "agentMd": "agents/devops.md",
+      "subagentType": "general-purpose"
+    },
+    {
+      "name": "product-experience",
+      "role": "产品体验师",
+      "agentMd": "agents/product-experience.md",
+      "subagentType": "everything-claude-code:planner"
+    },
+    {
+      "name": "gan-planner",
+      "role": "GAN规划器",
+      "agentMd": "agents/gan-planner.md",
+      "subagentType": "everything-claude-code:planner"
+    },
+    {
+      "name": "gan-generator",
+      "role": "GAN生成器",
+      "agentMd": "agents/gan-generator.md",
+      "subagentType": "general-purpose"
+    },
+    {
+      "name": "gan-evaluator",
+      "role": "GAN评估器",
+      "agentMd": "agents/gan-evaluator.md",
+      "subagentType": "general-purpose"
+    }
+  ]
+}

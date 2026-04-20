@@ -57,144 +57,12 @@
   "env": {
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "80",
     "MAX_THINKING_TOKENS": "16000",
-    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet",
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
+  "teammateMode": "tmux",
   "alwaysThinkingEnabled": true,
   "hasCompletedOnboarding": true,
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node hooks/scripts/safety-guard.js"
-          },
-          {
-            "type": "command",
-            "command": "node hooks/scripts/block-no-verify.js"
-          },
-          {
-            "type": "command",
-            "command": "node hooks/scripts/commit-quality.js"
-          }
-        ]
-      },
-      {
-        "matcher": "Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node hooks/scripts/safety-guard.js"
-          },
-          {
-            "type": "command",
-            "command": "node hooks/scripts/suggest-compact.js"
-          },
-          {
-            "type": "command",
-            "command": "node hooks/scripts/config-protection.js"
-          }
-        ]
-      },
-      {
-        "matcher": "Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node hooks/scripts/safety-guard.js"
-          },
-          {
-            "type": "command",
-            "command": "node hooks/scripts/suggest-compact.js"
-          },
-          {
-            "type": "command",
-            "command": "node hooks/scripts/config-protection.js"
-          }
-        ]
-      },
-      {
-        "matcher": "Delete",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node hooks/scripts/safety-guard.js"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Agent",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo '[Agent Check] Verify subagent-type is specified for development roles'"
-          }
-        ]
-      },
-      {
-        "matcher": "TaskUpdate",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node hooks/scripts/phase-controller.js"
-          },
-          {
-            "type": "command",
-            "command": "node hooks/scripts/gstack-phase-guard.js"
-          }
-        ]
-      },
-      {
-        "matcher": "TeamCreate",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node hooks/scripts/auto-start-agents.js"
-          }
-        ]
-      },
-      {
-        "matcher": "Edit|Write|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node hooks/scripts/edit-accumulator.js"
-          },
-          {
-            "type": "command",
-            "command": "node hooks/scripts/console-warn.js"
-          },
-          {
-            "type": "command",
-            "command": "node hooks/scripts/gstack-output-validator.js"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node hooks/scripts/format-typecheck.js",
-            "timeout": 300
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node hooks/scripts/doc-sync-check.js",
-            "timeout": 10
-          }
-        ]
-      }
-    ]
-  },
   "customInstructions": {
     "rageMode": {
       "enabled": true,
@@ -235,5 +103,5 @@
       "backwardCompatible": true
     }
   },
-  "_comment": "Updated 2026-04-11 - v2.6.0: GStack integration (gstackIntegration + gstack-phase-guard + gstack-output-validator)"
+  "_comment": "Updated 2026-04-21 - v3.0.0: Agent Teams enabled, hooks moved to hooks.json as SSOT"
 }

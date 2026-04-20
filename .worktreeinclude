@@ -35,6 +35,9 @@ CLAUDE.local.md
 *.sqlite
 *.sqlite3
 
+# Agent Teams 配置
+teams/
+
 # 临时文件
 *.tmp
 *.temp
