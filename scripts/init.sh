@@ -130,6 +130,10 @@ echo -e "${BLUE}[5/8] 复制代理定义...${NC}"
 cp -r "$TEMPLATE_DIR/agents" .claude/
 cp -r "$TEMPLATE_DIR/agent-memory" .claude/ 2>/dev/null || true
 
+# 复制团队配置
+echo -e "${BLUE}[5b/8] 复制团队配置...${NC}"
+cp -r "$TEMPLATE_DIR/teams" .claude/ 2>/dev/null || true
+
 # 复制命令和输出风格
 echo -e "${BLUE}[6/8] 复制可选组件...${NC}"
 cp -r "$TEMPLATE_DIR/commands" .claude/ 2>/dev/null || true
