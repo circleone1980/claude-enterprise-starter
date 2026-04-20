@@ -285,8 +285,8 @@ CLAUDE.md 是 Claude Code 的主要配置文件，包含 17 个章节：
 | **ui-ux-pro-max** | 背景知识 | - | paths: *.tsx | 50+ 设计风格、161 配色方案 |
 | **react-best-practices** | 背景知识 | - | paths: *.tsx | React 架构模式 |
 | **antfu** | 背景知识 | - | paths: *.ts | ESLint/TS/pnpm/Vitest 规范 |
-| **vitest** | 背景知识 | - | paths: *.test.ts | Vitest 测试模式 🆕 |
-| **pnpm** | 背景知识 | - | paths: pnpm-workspace.yaml | pnpm 工作区 & monorepo 🆕 |
+| **vitest** | 背景知识 | - | paths: *.test.ts | Vitest 测试模式 |
+| **pnpm** | 背景知识 | - | paths: pnpm-workspace.yaml | pnpm 工作区 & monorepo |
 | **prisma-database-setup** | 背景知识 | - | paths: *.prisma | 数据库配置指导 |
 | **design-context** | 辅助工具 | low | 否 | 按角色加载设计文档 |
 | **springboot-patterns** | 流程控制 | high | 否 | SpringBoot 架构模式 |
@@ -622,7 +622,87 @@ export SUBAGENT_MODEL=sonnet
 
 > **为什么 AUTOCOMPACT_PCT=80**：默认在 70% 时建议压缩，但频繁压缩会中断工作流。设为 80% 在保持精度的同时减少不必要的压缩次数。
 
-### 6.10 编排脚本
+### 6.10 Git Worktree 支持
+
+Git Worktree 允许在同一仓库中同时检出多个分支到不同目录，实现物理隔离。
+
+#### 使用场景
+
+| 场景 | 适用 Worktree | 适用 Agent Teams |
+|------|---------------|------------------|
+| 长时重构 | ✅ 需要独立目录、保留不同 Git 状态 | ❌ |
+| 多分支并行 | ✅ 同时处理多个功能分支 | ❌ |
+| 紧急 bugfix | ✅ 保留当前工作上下文 | ❌ |
+| 临时协作 | ❌ | ✅ 统一上下文、多人协作 |
+
+#### 命令速查
+
+使用 `scripts/worktree-manager.sh` 统一管理：
+
+```bash
+# 创建新 worktree + 分支
+bash scripts/worktree-manager.sh create feature/auth
+
+# 列出所有 worktree
+bash scripts/worktree-manager.sh list
+
+# 显示状态概览
+bash scripts/worktree-manager.sh status
+
+# 合并 worktree 到 main
+bash scripts/worktree-manager.sh merge feature/auth
+
+# 删除 worktree + 分支
+bash scripts/worktree-manager.sh remove feature/auth
+```
+
+#### 与 .worktreeinclude 配合
+
+`.worktreeinclude` 指定了哪些 gitignored 文件应该被复制到新 worktree：
+
+```
+# 环境配置
+.env
+.env.local
+
+# IDE 配置
+.vscode/
+.idea/
+
+# Claude 本地配置
+CLAUDE.local.md
+.claude/settings.local.json
+
+# Agent Teams 配置
+teams/
+```
+
+创建 worktree 时自动复制这些文件，无需手动处理。
+
+#### 最佳实践
+
+**命名规范**：
+- 功能分支: `feature/<name>`
+- 修复分支: `fix/<name>`
+- 热修复: `hotfix/<name>`
+- 重构: `refactor/<name>`
+- 实验性: `experiment/<name>`
+
+**合并流程**：
+1. 在 worktree 中完成开发和测试
+2. 提交所有改动
+3. 运行 `bash scripts/worktree-manager.sh merge <branch>`
+4. 确认合并成功后删除 worktree
+
+**注意事项**：
+- 每个 worktree 都有独立的 `.git` 文件（指向主仓库）
+- 不要直接删除 worktree 目录，使用 `worktree-manager.sh remove`
+- worktree 内的 git 操作影响同一主仓库的所有 worktree
+- 避免在不同 worktree 中操作同一分支
+
+详细规则见 `rules/14_worktree.md`。
+
+### 6.11 编排脚本
 
 项目提供两个核心编排脚本，简化 Agent 管理和 GAN 流程：
 
@@ -1139,6 +1219,11 @@ Skill content and instructions here...
 | `bash scripts/orchestrate.sh --phase 0.5b` | 启动 GStack Plan 阶段 |
 | `bash scripts/orchestrate.sh --status` | 查看当前阶段状态 |
 | `bash scripts/gan-harness.sh "描述"` | 启动 GAN 生成对抗开发循环 |
+| `bash scripts/worktree-manager.sh create <branch>` | 创建新 worktree + 分支 |
+| `bash scripts/worktree-manager.sh list` | 列出所有 worktree |
+| `bash scripts/worktree-manager.sh status` | 显示 worktree 状态概览 |
+| `bash scripts/worktree-manager.sh merge <branch>` | 合并 worktree 到 main |
+| `bash scripts/worktree-manager.sh remove <branch>` | 删除 worktree + 分支 |
 
 ### B. 技能触发速查表
 
@@ -1170,6 +1255,7 @@ Skill content and instructions here...
 | `AUTOCOMPACT_PCT` | 推荐 | 设为 `80`，上下文达 80% 时自动压缩 |
 | `MAX_THINKING_TOKENS` | 推荐 | 设为 `16000`，限制思考 token 数量 |
 | `SUBAGENT_MODEL` | 推荐 | 设为 `sonnet`，Subagent 使用的模型 |
+| `WORKTREE_BASE_PATH` | 可选 | Worktree 基础路径（默认父目录） |
 
 ---
 
