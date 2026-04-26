@@ -23,7 +23,7 @@ phase: 1
 | 🔴 必调 | design-context | 获取项目当前设计状态 |
 | 🔴 必调 | product-requirements | 需求分析和 PRD 生成 |
 | 🔴 必调 | autoplan | 自动规划审查 |
-| 🟡 辅助 | brainstorming | 产品方向偏离/需求不明确 |
+| 🟡 辅助 | ce:brainstorm | 产品方向偏离/需求不明确 |
 
 ## 输出格式
 - PRD 文档

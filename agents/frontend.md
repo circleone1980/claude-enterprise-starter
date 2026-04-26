@@ -24,8 +24,7 @@ phase: 2
 | 🔴 必调 | ui-ux-pro-max | UI/UX 设计最佳实践 |
 | 🔴 必调 | antfu | 前端工具链规范 |
 | 🔴 必调 | tdd | TDD 开发流程 |
-| 🟡 辅助 | brainstorming | 设计困惑/方案选型 |
-| 🟡 辅助 | systematic-debugging | Bug 调试 |
+| 🟡 辅助 | ce:brainstorm | 设计困惑/方案选型 |
 | 🟡 辅助 | code-review | 代码审查 |
 
 ## 输出格式

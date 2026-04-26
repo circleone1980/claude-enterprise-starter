@@ -18,7 +18,9 @@
 
 **How It Works**: Projects go through a 5-phase pipeline (Phase 0: Init → Phase 0.5: Product Design [optional, GStack] → Phase 1: Requirements → Phase 2: Development → Phase 3: Testing → Phase 4: UX Review → Phase 5: Deployment), with each phase requiring quality gate passage. A separate GAN Harness loop (Planner → Generator → Evaluator) handles quality-driven feature development.
 
-**Key Metrics**: 16 Agent roles | 38 Skills | 18 Hook scripts | 16 Rule files | 7 Automation configs
+**Key Metrics**: 16 Agent roles | 38 Skills | 18 Hook scripts | 17 Rule files | 7 Automation configs
+
+**Quick Start**: Copy `.claude/` to your project → run `claude` → type `/doctor` to validate. See [Operation Manual (Chinese)](docs/GUIDE.md#十二操作手册最佳实践与命令速查) for detailed workflows and command reference.
 
 ### Module Dependency Topology
 
@@ -28,7 +30,7 @@ graph TB
     SETTINGS["settings.json — Permissions + Hooks + Rage Mode"]
     MCP[".mcp.json — MCP Servers"]
 
-    subgraph Rules["Rules (16)"]
+    subgraph Rules["Rules (17)"]
         R0["00_global"]
         R1["01_development"]
         R2["02_database"]
@@ -39,6 +41,11 @@ graph TB
         R7["07_skill_triggers"]
         R8["08_code_comments"]
         R9["09_gstack_integration"]
+        R10["10_mode_selection"]
+        R11["11_rage_mode"]
+        R12["12_dual_model"]
+        R13["13_team_lifecycle"]
+        R14["14_worktree"]
         R15["15_adversarial_review"]
         R16["16_ce_integration"]
     end
@@ -108,7 +115,7 @@ graph TB
 
 | Feature | Description |
 |---------|-------------|
-| **Agent Team** | 15 specialized roles collaborating in parallel (PM, PO, Architect, Designer, Frontend, Backend-Java, Backend-Python, QA, DevOps, Product Experience, GAN Planner/Generator/Evaluator, GStack Product Designer, GStack Design Reviewer) |
+| **Agent Team** | 16 specialized roles collaborating in parallel (PM, PO, Architect, Designer, Frontend, Backend-Java, Backend-Python, QA, DevOps, Product Experience, GAN Planner/Generator/Evaluator, GStack Product Designer, GStack Design Reviewer, Review Champion) |
 | **Rage Mode** 🔴 | Full automation - auto GitHub push, agent health monitoring, phase advancement |
 | **TDD Workflow** | Enforced Test-Driven Development with Red-Green-Refactor cycle |
 | **Quality Gates** | 4-stage verification: functionality, code review, testing, documentation |
@@ -121,7 +128,7 @@ graph TB
 | **UI Style Selector** | 60 brand design templates with auto-scenario matching |
 | **Tech Stack** | React + TypeScript + Vite 6 (frontend fixed), Java + SpringBoot + Python (backend) |
 | **SSOT Architecture** | `automation/agent-orchestration.json` as single source of truth |
-| **Per-Role SOP** | Standard Operating Procedure for all 15 agent roles |
+| **Per-Role SOP** | Standard Operating Procedure for all 16 agent roles |
 | **Document System** | Frozen/Evolution/ADR document layers with design-context skill for auto-loading |
 | **Skill Triggers** | Global phase flowchart (Phase 1-5) + dynamic trigger rules |
 | **Commands** | Custom slash commands: `/commit`, `/pr`, `/review` |
@@ -193,7 +200,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 ├── CLAUDE.md                        # Core instructions (12 sections)
 ├── settings.json                    # Permissions, hooks, rage mode config
 ├── settings.local.json              # Local overrides (gitignored)
-├── rules/                           # Modular rules (10 files)
+├── rules/                           # Modular rules (17 files)
 │   ├── 00_global.md                 # Language, startup constraints
 │   ├── 01_development.md            # Development constraints + tech stack
 │   ├── 02_database.md               # Database standards
@@ -203,7 +210,14 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── 06_document_lifecycle.md     # Document lifecycle (Frozen/Evolution/ADR)
 │   ├── 07_skill_triggers.md         # Skill triggers + global phase flowchart
 │   ├── 08_code_comments.md          # Code comment standards (Chinese + versioning) 🆕
-│   └── 09_gstack_integration.md     # GStack Phase 0.5 integration rules 🆕
+│   ├── 09_gstack_integration.md     # GStack Phase 0.5 integration rules 🆕
+│   ├── 10_mode_selection.md         # Mode selection engine (Team vs Subagent) 🆕
+│   ├── 11_rage_mode.md              # Rage mode (full auto development) 🆕
+│   ├── 12_dual_model.md             # Dual model strategy (GLM-5 + GPT-5.4) 🆕
+│   ├── 13_team_lifecycle.md         # Team lifecycle (create/disband) 🆕
+│   ├── 14_worktree.md               # Git worktree management 🆕
+│   ├── 15_adversarial_review.md     # Adversarial review rules 🆕
+│   └── 16_ce_integration.md         # CE plugin integration 🆕
 ├── skills/                          # Skills (38 skills from ECC/superpowers/gstack/official/custom)
 │   ├── ui-style-selector/           # UI style auto-selection (60 templates)
 │   ├── design-context/              # Auto-load design docs by role
@@ -241,7 +255,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── plan-eng-review/            # 工程架构审查 🆕
 │   ├── plan-devex-review/          # 开发者体验审查 🆕
 │   └── gstack-bridge/              # Phase 0.5→1 交接 🆕
-├── agents/                          # Agent definitions with SOP (15 roles)
+├── agents/                          # Agent definitions with SOP (16 roles)
 │   ├── pm.md                        # Project Manager
 │   ├── po.md                        # Product Owner
 │   ├── architect.md                 # Architect
@@ -256,7 +270,8 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── gan-generator.md             # GAN Code Generator 🆕
 │   ├── gan-evaluator.md             # GAN Quality Evaluator 🆕
 │   ├── product-designer.md         # GStack Product Designer 🆕
-│   └── design-reviewer.md          # GStack Design Reviewer 🆕
+│   ├── design-reviewer.md          # GStack Design Reviewer 🆕
+│   └── review-champion.md          # Review Champion 🆕
 ├── automation/                      # Automation configs
 │   ├── agent-orchestration.json     # SSOT: role-skill mapping
 │   ├── rage-mode.json               # Rage mode phases & features
@@ -601,7 +616,9 @@ Agent --name "Backend-Python-1" \
 
 **工作原理**: 项目经历 5 阶段流水线（Phase 0: 初始化 → Phase 0.5: 产品设计 [可选, GStack] → Phase 1: 需求分析 → Phase 2: 开发实现 → Phase 3: 测试验证 → Phase 4: 产品体验 → Phase 5: 部署发布），每个阶段必须通过质量门禁才能推进。独立的 GAN Harness 循环（Planner → Generator → Evaluator）负责质量驱动的功能开发。
 
-**关键指标**: 16 个 Agent 角色 | 38 个技能 | 18 个 Hook 脚本 | 16 个规则文件 | 7 个自动化配置
+**关键指标**: 16 个 Agent 角色 | 38 个技能 | 18 个 Hook 脚本 | 17 个规则文件 | 7 个自动化配置
+
+**操作手册**: 复制 `.claude/` 到你的项目 → 运行 `claude` → 输入 `/doctor` 验证配置。详细操作指南见 [使用手册第十二章](docs/GUIDE.md#十二操作手册最佳实践与命令速查)。
 
 ### 模块依赖拓扑
 
@@ -611,7 +628,7 @@ graph TB
     SETTINGS["settings.json — 权限 + Hook + 狂暴模式"]
     MCP[".mcp.json — MCP 服务器"]
 
-    subgraph Rules["规则系统 (16)"]
+    subgraph Rules["规则系统 (17)"]
         R0["00_global"]
         R1["01_development"]
         R2["02_database"]
@@ -622,6 +639,11 @@ graph TB
         R7["07_skill_triggers"]
         R8["08_code_comments"]
         R9["09_gstack_integration"]
+        R10["10_mode_selection"]
+        R11["11_rage_mode"]
+        R12["12_dual_model"]
+        R13["13_team_lifecycle"]
+        R14["14_worktree"]
         R15["15_adversarial_review"]
         R16["16_ce_integration"]
     end
@@ -691,7 +713,7 @@ graph TB
 
 | 功能 | 说明 |
 |------|------|
-| **Agent Team** | 15 个专业角色并行协作（PM、PO、架构师、设计师、前端、Java后端、Python后端、QA、DevOps、产品体验师、GAN 规划/生成/评估、GStack 产品设计师、GStack 设计审查员） |
+| **Agent Team** | 16 个专业角色并行协作（PM、PO、架构师、设计师、前端、Java后端、Python后端、QA、DevOps、产品体验师、GAN 规划/生成/评估、GStack 产品设计师、GStack 设计审查员、Review Champion） |
 | **狂暴模式** 🔴 | 全自动开发 - 自动 GitHub 推送、Agent 监控、阶段推进 |
 | **TDD 工作流** | 强制测试驱动开发，Red-Green-Refactor 循环 |
 | **质量门禁** | 4 阶段验证：功能、代码审查、测试、文档 |
@@ -704,7 +726,7 @@ graph TB
 | **UI 风格选择** | 60 个品牌设计模板，基于场景自动匹配 |
 | **技术栈** | React + TypeScript + Vite 6（前端固化），Java + SpringBoot + Python（后端） |
 | **SSOT 架构** | `automation/agent-orchestration.json` 单一真相源 |
-| **角色 SOP** | 全部 15 个角色标准化操作流程 |
+| **角色 SOP** | 全部 16 个角色标准化操作流程 |
 | **文档体系** | 冻结层/演化层/ADR 三层文档体系 |
 | **技能触发** | 全局阶段流程图（Phase 1-5）+ 动态触发规则 |
 | **命令系统** | 自定义斜杠命令：`/commit`、`/pr`、`/review` |
@@ -775,7 +797,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 ├── CLAUDE.md                        # 核心指令文件（12 个章节）
 ├── settings.json                    # 权限、钩子、狂暴模式配置
 ├── settings.local.json              # 本地覆盖配置（gitignored）
-├── rules/                           # 模块化规则（10 个文件）
+├── rules/                           # 模块化规则（17 个文件）
 │   ├── 00_global.md                 # 语言、启动约束
 │   ├── 01_development.md            # 开发约束 + 技术栈固化
 │   ├── 02_database.md               # 数据库规范
@@ -785,7 +807,14 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── 06_document_lifecycle.md     # 文档生命周期（冻结/演化/ADR）
 │   ├── 07_skill_triggers.md         # 技能触发 + 全局流程图
 │   ├── 08_code_comments.md          # 代码注释规范（中文注释 + 版本控制） 🆕
-│   └── 09_gstack_integration.md     # GStack Phase 0.5 集成规则 🆕
+│   ├── 09_gstack_integration.md     # GStack Phase 0.5 集成规则 🆕
+│   ├── 10_mode_selection.md         # 模式选择引擎（Team vs Subagent） 🆕
+│   ├── 11_rage_mode.md              # 狂暴模式（全自动开发） 🆕
+│   ├── 12_dual_model.md             # 双模型策略（GLM-5 + GPT-5.4） 🆕
+│   ├── 13_team_lifecycle.md         # Team 生命周期（创建/解散） 🆕
+│   ├── 14_worktree.md               # Git worktree 管理 🆕
+│   ├── 15_adversarial_review.md     # 对抗审查规则 🆕
+│   └── 16_ce_integration.md         # CE 插件集成 🆕
 ├── skills/                          # 技能系统（38 个，来自 ECC/superpowers/gstack/official/custom）
 │   ├── ui-style-selector/           # UI 风格自动选择（60 模板）
 │   ├── design-context/              # 按角色自动加载设计文档
@@ -823,7 +852,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── plan-eng-review/            # 工程架构审查 🆕
 │   ├── plan-devex-review/          # 开发者体验审查 🆕
 │   └── gstack-bridge/              # Phase 0.5→1 交接 🆕
-├── agents/                          # 代理定义（15 个角色，各含 SOP）
+├── agents/                          # 代理定义（16 个角色，各含 SOP）
 │   ├── pm.md                        # 项目经理
 │   ├── po.md                        # 产品负责人
 │   ├── architect.md                 # 架构师
@@ -838,7 +867,8 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── gan-generator.md             # GAN 代码生成 🆕
 │   ├── gan-evaluator.md             # GAN 质量评估 🆕
 │   ├── product-designer.md         # GStack 产品设计师 🆕
-│   └── design-reviewer.md          # GStack 设计审查员 🆕
+│   ├── design-reviewer.md          # GStack 设计审查员 🆕
+│   └── review-champion.md          # Review Champion 🆕
 ├── automation/                      # 自动化配置
 │   ├── agent-orchestration.json     # SSOT：角色-技能映射唯一真相源
 │   ├── rage-mode.json               # 狂暴模式阶段与功能

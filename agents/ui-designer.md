@@ -23,7 +23,7 @@ UI 设计、视觉规范、组件库设计。负责色彩系统、排版系统�
 | 🔴 必调 | design-context | 获取 UI 设计规范和品牌约束 |
 | 🔴 必调 | ui-style-selector | UI 风格模板选择 (60 个品牌风格) |
 | 🔴 必调 | ui-ux-pro-max | 完整设计系统推荐 |
-| 🟡 辅助 | brainstorming | 设计选择困难 |
+| 🟡 辅助 | ce:brainstorm | 设计选择困难 |
 
 ## 输出格式
 - `docs/design/04_UI设计规范.md` - 完整 UI 设计规范

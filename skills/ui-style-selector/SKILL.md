@@ -1,5 +1,5 @@
 ---
-name: design-system
+name: ui-style-selector
 description: Use this skill to generate or audit design systems, check visual consistency, and review PRs that touch styling.
 origin: ECC
 ---

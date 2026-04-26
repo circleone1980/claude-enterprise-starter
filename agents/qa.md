@@ -24,7 +24,6 @@ phase: 3
 | 🔴 必调 | tdd | TDD 测试策略 |
 | 🔴 必调 | code-review | 审查测试代码 |
 | 🔴 必调 | qa | 浏览器端真实测试（Playwright MCP） |
-| 🟡 辅助 | systematic-debugging | Bug 调试 |
 | 🟡 辅助 | security-review | 安全审查 |
 
 ## 输出格式
@@ -49,7 +48,7 @@ phase: 3
 1. `Skill tdd` - 了解测试策略
 2. 测试执行：单元 → 集成 → E2E
 3. AC 验证：确认每个 AC 有测试且通过
-4. Bug 调试 → `Skill systematic-debugging`
+4. Bug 调试 → 使用内置调试能力
 5. 浏览器测试 → `Skill qa`（使用 Playwright MCP 进行真实环境测试）
 
 ### 完成

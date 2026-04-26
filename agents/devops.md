@@ -21,7 +21,7 @@ phase: 5
 | 优先级 | 技能 | 用途 |
 |--------|------|------|
 | 🔴 必调 | design-context | 获取部署架构和基础设施配置 |
-| 🔴 必调 | verification-before-completion | 部署前完整验证 |
+| 🔴 必调 | verification-loop | 部署前完整验证 |
 | 🔴 必调 | code-review | 审查部署脚本和配置 |
 | 🟡 辅助 | security-review | 安全操作审查 |
 

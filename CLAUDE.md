@@ -177,6 +177,7 @@ claude --team full
 - [狂暴模式](rules/11_rage_mode.md) - 全自动开发模式
 - [双模型策略](rules/12_dual_model.md) - GLM-5 + GPT-5.4 协作
 - [Team 生命周期](rules/13_team_lifecycle.md) - 创建/解散流程
+- [Worktree 管理](rules/14_worktree.md) - Git Worktree 隔离开发
 - [对抗审查规则](rules/15_adversarial_review.md) - 左右互搏文档审查
 - [CE 插件集成](rules/16_ce_integration.md) - Compound Engineering 技能映射
 

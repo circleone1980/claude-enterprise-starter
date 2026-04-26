@@ -129,7 +129,7 @@ CLAUDE.local.md
 
 ### 3.2 规则系统 (`rules/`)
 
-10 个模块化规则文件，按需加载：
+17 个模块化规则文件，按需加载：
 
 | 文件 | 内容 | 关键规则 |
 |------|------|----------|
@@ -142,6 +142,14 @@ CLAUDE.local.md
 | `06_document_lifecycle.md` | 文档生命周期 | 冻结层/演化层/ADR 层管理 |
 | `07_skill_triggers.md` | 技能触发 | 什么场景触发什么技能 + 全局流程图 |
 | `08_code_comments.md` | 代码注释 | 中文注释标准 + 模块头 + 函数级 JSDoc/Javadoc/docstring |
+| `09_gstack_integration.md` | GStack 集成 | Phase 0.5 触发规则（已独立化） |
+| `10_mode_selection.md` | 模式选择引擎 | Team/Subagent 决策 |
+| `11_rage_mode.md` | 狂暴模式 | 全自动开发模式 |
+| `12_dual_model.md` | 双模型策略 | GLM-5 + GPT-5.4 协作 |
+| `13_team_lifecycle.md` | Team 生命周期 | 创建/解散流程 |
+| `14_worktree.md` | Git Worktree | Worktree 管理 |
+| `15_adversarial_review.md` | 对抗审查 | 左右互搏文档审查 |
+| `16_ce_integration.md` | CE 插件集成 | Compound Engineering 技能映射 |
 
 ### 3.3 技能系统 (`skills/`)
 
@@ -211,7 +219,7 @@ CLAUDE.md 是 Claude Code 的主要配置文件，包含 17 个章节：
 | 七、开发质量流程 | 功能完整性、代码评审、编译测试、文档更新、注释合规 |
 | 八、Agent Team Skills | 角色-技能映射（16 角色）、启动格式、禁止行为 |
 | 九、狂暴模式 | 自动化能力、阶段推进（含 Phase 0.5）、安全边界 |
-| 十、模组化规则加载 | 9 个模块化规则文件 |
+| 十、模组化规则加载 | 17 个模块化规则文件 |
 | 十一、代理定义 | 16 个角色定义文件路径 |
 | 十二、技能文件 | 38 个技能文件路径 |
 | 十三、验证与信任 | 验证策略、信任校准 |
@@ -387,7 +395,7 @@ Skill product-requirements --effort high
 
 ## 六、Agent Team 系统
 
-### 6.1 十五个角色
+### 6.1 十六个角色
 
 | 角色 | 职责 | Agent 类型 | 可并行 | 模式 | 评分 |
 |------|------|------------|--------|------|------|
@@ -1179,6 +1187,368 @@ Skill content and instructions here...
   }
 }
 ```
+
+---
+
+## 十二、操作手册：最佳实践与命令速查
+
+> 本章是面向团队所有角色的快速操作指南。每个场景给出**何时做**、**用什么命令**、**预期产出**。
+
+### 12.1 项目初始化
+
+```bash
+# 1. 复制模板到新项目
+cp -r claude-enterprise-starter/.claude  /你的项目/.claude
+
+# 2. 进入项目启动 Claude Code
+cd /你的项目
+claude
+
+# 3. 诊断配置是否正确
+/doctor
+```
+
+### 12.2 Phase 0.5 — 产品构思（可选）
+
+> 适用角色：Product Designer, Design Reviewer
+
+| 步骤 | 命令 | 说明 |
+|------|------|------|
+| 1. 产品构思 | `/office-hours` | 引导式产品头脑风暴 |
+| 2. 设计咨询 | `/design-consultation` | 深入设计探索 |
+| 3. 方案散弹 | `/design-shotgun` | 生成多个设计方案 |
+| 4. HTML 原型 | `/design-html` | 输出可交互 HTML 原型 |
+| 5. 评审 | `/plan-design-review` | 设计方案评审 |
+
+**触发时机**：项目最早期，需求还很模糊时。如需求明确可跳过此阶段。
+
+### 12.3 Phase 1 — 需求与架构（必须）
+
+> 适用角色：PM, Architect, Review Champion
+
+#### PM 操作流程
+
+```bash
+# 1. 获取项目设计状态
+Skill design-context --role pm
+
+# 2. 生成 PRD
+/product-requirements
+
+# 3. [关键] PRD 完成后立即启动对抗审查
+/adversarial-review prd
+```
+
+#### Architect 操作流程
+
+```bash
+# 1. 获取项目设计状态
+Skill design-context --role architect
+
+# 2. 需要时进行架构探索
+/ce:brainstorm          # 多方案脑暴（需 CE 插件）
+
+# 3. 编写架构设计
+/writing-plans
+
+# 4. 选择 UI 风格
+/ui-style-selector
+
+# 5. [关键] 架构设计完成后启动对抗审查
+/adversarial-review design
+
+# 6. API 设计完成后也可对抗审查
+/adversarial-review api
+```
+
+#### 对抗审查操作
+
+```bash
+# 审查 PRD 文档
+/adversarial-review prd
+
+# 审查系统架构设计
+/adversarial-review design
+
+# 审查 API 接口设计
+/adversarial-review api
+
+# 审查 UI 设计规范
+/adversarial-review ui
+```
+
+**对抗审查流程**：
+1. 系统自动分配 Review Champion（质疑者）和文档作者（辩护者）
+2. Review Champion 使用 `/ce:review` 多维评审 + `/ce:brainstorm` 生成替代方案
+3. 每轮最多 5 个挑战点，最多 3 轮
+4. 作者逐条回应（accepted / partially-accepted / rejected）
+5. 最终人工确认
+
+**人工干预点**：PM/Architect 完成初稿后会自动弹出建议，选择是否执行对抗审查。
+
+### 12.4 Phase 2 — 开发实施
+
+> 适用角色：Frontend, Backend-Java, Backend-Python
+
+#### 前端开发
+
+```bash
+# 1. TDD 驱动开发
+/tdd
+
+# 2. React 最佳实践
+/react-best-practices
+
+# 3. UI 开发
+/ui-ux-pro-max --stack react
+
+# 4. 前端规范
+/antfu
+
+# 5. 测试
+/vitest
+
+# 6. Feature 完成后代码审查
+/code-review
+```
+
+#### 后端开发（Java）
+
+```bash
+# 1. TDD
+/tdd
+
+# 2. Spring Boot 模式
+/springboot-patterns
+
+# 3. Spring Boot 测试
+/springboot-tdd
+
+# 4. Spring Security
+/springboot-security
+
+# 5. JPA 模式
+/jpa-patterns
+
+# 6. 代码规范
+/java-coding-standards
+
+# 7. Feature 完成后代码审查
+/code-review
+```
+
+#### 后端开发（Python）
+
+```bash
+# 1. TDD
+/tdd
+
+# 2. 数据库配置
+/prisma-database-setup
+
+# 3. LLM 集成
+/llm-integration
+
+# 4. VLM 集成
+/vlm-integration
+
+# 5. Feature 完成后代码审查
+/code-review
+```
+
+### 12.5 Phase 3 — 测试验证
+
+> 适用角色：QA
+
+```bash
+# 1. TDD 验证
+/tdd
+
+# 2. 验证循环（持续到通过）
+/verification-loop
+
+# 3. [关键] 浏览器端到端测试
+/qa                      # 完整测试（~10 分钟）
+/qa --quick              # 快速冒烟测试（~30 秒）
+/qa --diff-aware         # 仅测试变更相关功能
+
+# 4. 安全审查
+/security-review
+
+# 5. 多维度代码审查
+/ce:review               # 需 CE 插件
+```
+
+**/qa 测试报告输出**：
+- 健康评分（0-100），按 8 个维度评估
+- 截图证据
+- Bug 列表（P0-P3 分级）
+- 修复建议
+
+### 12.6 Phase 4 — 用户体验
+
+> 适用角色：产品体验师
+
+```bash
+# 1. 用户引导优化
+/user-onboarding
+
+# 2. UI/UX 优化
+/ui-ux-pro-max
+```
+
+### 12.7 Phase 5 — 部署
+
+> 适用角色：DevOps
+
+```bash
+# 1. 代码审查
+/code-review
+
+# 2. 安全审查
+/security-review
+
+# 3. 多维度审查
+/ce:review
+
+# 4. 知识沉淀（本轮经验总结）
+/ce:compound
+```
+
+### 12.8 CE 插件技能速查
+
+> 前置条件：全局安装 Compound Engineering 插件
+
+| 命令 | 用途 | 适用阶段 | 适用角色 |
+|------|------|---------|---------|
+| `/ce:brainstorm` | ≥2 种方案脑暴，收敛为需求规格 | Phase 0.5-1 | PM, Architect |
+| `/ce:plan` | 检索历史经验，拆分细粒度任务 | Phase 1-2 | Architect |
+| `/ce:review` | 6 类+扩展评审，输出独立报告 | Phase 2-5 | QA, DevOps, Review Champion |
+| `/ce:compound` | 经验存入 docs/solutions/ | Phase 5（阶段结束） | DevOps |
+
+**CE 文档流转路径**：
+```
+/ce:brainstorm → docs/brainstorms/{topic}-requirements.md
+/ce:plan       → docs/plans/{date}-{type}-{name}-plan.md
+/ce:review     → docs/reviews/{topic}-review.md
+/ce:compound   → docs/solutions/{category}/{topic}.md
+```
+
+### 12.9 团队启动命令
+
+```bash
+# 标准开发团队（6 角色：PM, Architect, Frontend, Backend, QA, Review Champion）
+claude --team dev
+
+# 全功能团队（16 角色：含产品设计师、产品体验师、DevOps、GAN 全套）
+claude --team full
+```
+
+### 12.10 GAN 生成对抗开发
+
+> 适用场景：需要质量驱动的功能开发
+
+```bash
+# 启动 GAN 循环
+bash scripts/gan-harness.sh "实现用户登录功能"
+
+# 指定最大迭代次数
+bash scripts/gan-harness.sh "实现用户登录功能" --max-iterations 5
+```
+
+**GAN 三角色协作**：
+1. Planner → 拆分需求，输出规格文档
+2. Generator → 按规格实现代码
+3. Evaluator → 测试实现，评分，不达标则反馈 Generator 重新迭代
+
+### 12.11 常见工作流模板
+
+#### 场景 A：全新项目
+
+```
+Phase 0.5 (可选)  → /office-hours → /design-consultation → /plan-design-review
+Phase 1           → /product-requirements → /adversarial-review prd
+                  → /writing-plans → /adversarial-review design
+Phase 2           → /tdd → /springboot-patterns (或 /react-best-practices)
+Phase 3           → /qa → /security-review
+Phase 5           → /ce:compound
+```
+
+#### 场景 B：紧急 Bug 修复
+
+```
+直接 Phase 2     → /tdd → 修复 → /code-review
+                 → /qa --quick
+```
+
+#### 场景 C：大规模重构
+
+```
+Phase 1           → /ce:brainstorm (探索重构方案)
+                  → /writing-plans → /adversarial-review design
+Phase 2           → /tdd → 重构 → /code-review
+Phase 3           → /qa → /verification-loop
+```
+
+#### 场景 D：API 接口变更
+
+```
+Phase 1           → /writing-plans → /adversarial-review api
+Phase 2           → /tdd → 实现
+Phase 3           → /qa --diff-aware → /security-review
+```
+
+### 12.12 完整命令索引
+
+| 命令 | 类型 | 用途 |
+|------|------|------|
+| `/doctor` | 系统 | 诊断配置完整性 |
+| `/context` | 系统 | 查看上下文使用率 |
+| `/memory` | 系统 | 查看加载的文件 |
+| `/skills` | 系统 | 列出可用技能 |
+| `/plan` | 系统 | 进入计划模式 |
+| `/compact` | 系统 | 压缩上下文 |
+| `/clear` | 系统 | 清空对话 |
+| `/product-requirements` | 技能 | 需求分析 + PRD 生成 |
+| `/writing-plans` | 技能 | 编写实施计划 |
+| `/autoplan` | 技能 | 自动规划审查 |
+| `/ui-style-selector` | 技能 | UI 视觉方向选择 |
+| `/ui-ux-pro-max` | 技能 | UI/UX 最佳实践开发 |
+| `/tdd` | 技能 | 测试驱动开发 |
+| `/vitest` | 技能 | Vitest 测试配置 |
+| `/antfu` | 技能 | 前端代码规范 |
+| `/react-best-practices` | 技能 | React 最佳实践 |
+| `/springboot-patterns` | 技能 | Spring Boot 设计模式 |
+| `/springboot-tdd` | 技能 | Spring Boot 测试 |
+| `/springboot-security` | 技能 | Spring Security 配置 |
+| `/jpa-patterns` | 技能 | JPA 数据访问模式 |
+| `/java-coding-standards` | 技能 | Java 编码规范 |
+| `/prisma-database-setup` | 技能 | Prisma 数据库配置 |
+| `/llm-integration` | 技能 | LLM API 集成 |
+| `/vlm-integration` | 技能 | VLM 视觉模型集成 |
+| `/code-review` | 技能 | GitHub PR 代码审查 |
+| `/security-review` | 技能 | 安全漏洞扫描 |
+| `/verification-loop` | 技能 | 验证循环 |
+| `/user-onboarding` | 技能 | 用户引导优化 |
+| `/design-context` | 技能 | 加载项目设计约束 |
+| `/continuous-learning` | 技能 | 持续学习 |
+| `/search-first` | 技能 | 搜索优先模式 |
+| `/strategic-compact` | 技能 | 策略性上下文压缩 |
+| `/office-hours` | GStack | 产品构思 |
+| `/design-consultation` | GStack | 设计咨询 |
+| `/design-shotgun` | GStack | 方案散弹 |
+| `/design-html` | GStack | HTML 原型 |
+| `/plan-ceo-review` | GStack | CEO 级评审 |
+| `/plan-eng-review` | GStack | 工程评审 |
+| `/plan-design-review` | GStack | 设计评审 |
+| `/plan-devex-review` | GStack | 开发体验评审 |
+| `/gan-harness` | GAN | GAN 对抗开发 |
+| `/qa` | 测试 | 浏览器端到端测试 |
+| `/adversarial-review` | 审查 | 对抗式文档审查 |
+| `/ce:brainstorm` | CE | 方案脑暴 |
+| `/ce:plan` | CE | 经验规划 |
+| `/ce:review` | CE | 多维评审 |
+| `/ce:compound` | CE | 知识沉淀 |
 
 ---
 

@@ -206,7 +206,7 @@
     },
     "DevOps": {
       "subagentType": "general-purpose",
-      "requiredSkills": ["code-review", "security-review", "ce:review"],
+      "requiredSkills": ["code-review", "security-review", "ce:review", "ce:compound"],
       "parallelizable": false,
       "dependencies": ["QA"],
       "count": 1,
