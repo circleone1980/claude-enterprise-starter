@@ -153,7 +153,7 @@ graph TB
 | Workflow Engine | Flowable (Java) / Prefect (Python) | `CLAUDE.md` Section I-B |
 | MCP Tools | GitHub / Figma / Playwright / Context7 | `.mcp.json` |
 | Hook Runtime | Node.js | `hooks/scripts/*.js` |
-| Config Validation | Node.js | `scripts/validate-config.js` |
+| Config Validation | Node.js (test runner) | `scripts/validate-config.js` + `test/` (154 tests) |
 | Code Review | GLM-5.1 (dev) + GPT-5.5 via Codex (review) | `CLAUDE.md` Section XVI |
 | Lint / Format | ESLint flat config (antfu style) | `CLAUDE.md` Section I-B |
 
@@ -374,6 +374,13 @@ tips/                                # Reference guides & design resources
 .worktreeinclude                     # Git worktree config
 CLAUDE.local.md.example              # Local config template (gitignored)
 QUICKSTART.md                        # 5-minute quick start guide
+package.json                         # Test infrastructure (zero external deps) 🆕
+.github/workflows/validate.yml       # CI: validate + test on push/PR 🆕
+test/                                # Automated test suite (154 tests) 🆕
+├── helpers/                         # Shared test utilities
+├── static/                          # Config validation tests (30)
+├── hooks/                           # Hook script tests (64)
+└── integration/                     # Integration tests (60)
 ```
 
 ### Skills Frontmatter Configuration
@@ -603,6 +610,9 @@ Agent --name "Backend-Python-1" \
 | `/memory` | View loaded files |
 | `/skills` | List available skills |
 | `/agents` | View configured agents |
+| `npm test` | Run 154 automated tests |
+| `npm run validate` | Validate all config files |
+| `npm run check-all` | Full validation + test suite |
 
 ---
 
@@ -973,6 +983,13 @@ tips/                                # 参考指南与设计资源
 .worktreeinclude                     # Git worktree 配置
 CLAUDE.local.md.example              # 本地配置模板（gitignored）
 QUICKSTART.md                        # 5 分钟快速开始
+package.json                         # 测试基础设施（零外部依赖） 🆕
+.github/workflows/validate.yml       # CI：推送/PR 时自动验证 + 测试 🆕
+test/                                # 自动化测试套件（154 个测试） 🆕
+├── helpers/                         # 共享测试工具
+├── static/                          # 配置验证测试（30 个）
+├── hooks/                           # Hook 脚本测试（64 个）
+└── integration/                     # 集成测试（60 个）
 ```
 
 ### Agent Team 角色

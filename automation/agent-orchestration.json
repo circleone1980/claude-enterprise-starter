@@ -39,7 +39,7 @@
     },
     "PM": {
       "subagentType": "everything-claude-code:planner",
-      "requiredSkills": ["product-requirements", "autoplan", "ce:brainstorm"],
+      "requiredSkills": ["product-requirements", "autoplan", "ce-brainstorm"],
       "parallelizable": false,
       "dependencies": [],
       "count": 1,
@@ -71,7 +71,7 @@
     },
     "Architect": {
       "subagentType": "everything-claude-code:architect",
-      "requiredSkills": ["writing-plans", "product-requirements", "react-best-practices", "ui-ux-pro-max", "ui-style-selector", "code-review", "ce:brainstorm", "ce:plan"],
+      "requiredSkills": ["writing-plans", "product-requirements", "react-best-practices", "ui-ux-pro-max", "ui-style-selector", "code-review", "ce-brainstorm", "ce-plan"],
       "parallelizable": true,
       "dependencies": [],
       "count": 1,
@@ -184,7 +184,7 @@
     },
     "QA": {
       "subagentType": "everything-claude-code:tdd-guide",
-      "requiredSkills": ["tdd", "verification-loop", "code-review", "security-review", "qa", "ce:review"],
+      "requiredSkills": ["tdd", "verification-loop", "code-review", "security-review", "qa", "ce-review"],
       "parallelizable": false,
       "dependencies": ["Frontend", "Backend-Java", "Backend-Python"],
       "count": 1,
@@ -206,7 +206,7 @@
     },
     "DevOps": {
       "subagentType": "general-purpose",
-      "requiredSkills": ["code-review", "security-review", "ce:review", "ce:compound"],
+      "requiredSkills": ["code-review", "security-review", "ce-review", "ce-compound"],
       "parallelizable": false,
       "dependencies": ["QA"],
       "count": 1,

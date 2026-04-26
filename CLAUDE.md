@@ -104,15 +104,15 @@
 | ------------------ | -------------------------------------- | ---------------- |
 | Product Designer   | office-hours, design-consultation, design-shotgun, design-html    | general-purpose  |
 | Design Reviewer    | autoplan, plan-ceo-review, plan-eng-review                               | general-purpose  |
-| PM             | product-requirements, ce:brainstorm                   | planner          |
-| Architect      | writing-plans, ce:brainstorm, ce:plan                          | architect        |
+| PM             | product-requirements, ce-brainstorm                   | planner          |
+| Architect      | writing-plans, ce-brainstorm, ce-plan                          | architect        |
 | Review Champion | adversarial-review, plan-ceo-review, plan-eng-review | general-purpose  |
 | UI Designer    | ui-ux-pro-max, ui-style-selector       | general-purpose  |
 | Frontend       | tdd, antfu                             | typescript-reviewer |
 | Backend-Java   | springboot-patterns, springboot-tdd    | java-reviewer    |
 | Backend-Python | tdd, prisma-database-setup             | python-reviewer  |
-| QA             | tdd, verification-loop, qa, ce:review  | tdd-guide        |
-| DevOps         | code-review, security-review, ce:review | general-purpose  |
+| QA             | tdd, verification-loop, qa, ce-review  | tdd-guide        |
+| DevOps         | code-review, security-review, ce-review | general-purpose  |
 
 详细配置: [rules/04_agent_team.md](rules/04_agent_team.md)
 
@@ -125,10 +125,10 @@
 
 | 技能 | 命令 | 用途 |
 |------|------|------|
-| 方案脑暴 | `/ce:brainstorm` | ≥2 种实现路径，收敛为需求规格 |
-| 经验规划 | `/ce:plan` | 检索历史经验，拆分细粒度任务 |
-| 多维评审 | `/ce:review` | 6 类+扩展评审，独立报告 |
-| 知识沉淀 | `/ce:compound` | 经验存入 docs/solutions/ |
+| 方案脑暴 | `/ce-brainstorm` | ≥2 种实现路径，收敛为需求规格 |
+| 经验规划 | `/ce-plan` | 检索历史经验，拆分细粒度任务 |
+| 多维评审 | `/ce-review` | 6 类+扩展评审，独立报告 |
+| 知识沉淀 | `/ce-compound` | 经验存入 docs/solutions/ |
 
 详细规则: [rules/16_ce_integration.md](rules/16_ce_integration.md)
 

@@ -63,10 +63,10 @@
 
 | 触发场景 | 调用技能 | 适用角色 |
 |---------|---------|---------|
-| 遇到**设计困惑/方案选型** | `Skill ce:brainstorm` | 所有角色 |
-| PM/PO 发现**产品方向偏离** | `Skill ce:brainstorm` → `Skill product-requirements` | PM, PO |
-| Architect 发现**技术选型困难** | `Skill ce:brainstorm` | Architect |
-| UI Designer 遇到**设计选择困难** | `Skill ce:brainstorm` | UI Designer |
+| 遇到**设计困惑/方案选型** | `Skill ce-brainstorm` | 所有角色 |
+| PM/PO 发现**产品方向偏离** | `Skill ce-brainstorm` → `Skill product-requirements` | PM, PO |
+| Architect 发现**技术选型困难** | `Skill ce-brainstorm` | Architect |
+| UI Designer 遇到**设计选择困难** | `Skill ce-brainstorm` | UI Designer |
 
 ### 1.2 架构设计完成
 
@@ -125,7 +125,7 @@
 | Frontend 遇到 **Bug** | 使用内置调试能力逐步排查 | Frontend |
 | Backend 遇到 **Bug** | 使用内置调试能力逐步排查 | Backend |
 | QA 发现 **Bug** | 使用内置调试能力逐步排查 | QA |
-| 任何角色**卡住超过 15 分钟** | `Skill ce:brainstorm` | 所有角色 |
+| 任何角色**卡住超过 15 分钟** | `Skill ce-brainstorm` | 所有角色 |
 
 ### 2.3 完成功能实现
 
@@ -184,7 +184,7 @@ Agent --name "{角色名称}" \
   --subagent-type "{对应类型}" \
   --prompt "你是{角色}。必须遵循以下流程：
     1. 🔴 调用 Skill design-context --role {角色} 获取设计约束
-    2. 🔴 遇到设计困惑 → 调用 Skill ce:brainstorm
+    2. 🔴 遇到设计困惑 → 调用 Skill ce-brainstorm
     3. 🔴 开始开发 → 调用 Skill tdd
     4. 🔴 遇到 Bug → 使用内置调试能力逐步排查
     5. 🔴 完成代码 → 调用 Skill verification-loop
@@ -212,11 +212,11 @@ Agent --name "{角色名称}" \
 
 当多个技能可能同时适用时，按以下顺序调用：
 
-1. **Process skills**（流程技能）: `ce:brainstorm`, 内置调试能力 — 决定 HOW to approach
+1. **Process skills**（流程技能）: `ce-brainstorm`, 内置调试能力 — 决定 HOW to approach
 2. **Implementation skills**（实现技能）: `tdd`, `springboot-patterns` — 指导 execution
 
 **示例**：
-- "Let's build X" → `ce:brainstorm` first, then `tdd`
+- "Let's build X" → `ce-brainstorm` first, then `tdd`
 - "Fix this bug" → 内置调试能力 first, then domain-specific skills
 
 ---
@@ -226,7 +226,7 @@ Agent --name "{角色名称}" \
 | 类型 | 技能 | 使用方式 |
 |------|------|---------|
 | **Rigid（刚性）** | `tdd`, `verification-loop` | 严格遵循，不要跳过步骤 |
-| **Flexible（灵活）** | `ce:brainstorm`, `springboot-patterns` | 根据上下文适配原则 |
+| **Flexible（灵活）** | `ce-brainstorm`, `springboot-patterns` | 根据上下文适配原则 |
 
 ---
 

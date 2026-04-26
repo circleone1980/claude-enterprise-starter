@@ -14,7 +14,7 @@
 
 **问题**: 当前 v2.6.0 存在三个核心缺口:
 1. GStack 技能依赖 `~/.claude/skills/gstack/bin/` 全局安装（9 个文件 320 处引用），用户未安装 GStack 则技能完全不可用
-2. 缺少浏览器端真实测试（/qa）、方案脑暴（/ce:brainstorm）、知识沉淀（/ce:compound）等关键能力
+2. 缺少浏览器端真实测试（/qa）、方案脑暴（/ce-brainstorm）、知识沉淀（/ce-compound）等关键能力
 3. 文档创建（PRD/架构设计）过程缺乏"对抗审查"机制，无法发现逻辑漏洞和需求偏差
 
 **目标**: v3.1.0 实现 GStack 技能完全自包含、集成 CE 插件（仅需求/设计/评审阶段）、新增 /qa 浏览器测试、实现"左右互搏"对抗式文档审查。
@@ -94,7 +94,7 @@ echo "SLUG: $_SLUG"
 
 #### 定位
 
-CE 插件已全局安装，技能通过 `/ce:brainstorm`, `/ce:plan`, `/ce:review`, `/ce:compound` 访问。本项目**引用而非复制**。
+CE 插件已全局安装，技能通过 `/ce-brainstorm`, `/ce-plan`, `/ce-review`, `/ce-compound` 访问。本项目**引用而非复制**。
 
 **不集成 /ce:work**（用户决策），开发流程继续使用本项目 TDD 工作流。
 
@@ -106,7 +106,7 @@ CE 插件已全局安装，技能通过 `/ce:brainstorm`, `/ce:plan`, `/ce:revie
 "compoundEngineering": {
   "enabled": true,
   "description": "Compound Engineering 全局插件集成（需全局安装 CE 插件）",
-  "skills": ["ce:brainstorm", "ce:plan", "ce:review", "ce:compound"],
+  "skills": ["ce-brainstorm", "ce-plan", "ce-review", "ce-compound"],
   "documentHandoff": {
     "brainstormOutput": "docs/brainstorms/",
     "planOutput": "docs/plans/",
@@ -120,27 +120,27 @@ CE 插件已全局安装，技能通过 `/ce:brainstorm`, `/ce:plan`, `/ce:revie
 
 | Agent | 新增 CE 技能 | 理由 |
 |-------|-------------|------|
-| PM | `ce:brainstorm` | 需求探索阶段多方案构思 |
-| Architect | `ce:brainstorm`, `ce:plan` | 架构选型多方案 + 经验规划 |
-| QA | `ce:review` | 多维度专项审查 |
-| DevOps | `ce:review` | 部署前多维审查 |
+| PM | `ce-brainstorm` | 需求探索阶段多方案构思 |
+| Architect | `ce-brainstorm`, `ce-plan` | 架构选型多方案 + 经验规划 |
+| QA | `ce-review` | 多维度专项审查 |
+| DevOps | `ce-review` | 部署前多维审查 |
 
 **`rules/07_skill_triggers.md`** — 添加 CE 技能触发规则章节:
 
 | 触发场景 | CE 技能 | 适用角色 |
 |---------|--------|---------|
-| 需求不明确，需要多方案探索 | `/ce:brainstorm` | PM, Architect |
-| 文档创建完毕，需要详细规划 | `/ce:plan` | Architect |
-| 代码/文档需要多维度审查 | `/ce:review` | QA, DevOps |
-| 阶段结束，需要知识沉淀 | `/ce:compound` | 所有角色 |
+| 需求不明确，需要多方案探索 | `/ce-brainstorm` | PM, Architect |
+| 文档创建完毕，需要详细规划 | `/ce-plan` | Architect |
+| 代码/文档需要多维度审查 | `/ce-review` | QA, DevOps |
+| 阶段结束，需要知识沉淀 | `/ce-compound` | 所有角色 |
 
 #### 文档流转目录
 
 ```
-/ce:brainstorm → docs/brainstorms/{topic}-requirements.md
-/ce:plan       → docs/plans/{date}-{type}-{name}-plan.md
-/ce:review     → docs/reviews/{topic}-review.md
-/ce:compound   → docs/solutions/{category}/{topic}.md
+/ce-brainstorm → docs/brainstorms/{topic}-requirements.md
+/ce-plan       → docs/plans/{date}-{type}-{name}-plan.md
+/ce-review     → docs/reviews/{topic}-review.md
+/ce-compound   → docs/solutions/{category}/{topic}.md
 ```
 
 **新建目录**（含 .gitkeep）:
@@ -159,7 +159,7 @@ CE 插件已全局安装，技能通过 `/ce:brainstorm`, `/ce:plan`, `/ce:revie
 
 在文档创建过程中，两个对立视角的 Agent 同时审查:
 
-- **"左派" Review-Champion**: 质疑者。使用 `/ce:review` 多维审查 + `/ce:brainstorm` 生成替代方案
+- **"左派" Review-Champion**: 质疑者。使用 `/ce-review` 多维审查 + `/ce-brainstorm` 生成替代方案
 - **"右派" PM/Architect**: 辩护者。逐条回应或采纳挑战
 
 **核心流程**:
@@ -168,7 +168,7 @@ PM 创建 PRD 草稿
     ↓
 [人工干预点] "PRD 初稿已就绪，建议运行 /adversarial-review prd"
     ↓
-左派 Agent: /ce:review → /ce:brainstorm → 输出挑战报告
+左派 Agent: /ce-review → /ce-brainstorm → 输出挑战报告
     ↓
 右派 (PM): 逐条回应/采纳 → 输出修订文档
     ↓
@@ -203,7 +203,7 @@ phase: "1-review"
 ---
 ```
 
-必用技能: `ce:review`, `ce:brainstorm`, `plan-ceo-review`, `plan-eng-review`
+必用技能: `ce-review`, `ce-brainstorm`, `plan-ceo-review`, `plan-eng-review`
 
 **`rules/15_adversarial_review.md`** — 对抗审查规则:
 - 触发时机: Phase 1 文档初稿完成后
@@ -228,8 +228,8 @@ phase: "1-review"
 | Phase 0.5a | office-hours 完成 | "产品构思完成。建议: /design-consultation 或直接进入 Phase 1" |
 | Phase 1 (PRD) | PRD 初稿完成 | "PRD 初稿就绪。建议运行 /adversarial-review prd" |
 | Phase 1 (架构) | 架构设计完成 | "架构设计完成。建议: /plan-eng-review 或 /adversarial-review design" |
-| Phase 1→2 | 冻结层文档完成 | "所有文档就绪。建议运行 /ce:compound 沉淀本轮经验" |
-| Phase 2 | Feature 完成 | "Feature 完成。建议: /ce:review 或 /code-review" |
+| Phase 1→2 | 冻结层文档完成 | "所有文档就绪。建议运行 /ce-compound 沉淀本轮经验" |
+| Phase 2 | Feature 完成 | "Feature 完成。建议: /ce-review 或 /code-review" |
 | Phase 3→4 | 测试完成 | "测试通过。建议: /qa 浏览器测试 或直接进入体验阶段" |
 
 #### 实现方式
@@ -246,11 +246,11 @@ phase: "1-review"
 
 | Agent | 变更 | 详情 |
 |-------|------|------|
-| **Review-Champion** | 新增 | `requiredSkills: [ce:review, ce:brainstorm, plan-ceo-review, plan-eng-review]` |
-| PM | 修改 | +`ce:brainstorm` |
-| Architect | 修改 | +`ce:brainstorm`, `ce:plan` |
-| QA | 修改 | +`qa`, `ce:review` |
-| DevOps | 修改 | +`ce:review` |
+| **Review-Champion** | 新增 | `requiredSkills: [ce-review, ce-brainstorm, plan-ceo-review, plan-eng-review]` |
+| PM | 修改 | +`ce-brainstorm` |
+| Architect | 修改 | +`ce-brainstorm`, `ce-plan` |
+| QA | 修改 | +`qa`, `ce-review` |
+| DevOps | 修改 | +`ce-review` |
 | Product-Designer | 修改 | `gstackOnly: true` → `false` |
 | Design-Reviewer | 修改 | `gstackOnly: true` → `false` |
 
@@ -398,7 +398,7 @@ git push origin main --tags
 - [ ] 9 个 GStack 技能在无 `~/.claude/skills/gstack/bin/` 环境下可运行
 - [ ] `/office-hours` 可独立运行（无需启用 gstackConfig）
 - [ ] `/qa` 执行浏览器测试并生成报告
-- [ ] `/ce:brainstorm` 可正常调用
+- [ ] `/ce-brainstorm` 可正常调用
 - [ ] `/adversarial-review prd` 启动左右互搏审查
 - [ ] PM/Architect/QA 的 requiredSkills 包含 CE 技能
 - [ ] Product-Designer 和 Design-Reviewer 的 gstackOnly 为 false

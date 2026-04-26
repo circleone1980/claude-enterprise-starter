@@ -11,7 +11,7 @@
 
 | 角色 | 视角 | 使用技能 | 职责 |
 |------|------|---------|------|
-| **左派** Review-Champion | 质疑者 | `/ce:review`, `/ce:brainstorm`, `plan-ceo-review`, `plan-eng-review` | 找漏洞、挑战假设、生成替代方案 |
+| **左派** Review-Champion | 质疑者 | `/ce-review`, `/ce-brainstorm`, `plan-ceo-review`, `plan-eng-review` | 找漏洞、挑战假设、生成替代方案 |
 | **右派** PM/Architect | 辩护者 | `product-requirements`, `writing-plans` | 逐条回应、采纳合理挑战、修订文档 |
 
 ### 审查流程
@@ -103,8 +103,8 @@
 ## 八、与 CE 插件的关系
 
 对抗审查的"左派"角色默认使用 CE 插件的技能：
-- `/ce:review` — 多维度专项审查（生成正式评审报告）
-- `/ce:brainstorm` — 生成替代方案（至少 2 种实现路径）
+- `/ce-review` — 多维度专项审查（生成正式评审报告）
+- `/ce-brainstorm` — 生成替代方案（至少 2 种实现路径）
 
 如果 CE 插件未安装，左派角色仍可使用内置的 `plan-ceo-review` 和 `plan-eng-review` 进行基础审查。
 

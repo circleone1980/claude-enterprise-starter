@@ -23,7 +23,7 @@ phase: 1
 | 🔴 必调 | design-context | 获取项目设计约束和状态 |
 | 🔴 必调 | writing-plans | 编写系统架构设计和实施计划 |
 | 🔴 必调 | ui-style-selector | 确认 UI 视觉方向 |
-| 🟡 辅助 | ce:brainstorm | 技术选型困难时设计探索 |
+| 🟡 辅助 | ce-brainstorm | 技术选型困难时设计探索 |
 | 🟡 辅助 | code-review | 审查技术方案的代码实现 |
 
 ## 输出格式
@@ -44,7 +44,7 @@ phase: 1
 1. `Skill design-context --role architect` - 获取设计约束
 
 ### 核心任务
-1. 架构探索 → `Skill ce:brainstorm` (技术选型困难时)
+1. 架构探索 → `Skill ce-brainstorm` (技术选型困难时)
 2. 架构设计 → 填充 `docs/design/01_系统架构设计.md`
 3. 数据库设计 → 填充 `docs/design/02_数据库设计.md`
 4. API 设计 → 填充 `docs/design/03_API接口设计.md`

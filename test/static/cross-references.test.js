@@ -20,13 +20,13 @@ describe('交叉引用 - 跨文件引用一致性', () => {
     assert.strictEqual(missing.length, 0, `缺少 agentMd 文件:\n${missing.join('\n')}`);
   });
 
-  test('每个非 ce:* requiredSkill 在 skills/ 下有对应目录', () => {
+  test('每个非 ce-* requiredSkill 在 skills/ 下有对应目录', () => {
     const skillDirs = listSkillDirs();
     const missing = [];
     for (const name of agentNames) {
       const skills = ssot.agents[name].requiredSkills || [];
       for (const skill of skills) {
-        if (skill.startsWith('ce:')) continue;
+        if (skill.startsWith('ce-')) continue;
         if (!skillDirs.includes(skill)) {
           missing.push(`${name} → skills/${skill}`);
         }

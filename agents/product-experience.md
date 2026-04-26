@@ -23,7 +23,7 @@ phase: 4
 | 🔴 必调 | design-context | 获取产品定位和目标用户 |
 | 🔴 必调 | user-onboarding | 首次用户体验设计 |
 | 🟡 辅助 | ui-ux-pro-max | UX 评估标准 |
-| 🟡 辅助 | ce:brainstorm | 优化建议 |
+| 🟡 辅助 | ce-brainstorm | 优化建议 |
 
 ## 输出格式
 - 用户体验评估报告

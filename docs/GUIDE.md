@@ -103,6 +103,15 @@ claude
 
 # 运行诊断
 /doctor
+
+# 运行自动化测试（154 个测试，零外部依赖）
+npm test
+
+# 运行配置验证（175 项检查）
+npm run validate
+
+# 全量检查（验证 + 测试）
+npm run check-all
 ```
 
 ### 2.6 .gitignore 配置
@@ -381,8 +390,8 @@ Skill product-requirements --effort high
 | 需求分析 | `product-requirements` |
 | 架构设计 | `writing-plans` |
 | UI 风格选择 | `ui-style-selector` |
-| 遇到 Bug | `systematic-debugging` |
-| 卡住 >15 分钟 | `brainstorming` |
+| 遇到 Bug | 内置调试（逐步排查） |
+| 卡住 >15 分钟 | `ce-brainstorm`（需 CE 插件） |
 
 **内置技能**（Claude Code 自带，无需安装）：
 
@@ -1246,7 +1255,7 @@ Skill design-context --role pm
 Skill design-context --role architect
 
 # 2. 需要时进行架构探索
-/ce:brainstorm          # 多方案脑暴（需 CE 插件）
+/ce-brainstorm          # 多方案脑暴（需 CE 插件）
 
 # 3. 编写架构设计
 /writing-plans
@@ -1279,7 +1288,7 @@ Skill design-context --role architect
 
 **对抗审查流程**：
 1. 系统自动分配 Review Champion（质疑者）和文档作者（辩护者）
-2. Review Champion 使用 `/ce:review` 多维评审 + `/ce:brainstorm` 生成替代方案
+2. Review Champion 使用 `/ce-review` 多维评审 + `/ce-brainstorm` 生成替代方案
 3. 每轮最多 5 个挑战点，最多 3 轮
 4. 作者逐条回应（accepted / partially-accepted / rejected）
 5. 最终人工确认
@@ -1376,7 +1385,7 @@ Skill design-context --role architect
 /security-review
 
 # 5. 多维度代码审查
-/ce:review               # 需 CE 插件
+/ce-review               # 需 CE 插件
 ```
 
 **/qa 测试报告输出**：
@@ -1409,10 +1418,10 @@ Skill design-context --role architect
 /security-review
 
 # 3. 多维度审查
-/ce:review
+/ce-review
 
 # 4. 知识沉淀（本轮经验总结）
-/ce:compound
+/ce-compound
 ```
 
 ### 12.8 CE 插件技能速查
@@ -1421,17 +1430,17 @@ Skill design-context --role architect
 
 | 命令 | 用途 | 适用阶段 | 适用角色 |
 |------|------|---------|---------|
-| `/ce:brainstorm` | ≥2 种方案脑暴，收敛为需求规格 | Phase 0.5-1 | PM, Architect |
-| `/ce:plan` | 检索历史经验，拆分细粒度任务 | Phase 1-2 | Architect |
-| `/ce:review` | 6 类+扩展评审，输出独立报告 | Phase 2-5 | QA, DevOps, Review Champion |
-| `/ce:compound` | 经验存入 docs/solutions/ | Phase 5（阶段结束） | DevOps |
+| `/ce-brainstorm` | ≥2 种方案脑暴，收敛为需求规格 | Phase 0.5-1 | PM, Architect |
+| `/ce-plan` | 检索历史经验，拆分细粒度任务 | Phase 1-2 | Architect |
+| `/ce-review` | 6 类+扩展评审，输出独立报告 | Phase 2-5 | QA, DevOps, Review Champion |
+| `/ce-compound` | 经验存入 docs/solutions/ | Phase 5（阶段结束） | DevOps |
 
 **CE 文档流转路径**：
 ```
-/ce:brainstorm → docs/brainstorms/{topic}-requirements.md
-/ce:plan       → docs/plans/{date}-{type}-{name}-plan.md
-/ce:review     → docs/reviews/{topic}-review.md
-/ce:compound   → docs/solutions/{category}/{topic}.md
+/ce-brainstorm → docs/brainstorms/{topic}-requirements.md
+/ce-plan       → docs/plans/{date}-{type}-{name}-plan.md
+/ce-review     → docs/reviews/{topic}-review.md
+/ce-compound   → docs/solutions/{category}/{topic}.md
 ```
 
 ### 12.9 团队启动命令
@@ -1471,7 +1480,7 @@ Phase 1           → /product-requirements → /adversarial-review prd
                   → /writing-plans → /adversarial-review design
 Phase 2           → /tdd → /springboot-patterns (或 /react-best-practices)
 Phase 3           → /qa → /security-review
-Phase 5           → /ce:compound
+Phase 5           → /ce-compound
 ```
 
 #### 场景 B：紧急 Bug 修复
@@ -1484,7 +1493,7 @@ Phase 5           → /ce:compound
 #### 场景 C：大规模重构
 
 ```
-Phase 1           → /ce:brainstorm (探索重构方案)
+Phase 1           → /ce-brainstorm (探索重构方案)
                   → /writing-plans → /adversarial-review design
 Phase 2           → /tdd → 重构 → /code-review
 Phase 3           → /qa → /verification-loop
@@ -1545,10 +1554,10 @@ Phase 3           → /qa --diff-aware → /security-review
 | `/gan-harness` | GAN | GAN 对抗开发 |
 | `/qa` | 测试 | 浏览器端到端测试 |
 | `/adversarial-review` | 审查 | 对抗式文档审查 |
-| `/ce:brainstorm` | CE | 方案脑暴 |
-| `/ce:plan` | CE | 经验规划 |
-| `/ce:review` | CE | 多维评审 |
-| `/ce:compound` | CE | 知识沉淀 |
+| `/ce-brainstorm` | CE | 方案脑暴 |
+| `/ce-plan` | CE | 经验规划 |
+| `/ce-review` | CE | 多维评审 |
+| `/ce-compound` | CE | 知识沉淀 |
 
 ---
 
@@ -1577,6 +1586,9 @@ Phase 3           → /qa --diff-aware → /security-review
 
 | 命令 | 用途 |
 |------|------|
+| `npm test` | 运行 154 个自动化测试（零外部依赖） |
+| `npm run validate` | 验证项目配置完整性（175 项检查） |
+| `npm run check-all` | 全量验证 + 测试套件 |
 | `node scripts/validate-config.js` | 验证项目配置完整性 |
 | `node scripts/gstack-toggle.js --enable` | 启用 GStack Phase 0.5 |
 | `node scripts/gstack-toggle.js --disable` | 禁用 GStack Phase 0.5 |

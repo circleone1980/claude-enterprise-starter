@@ -12,7 +12,7 @@
 | Preamble | 依赖 `~/.claude/skills/gstack/bin/` (6 个脚本) | 轻量级内置 (git 分支 + 会话管理) |
 | 遥测 | GStack 遥测系统 | 已移除 |
 | 更新检查 | `gstack-update-check` | 已移除 |
-| 经验库 | `gstack-learnings-search` | 由 CE `/ce:compound` 替代 |
+| 经验库 | `gstack-learnings-search` | 由 CE `/ce-compound` 替代 |
 | 仓库模式 | `gstack-repo-mode` | 已移除 |
 
 **用户无需安装 GStack 即可使用所有 GStack 派生技能。**

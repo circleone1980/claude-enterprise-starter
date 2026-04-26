@@ -23,7 +23,7 @@ phase: 1
 | 🔴 必调 | design-context | 获取 PRD、用户故事、验收标准 |
 | 🔴 必调 | product-requirements | 需求分析和验收标准 |
 | 🟡 辅助 | user-onboarding | 用户引导设计 |
-| 🟡 辅助 | ce:brainstorm | 需求模糊/用户体验争议 |
+| 🟡 辅助 | ce-brainstorm | 需求模糊/用户体验争议 |
 
 ## 输出格式
 - `docs/requirements/PRD.md` - 产品需求文档

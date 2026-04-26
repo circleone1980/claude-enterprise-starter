@@ -28,8 +28,8 @@ origin: custom
 ```
 1. 读取目标文档
 2. 作为"左派"质疑者，生成 ≤5 个挑战点
-3. 使用 /ce:review 或 plan-ceo-review/plan-eng-review 进行多维审查
-4. 使用 /ce:brainstorm 为每个挑战生成替代方案
+3. 使用 /ce-review 或 plan-ceo-review/plan-eng-review 进行多维审查
+4. 使用 /ce-brainstorm 为每个挑战生成替代方案
 5. 输出结构化挑战报告
 6. 等待用户决定是否让"右派"回应
 ```
@@ -80,8 +80,8 @@ Each challenge must include:
 
 If CE plugin is installed, use it to deepen the review:
 
-1. Run `/ce:review` on the document for structured multi-dimensional analysis
-2. Run `/ce:brainstorm` to generate alternative approaches for the top 2 challenges
+1. Run `/ce-review` on the document for structured multi-dimensional analysis
+2. Run `/ce-brainstorm` to generate alternative approaches for the top 2 challenges
 
 If CE plugin is NOT installed, use built-in skills:
 1. Use `plan-ceo-review` perspective for product value challenges
@@ -111,7 +111,7 @@ Generate the challenge report:
 
 ## 替代方案建议
 
-（来自 /ce:brainstorm 或内置分析）
+（来自 /ce-brainstorm 或内置分析）
 
 ## 下一步
 

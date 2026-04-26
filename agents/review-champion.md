@@ -25,8 +25,8 @@ phase: "1-review"
 | 🔴 必调 | adversarial-review | 对抗审查编排 |
 | 🔴 必调 | plan-ceo-review | 产品维度质疑 |
 | 🔴 必调 | plan-eng-review | 工程维度质疑 |
-| 🟡 辅助 | ce:review | CE 多维评审（如已安装） |
-| 🟡 辅助 | ce:brainstorm | 生成替代方案（如已安装） |
+| 🟡 辅助 | ce-review | CE 多维评审（如已安装） |
+| 🟡 辅助 | ce-brainstorm | 生成替代方案（如已安装） |
 
 ## 输出格式
 - 对抗审查报告（`docs/reviews/{date}-{type}-adversarial-review.md`）
@@ -45,8 +45,8 @@ phase: "1-review"
 ### 核心任务
 1. 读取目标文档全文
 2. 按五大维度生成挑战（产品价值、技术可行性、用户体验、安全性、可维护性）
-3. 优先使用 `/ce:review` 生成多维审查报告
-4. 使用 `/ce:brainstorm` 为 Top 挑战生成替代方案
+3. 优先使用 `/ce-review` 生成多维审查报告
+4. 使用 `/ce-brainstorm` 为 Top 挑战生成替代方案
 5. 输出结构化挑战报告
 
 ### 完成

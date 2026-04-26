@@ -418,8 +418,8 @@ for (const [name, agent] of Object.entries(ssot.agents)) {
   if (agent.gstackOnly && !gstackEnabled) continue;
   for (const skill of (agent.requiredSkills || [])) {
     allSkills.add(skill);
-    // CE plugin skills (ce:*) are provided by external MCP server, not local directories
-    if (skill.startsWith('ce:')) {
+    // CE plugin skills (ce-*) are provided by external MCP server, not local directories
+    if (skill.startsWith('ce-')) {
       log_ok(`${name} → ${skill} (CE 插件，跳过本地检查)`);
       continue;
     }

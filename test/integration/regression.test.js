@@ -58,12 +58,12 @@ describe('regression - agent .md files forbidden references', () => {
 describe('regression - SSOT agent configuration', () => {
   const ssot = loadJSON('automation/agent-orchestration.json');
 
-  test('DevOps in SSOT has ce:compound in requiredSkills', () => {
+  test('DevOps in SSOT has ce-compound in requiredSkills', () => {
     const devOps = ssot.agents.DevOps;
     assert.ok(devOps, 'DevOps agent not found in SSOT');
     assert.ok(
-      devOps.requiredSkills.includes('ce:compound'),
-      `DevOps requiredSkills missing ce:compound. Got: ${devOps.requiredSkills.join(', ')}`
+      devOps.requiredSkills.includes('ce-compound'),
+      `DevOps requiredSkills missing ce-compound. Got: ${devOps.requiredSkills.join(', ')}`
     );
   });
 });
