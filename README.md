@@ -134,7 +134,7 @@ graph TB
 | **Commands** | Custom slash commands: `/commit`, `/pr`, `/review` |
 | **Smart Mode Selection** 🆕 | modeSelection scoring engine — auto-decide Team vs Subagent per phase |
 | **Team Cleanup** 🆕 | `team-manager.sh` — resolves 5 TeamDelete bugs, safe cleanup workflow |
-| **Codex Dual-Model** 🆕 | GLM-5 for development + GPT-5.4 for review via Codex integration |
+| **Codex Dual-Model** 🆕 | GLM-5.1 for development + GPT-5.5 for review via Codex integration |
 | **Env Optimization** 🆕 | `AUTOCOMPACT_PCT=80`, `MAX_THINKING_TOKENS=16000` for optimal performance |
 | **GStack Integration** 🆕 | Phase 0.5 Product Design layer - YC-style ideation, design exploration, automated review, seamless handoff to PRD |
 | **Design Shotgun** 🆕 | Generate 4-6 UI variants, browser comparison panel, taste memory for iterative design |
@@ -154,7 +154,7 @@ graph TB
 | MCP Tools | GitHub / Figma / Playwright / Context7 | `.mcp.json` |
 | Hook Runtime | Node.js | `hooks/scripts/*.js` |
 | Config Validation | Node.js | `scripts/validate-config.js` |
-| Code Review | GLM-5 (dev) + GPT-5.4 via Codex (review) | `CLAUDE.md` Section XVI |
+| Code Review | GLM-5.1 (dev) + GPT-5.5 via Codex (review) | `CLAUDE.md` Section XVI |
 | Lint / Format | ESLint flat config (antfu style) | `CLAUDE.md` Section I-B |
 
 ### Navigation Guide
@@ -213,7 +213,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── 09_gstack_integration.md     # GStack Phase 0.5 integration rules 🆕
 │   ├── 10_mode_selection.md         # Mode selection engine (Team vs Subagent) 🆕
 │   ├── 11_rage_mode.md              # Rage mode (full auto development) 🆕
-│   ├── 12_dual_model.md             # Dual model strategy (GLM-5 + GPT-5.4) 🆕
+│   ├── 12_dual_model.md             # Dual model strategy (GLM-5.1 + GPT-5.5) 🆕
 │   ├── 13_team_lifecycle.md         # Team lifecycle (create/disband) 🆕
 │   ├── 14_worktree.md               # Git worktree management 🆕
 │   ├── 15_adversarial_review.md     # Adversarial review rules 🆕
@@ -475,16 +475,16 @@ Phase 5: Deployment   → DevOps → GitHub push
 
 ### Dual-Model Collaboration Strategy
 
-> Leverage each model's strengths: GLM-5 for rapid development, GPT-5.4 (via Codex) for thorough review.
+> Leverage each model's strengths: GLM-5.1 for rapid development, GPT-5.5 (via Codex) for thorough review.
 
 | Stage | Model | Purpose | Trigger |
 |-------|-------|---------|---------|
-| **Development** | GLM-5 | Code generation, implementation, refactoring | Default for all Agent tasks |
-| **Code Review** | GPT-5.4 (Codex) | Deep analysis, pattern detection, security audit | After feature completion |
-| **Architecture Review** | GPT-5.4 (Codex) | Trade-off analysis, design pattern validation | Phase 1 & design changes |
-| **Final Verification** | GPT-5.4 (Codex) | Pre-merge quality gate | Phase 5 before push |
+| **Development** | GLM-5.1 | Code generation, implementation, refactoring | Default for all Agent tasks |
+| **Code Review** | GPT-5.5 (Codex) | Deep analysis, pattern detection, security audit | After feature completion |
+| **Architecture Review** | GPT-5.5 (Codex) | Trade-off analysis, design pattern validation | Phase 1 & design changes |
+| **Final Verification** | GPT-5.5 (Codex) | Pre-merge quality gate | Phase 5 before push |
 
-**Workflow**: GLM-5 implements → GPT-5.4 reviews → GLM-5 fixes → GPT-5.4 approves → merge.
+**Workflow**: GLM-5.1 implements → GPT-5.5 reviews → GLM-5.1 fixes → GPT-5.5 approves → merge.
 
 **4-Layer Trigger Architecture**:
 
@@ -732,7 +732,7 @@ graph TB
 | **命令系统** | 自定义斜杠命令：`/commit`、`/pr`、`/review` |
 | **智能模式选择** 🆕 | modeSelection 评分引擎 — 各阶段自动决策 Team 或 Subagent 模式 |
 | **Team 清除机制** 🆕 | `team-manager.sh` — 解决 5 个 TeamDelete Bug，安全清理工作流 |
-| **Codex 双模型** 🆕 | GLM-5 开发 + GPT-5.4 审查的 Codex 双模型集成 |
+| **Codex 双模型** 🆕 | GLM-5.1 开发 + GPT-5.5 审查的 Codex 双模型集成 |
 | **环境变量优化** 🆕 | `AUTOCOMPACT_PCT=80`、`MAX_THINKING_TOKENS=16000` 性能优化 |
 | **GStack 集成** 🆕 | Phase 0.5 产品设计屋 — YC 式构思、设计探索、自动审查、无缝交接 PRD |
 | **Design Shotgun** 🆕 | 生成 4-6 个 UI 变体，浏览器对比面板，品味记忆迭代设计 |
@@ -752,7 +752,7 @@ graph TB
 | MCP 工具 | GitHub / Figma / Playwright / Context7 | `.mcp.json` |
 | Hook 运行时 | Node.js | `hooks/scripts/*.js` |
 | 配置验证 | Node.js | `scripts/validate-config.js` |
-| 代码审查 | GLM-5（开发）+ GPT-5.4 via Codex（审查） | `CLAUDE.md` 十六节 |
+| 代码审查 | GLM-5.1（开发）+ GPT-5.5 via Codex（审查） | `CLAUDE.md` 十六节 |
 | Lint / 格式化 | ESLint flat config (antfu 风格) | `CLAUDE.md` 一-B 节 |
 
 ### 导航指南
@@ -810,7 +810,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── 09_gstack_integration.md     # GStack Phase 0.5 集成规则 🆕
 │   ├── 10_mode_selection.md         # 模式选择引擎（Team vs Subagent） 🆕
 │   ├── 11_rage_mode.md              # 狂暴模式（全自动开发） 🆕
-│   ├── 12_dual_model.md             # 双模型策略（GLM-5 + GPT-5.4） 🆕
+│   ├── 12_dual_model.md             # 双模型策略（GLM-5.1 + GPT-5.5） 🆕
 │   ├── 13_team_lifecycle.md         # Team 生命周期（创建/解散） 🆕
 │   ├── 14_worktree.md               # Git worktree 管理 🆕
 │   ├── 15_adversarial_review.md     # 对抗审查规则 🆕
@@ -1074,16 +1074,16 @@ Phase 5: 部署发布 → DevOps → GitHub 推送
 
 ### 双模型协作策略
 
-> 发挥每个模型的优势：GLM-5 用于快速开发，GPT-5.4（通过 Codex）用于深度审查。
+> 发挥每个模型的优势：GLM-5.1 用于快速开发，GPT-5.5（通过 Codex）用于深度审查。
 
 | 阶段 | 模型 | 用途 | 触发时机 |
 |------|------|------|---------|
-| **开发实现** | GLM-5 | 代码生成、功能实现、重构优化 | 所有 Agent 任务的默认模型 |
-| **代码审查** | GPT-5.4 (Codex) | 深度分析、模式检测、安全审计 | 功能完成后触发 |
-| **架构评审** | GPT-5.4 (Codex) | 权衡分析、设计模式验证 | Phase 1 及设计变更时 |
-| **最终验证** | GPT-5.4 (Codex) | 合并前质量门禁 | Phase 5 推送前 |
+| **开发实现** | GLM-5.1 | 代码生成、功能实现、重构优化 | 所有 Agent 任务的默认模型 |
+| **代码审查** | GPT-5.5 (Codex) | 深度分析、模式检测、安全审计 | 功能完成后触发 |
+| **架构评审** | GPT-5.5 (Codex) | 权衡分析、设计模式验证 | Phase 1 及设计变更时 |
+| **最终验证** | GPT-5.5 (Codex) | 合并前质量门禁 | Phase 5 推送前 |
 
-**工作流**: GLM-5 实现 → GPT-5.4 审查 → GLM-5 修复 → GPT-5.4 批准 → 合并。
+**工作流**: GLM-5.1 实现 → GPT-5.5 审查 → GLM-5.1 修复 → GPT-5.5 批准 → 合并。
 
 **4 层触发架构**:
 

@@ -22,14 +22,7 @@ allowed-tools:
 ```bash
 _BRANCH=$(git branch --show-current 2>/dev/null || echo "unknown")
 echo "BRANCH: $_BRANCH"
-_SESSION_DIR="$HOME/.claude-enterprise/sessions"
-mkdir -p "$_SESSION_DIR" 2>/dev/null || true
-touch "$_SESSION_DIR/$PPID" 2>/dev/null || true
-_SESSIONS=$(find "$_SESSION_DIR" -mmin -120 -type f 2>/dev/null | wc -l | tr -d ' ')
-find "$_SESSION_DIR" -mmin +120 -type f -exec rm {} + 2>/dev/null || true
-echo "SESSIONS: $_SESSIONS"
-_REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo ".")
-_SLUG=$(basename "$_REPO_ROOT" 2>/dev/null || echo "unknown")
+_SLUG=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || echo ".")")
 echo "SLUG: $_SLUG"
 ```
 
@@ -43,41 +36,8 @@ visual brainstorming, not a review process.
 
 ## DESIGN SETUP (run this check BEFORE any design mockup command)
 
-```bash
-_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
-D=""
-[ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/gstack/design/dist/design" ] && D="$_ROOT/.claude/skills/gstack/design/dist/design"
-[ -z "$D" ] && D=~/.claude/skills/gstack/design/dist/design
-if [ -x "$D" ]; then
-  echo "DESIGN_READY: $D"
-else
-  echo "DESIGN_NOT_AVAILABLE"
-fi
-B=""
-[ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/gstack/browse/dist/browse" ] && B="$_ROOT/.claude/skills/gstack/browse/dist/browse"
-[ -z "$B" ] && B=~/.claude/skills/gstack/browse/dist/browse
-if [ -x "$B" ]; then
-  echo "BROWSE_READY: $B"
-else
-  echo "BROWSE_NOT_AVAILABLE (will use 'open' to view comparison boards)"
-fi
-```
-
-If `DESIGN_NOT_AVAILABLE`: skip visual mockup generation and fall back to the
-existing HTML wireframe approach (`DESIGN_SKETCH`). Design mockups are a
-progressive enhancement, not a hard requirement.
-
-If `BROWSE_NOT_AVAILABLE`: use `open file://...` instead of `$B goto` to open
-comparison boards. The user just needs to see the HTML file in any browser.
-
-If `DESIGN_READY`: the design binary is available for visual mockup generation.
-Commands:
-- `$D generate --brief "..." --output /path.png` — generate a single mockup
-- `$D variants --brief "..." --count 3 --output-dir /path/` — generate N style variants
-- `$D compare --images "a.png,b.png,c.png" --output /path/board.html --serve` — comparison board + HTTP server
-- `$D serve --html /path/board.html` — serve comparison board and collect feedback via HTTP
-- `$D check --image /path.png --brief "..."` — vision quality gate
-- `$D iterate --session /path/session.json --feedback "..." --output /path.png` — iterate
+Design/browse binaries are not bundled. Visual mockup generation uses WebSearch
+and inline image generation as alternatives. Comparison boards use `open file://...`.
 
 **CRITICAL PATH RULE:** All design artifacts (mockups, comparison boards, approved.json)
 MUST be saved to `~/.gstack/projects/$SLUG/designs/`, NEVER to `.context/`,
@@ -89,7 +49,6 @@ data, not project files. They persist across branches, conversations, and worksp
 Check for prior design exploration sessions for this project:
 
 ```bash
-eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)"
 setopt +o nomatch 2>/dev/null || true
 _PREV=$(find ~/.gstack/projects/$SLUG/designs/ -name "approved.json" -maxdepth 2 2>/dev/null | sort -r | head -5)
 [ -n "$_PREV" ] && echo "PREVIOUS_SESSIONS_FOUND" || echo "NO_PREVIOUS_SESSIONS"
@@ -193,7 +152,6 @@ Limit to last 10 sessions. Try/catch JSON parse on each (skip corrupted files).
 Set up the output directory:
 
 ```bash
-eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)"
 _DESIGN_DIR=~/.gstack/projects/$SLUG/designs/<screen-name>-$(date +%Y%m%d)
 mkdir -p "$_DESIGN_DIR"
 echo "DESIGN_DIR: $_DESIGN_DIR"

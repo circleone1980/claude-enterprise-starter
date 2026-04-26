@@ -25,12 +25,6 @@ allowed-tools:
 ```bash
 _BRANCH=$(git branch --show-current 2>/dev/null || echo "unknown")
 echo "BRANCH: $_BRANCH"
-_SESSION_DIR="$HOME/.claude-enterprise/sessions"
-mkdir -p "$_SESSION_DIR" 2>/dev/null || true
-touch "$_SESSION_DIR/$PPID" 2>/dev/null || true
-_SESSIONS=$(find "$_SESSION_DIR" -mmin -120 -type f 2>/dev/null | wc -l | tr -d ' ')
-find "$_SESSION_DIR" -mmin +120 -type f -exec rm {} + 2>/dev/null || true
-echo "SESSIONS: $_SESSIONS"
 _REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo ".")
 _SLUG=$(basename "$_REPO_ROOT" 2>/dev/null || echo "unknown")
 echo "SLUG: $_SLUG"
@@ -69,8 +63,8 @@ Look for office-hours output:
 
 ```bash
 setopt +o nomatch 2>/dev/null || true  # zsh compat
-eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)"
-ls ~/.gstack/projects/$SLUG/*office-hours* 2>/dev/null | head -5
+_SLUG=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || echo ".")")
+ls ~/.gstack/projects/$_SLUG/*office-hours* 2>/dev/null | head -5
 ls .context/*office-hours* .context/attachments/*office-hours* 2>/dev/null | head -5
 ```
 
@@ -78,134 +72,19 @@ If office-hours output exists, read it — the product context is pre-filled.
 
 If the codebase is empty and purpose is unclear, say: *"I don't have a clear picture of what you're building yet. Want to explore first with `/office-hours`? Once we know the product direction, we can set up the design system."*
 
-**Find the browse binary (optional — enables visual competitive research):**
+**Visual competitive research:** If visual research of competitor sites is needed,
+use WebSearch to find competitor designs and analyze them from search results and
+your built-in design knowledge. The skill works fully without any browser tooling.
 
-## SETUP (run this check BEFORE any browse command)
-
-```bash
-_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
-B=""
-[ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/gstack/browse/dist/browse" ] && B="$_ROOT/.claude/skills/gstack/browse/dist/browse"
-[ -z "$B" ] && B=~/.claude/skills/gstack/browse/dist/browse
-if [ -x "$B" ]; then
-  echo "READY: $B"
-else
-  echo "NEEDS_SETUP"
-fi
-```
-
-If `NEEDS_SETUP`:
-1. Tell the user: "gstack browse needs a one-time build (~10 seconds). OK to proceed?" Then STOP and wait.
-2. Run: `cd <SKILL_DIR> && ./setup`
-3. If `bun` is not installed:
-   ```bash
-   if ! command -v bun >/dev/null 2>&1; then
-     BUN_VERSION="1.3.10"
-     BUN_INSTALL_SHA="bab8acfb046aac8c72407bdcce903957665d655d7acaa3e11c7c4616beae68dd"
-     tmpfile=$(mktemp)
-     curl -fsSL "https://bun.sh/install" -o "$tmpfile"
-     actual_sha=$(shasum -a 256 "$tmpfile" | awk '{print $1}')
-     if [ "$actual_sha" != "$BUN_INSTALL_SHA" ]; then
-       echo "ERROR: bun install script checksum mismatch" >&2
-       echo "  expected: $BUN_INSTALL_SHA" >&2
-       echo "  got:      $actual_sha" >&2
-       rm "$tmpfile"; exit 1
-     fi
-     BUN_VERSION="$BUN_VERSION" bash "$tmpfile"
-     rm "$tmpfile"
-   fi
-   ```
-
-If browse is not available, that's fine — visual research is optional. The skill works without it using WebSearch and your built-in design knowledge.
-
-**Find the gstack designer (optional — enables AI mockup generation):**
-
-## DESIGN SETUP (run this check BEFORE any design mockup command)
-
-```bash
-_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
-D=""
-[ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/gstack/design/dist/design" ] && D="$_ROOT/.claude/skills/gstack/design/dist/design"
-[ -z "$D" ] && D=~/.claude/skills/gstack/design/dist/design
-if [ -x "$D" ]; then
-  echo "DESIGN_READY: $D"
-else
-  echo "DESIGN_NOT_AVAILABLE"
-fi
-B=""
-[ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/gstack/browse/dist/browse" ] && B="$_ROOT/.claude/skills/gstack/browse/dist/browse"
-[ -z "$B" ] && B=~/.claude/skills/gstack/browse/dist/browse
-if [ -x "$B" ]; then
-  echo "BROWSE_READY: $B"
-else
-  echo "BROWSE_NOT_AVAILABLE (will use 'open' to view comparison boards)"
-fi
-```
-
-If `DESIGN_NOT_AVAILABLE`: skip visual mockup generation and fall back to the
-existing HTML wireframe approach (`DESIGN_SKETCH`). Design mockups are a
-progressive enhancement, not a hard requirement.
-
-If `BROWSE_NOT_AVAILABLE`: use `open file://...` instead of `$B goto` to open
-comparison boards. The user just needs to see the HTML file in any browser.
-
-If `DESIGN_READY`: the design binary is available for visual mockup generation.
-Commands:
-- `$D generate --brief "..." --output /path.png` — generate a single mockup
-- `$D variants --brief "..." --count 3 --output-dir /path/` — generate N style variants
-- `$D compare --images "a.png,b.png,c.png" --output /path/board.html --serve` — comparison board + HTTP server
-- `$D serve --html /path/board.html` — serve comparison board and collect feedback via HTTP
-- `$D check --image /path.png --brief "..."` — vision quality gate
-- `$D iterate --session /path/session.json --feedback "..." --output /path.png` — iterate
-
-**CRITICAL PATH RULE:** All design artifacts (mockups, comparison boards, approved.json)
-MUST be saved to `~/.gstack/projects/$SLUG/designs/`, NEVER to `.context/`,
-`docs/designs/`, `/tmp/`, or any project-local directory. Design artifacts are USER
-data, not project files. They persist across branches, conversations, and workspaces.
-
-If `DESIGN_READY`: Phase 5 will generate AI mockups of your proposed design system applied to real screens, instead of just an HTML preview page. Much more powerful — the user sees what their product could actually look like.
-
-If `DESIGN_NOT_AVAILABLE`: Phase 5 falls back to the HTML preview page (still good).
+**AI mockup generation:** Not available in standalone mode. Phase 5 falls back to
+the HTML preview page approach, which is fully functional and produces beautiful output.
 
 ---
 
 ## Prior Learnings
 
-Search for relevant learnings from previous sessions:
-
-```bash
-_CROSS_PROJ=$(~/.claude/skills/gstack/bin/gstack-config get cross_project_learnings 2>/dev/null || echo "unset")
-echo "CROSS_PROJECT: $_CROSS_PROJ"
-if [ "$_CROSS_PROJ" = "true" ]; then
-  ~/.claude/skills/gstack/bin/gstack-learnings-search --limit 10 --cross-project 2>/dev/null || true
-else
-  ~/.claude/skills/gstack/bin/gstack-learnings-search --limit 10 2>/dev/null || true
-fi
-```
-
-If `CROSS_PROJECT` is `unset` (first time): Use AskUserQuestion:
-
-> gstack can search learnings from your other projects on this machine to find
-> patterns that might apply here. This stays local (no data leaves your machine).
-> Recommended for solo developers. Skip if you work on multiple client codebases
-> where cross-contamination would be a concern.
-
-Options:
-- A) Enable cross-project learnings (recommended)
-- B) Keep learnings project-scoped only
-
-If A: run `~/.claude/skills/gstack/bin/gstack-config set cross_project_learnings true`
-If B: run `~/.claude/skills/gstack/bin/gstack-config set cross_project_learnings false`
-
-Then re-run the search with the appropriate flag.
-
-If learnings are found, incorporate them into your analysis. When a review finding
-matches a past learning, display:
-
-**"Prior learning applied: [key] (confidence N/10, from [date])"**
-
-This makes the compounding visible. The user should see that gstack is getting
-smarter on their codebase over time.
+> **Note**: Cross-session learnings search requires GStack infrastructure. In standalone
+> mode, rely on your built-in design knowledge and any existing files in `~/.gstack/projects/$SLUG/`.
 
 ## Phase 1: Product Context
 
@@ -232,21 +111,11 @@ Use WebSearch to find 5-10 products in their space. Search for:
 - "[product category] best websites 2025"
 - "best [industry] web apps"
 
-**Step 2: Visual research via browse (if available)**
+**Step 2: Visual research via WebSearch**
 
-If the browse binary is available (`$B` is set), visit the top 3-5 sites in the space and capture visual evidence:
-
-```bash
-$B goto "https://example-site.com"
-$B screenshot "/tmp/design-research-site-name.png"
-$B snapshot
-```
-
-For each site, analyze: fonts actually used, color palette, layout approach, spacing density, aesthetic direction. The screenshot gives you the feel; the snapshot gives you structural data.
-
-If a site blocks the headless browser or requires login, skip it and note why.
-
-If browse is not available, rely on WebSearch results and your built-in design knowledge — this is fine.
+Use WebSearch to find screenshots, design showcases, and visual references for the
+top 3-5 sites in the space. Search for specific product screenshots and design reviews.
+Analyze from descriptions, CSS/tech stack mentions, and your design knowledge.
 
 **Step 3: Synthesize findings**
 
@@ -261,9 +130,8 @@ Summarize conversationally:
 > "I looked at what's out there. Here's the landscape: they converge on [patterns]. Most of them feel [observation — e.g., interchangeable, polished but generic, etc.]. The opportunity to stand out is [gap]. Here's where I'd play it safe and where I'd take a risk..."
 
 **Graceful degradation:**
-- Browse available → screenshots + snapshots + WebSearch (richest research)
-- Browse unavailable → WebSearch only (still good)
-- WebSearch also unavailable → agent's built-in design knowledge (always works)
+- WebSearch available → search results + built-in design knowledge (rich research)
+- WebSearch unavailable → agent's built-in design knowledge (always works)
 
 If the user said no research, skip entirely and proceed to Phase 3 using your built-in design knowledge.
 
@@ -331,7 +199,9 @@ Present subagent output under a `CLAUDE SUBAGENT (design direction):` header.
 
 **Log the result:**
 ```bash
-~/.claude/skills/gstack/bin/gstack-review-log '{"skill":"design-outside-voices","timestamp":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'","status":"STATUS","source":"SOURCE","commit":"'"$(git rev-parse --short HEAD)"'"}'
+_LOG_DIR=~/.gstack/projects/$_SLUG/reviews
+mkdir -p "$_LOG_DIR"
+echo '{"skill":"design-outside-voices","timestamp":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'","status":"STATUS","source":"SOURCE","commit":"'"$(git rev-parse --short HEAD)"'"}' >> "$_LOG_DIR/review-log.jsonl"
 ```
 Replace STATUS with "clean" or "issues_found", SOURCE with "codex+subagent", "codex-only", "subagent-only", or "unavailable".
 
@@ -446,8 +316,8 @@ This phase generates visual previews of the proposed design system. Two paths de
 Generate AI-rendered mockups showing the proposed design system applied to realistic screens for this product. This is far more powerful than an HTML preview — the user sees what their product could actually look like.
 
 ```bash
-eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)"
-_DESIGN_DIR=~/.gstack/projects/$SLUG/designs/design-system-$(date +%Y%m%d)
+_SLUG=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || echo ".")")
+_DESIGN_DIR=~/.gstack/projects/$_SLUG/designs/design-system-$(date +%Y%m%d)
 mkdir -p "$_DESIGN_DIR"
 echo "DESIGN_DIR: $_DESIGN_DIR"
 ```
@@ -714,10 +584,12 @@ After shipping DESIGN.md, if the session produced screen-level mockups or page l
 ## Capture Learnings
 
 If you discovered a non-obvious pattern, pitfall, or architectural insight during
-this session, log it for future sessions:
+this session, log it locally for future reference:
 
 ```bash
-~/.claude/skills/gstack/bin/gstack-learnings-log '{"skill":"design-consultation","type":"TYPE","key":"SHORT_KEY","insight":"DESCRIPTION","confidence":N,"source":"SOURCE","files":["path/to/relevant/file"]}'
+_LEARNINGS_DIR=~/.gstack/projects/$_SLUG/learnings
+mkdir -p "$_LEARNINGS_DIR"
+echo '{"skill":"design-consultation","type":"TYPE","key":"SHORT_KEY","insight":"DESCRIPTION","confidence":N,"source":"SOURCE","files":["path/to/relevant/file"]}' >> "$_LEARNINGS_DIR/learnings.jsonl"
 ```
 
 **Types:** `pattern` (reusable approach), `pitfall` (what NOT to do), `preference`

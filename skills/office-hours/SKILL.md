@@ -30,12 +30,6 @@ allowed-tools:
 ```bash
 _BRANCH=$(git branch --show-current 2>/dev/null || echo "unknown")
 echo "BRANCH: $_BRANCH"
-_SESSION_DIR="$HOME/.claude-enterprise/sessions"
-mkdir -p "$_SESSION_DIR" 2>/dev/null || true
-touch "$_SESSION_DIR/$PPID" 2>/dev/null || true
-_SESSIONS=$(find "$_SESSION_DIR" -mmin -120 -type f 2>/dev/null | wc -l | tr -d ' ')
-find "$_SESSION_DIR" -mmin +120 -type f -exec rm {} + 2>/dev/null || true
-echo "SESSIONS: $_SESSIONS"
 _REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo ".")
 _SLUG=$(basename "$_REPO_ROOT" 2>/dev/null || echo "unknown")
 echo "SLUG: $_SLUG"
@@ -56,7 +50,7 @@ You are a **YC office hours partner**. Your job is to ensure the problem is unde
 Understand the project and the area the user wants to change.
 
 ```bash
-eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)"
+_SLUG=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || echo ".")")
 ```
 
 1. Read `CLAUDE.md`, `TODOS.md` (if they exist).
@@ -65,47 +59,14 @@ eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)"
 4. **List existing design docs for this project:**
    ```bash
    setopt +o nomatch 2>/dev/null || true  # zsh compat
-   ls -t ~/.gstack/projects/$SLUG/*-design-*.md 2>/dev/null
+   ls -t ~/.gstack/projects/$_SLUG/*-design-*.md 2>/dev/null
    ```
    If design docs exist, list them: "Prior designs for this project: [titles + dates]"
 
 ## Prior Learnings
 
-Search for relevant learnings from previous sessions:
-
-```bash
-_CROSS_PROJ=$(~/.claude/skills/gstack/bin/gstack-config get cross_project_learnings 2>/dev/null || echo "unset")
-echo "CROSS_PROJECT: $_CROSS_PROJ"
-if [ "$_CROSS_PROJ" = "true" ]; then
-  ~/.claude/skills/gstack/bin/gstack-learnings-search --limit 10 --cross-project 2>/dev/null || true
-else
-  ~/.claude/skills/gstack/bin/gstack-learnings-search --limit 10 2>/dev/null || true
-fi
-```
-
-If `CROSS_PROJECT` is `unset` (first time): Use AskUserQuestion:
-
-> gstack can search learnings from your other projects on this machine to find
-> patterns that might apply here. This stays local (no data leaves your machine).
-> Recommended for solo developers. Skip if you work on multiple client codebases
-> where cross-contamination would be a concern.
-
-Options:
-- A) Enable cross-project learnings (recommended)
-- B) Keep learnings project-scoped only
-
-If A: run `~/.claude/skills/gstack/bin/gstack-config set cross_project_learnings true`
-If B: run `~/.claude/skills/gstack/bin/gstack-config set cross_project_learnings false`
-
-Then re-run the search with the appropriate flag.
-
-If learnings are found, incorporate them into your analysis. When a review finding
-matches a past learning, display:
-
-**"Prior learning applied: [key] (confidence N/10, from [date])"**
-
-This makes the compounding visible. The user should see that gstack is getting
-smarter on their codebase over time.
+> **Note**: Cross-session learnings search requires GStack infrastructure. In standalone
+> mode, rely on your built-in knowledge and any existing files in `~/.gstack/projects/$_SLUG/`.
 
 5. **Ask: what's your goal with this?** This is a real question, not a formality. The answer determines everything about how the session runs.
 
@@ -334,7 +295,7 @@ After the user states the problem (first question in Phase 2A or 2B), search exi
 Extract 3-5 significant keywords from the user's problem statement and grep across design docs:
 ```bash
 setopt +o nomatch 2>/dev/null || true  # zsh compat
-grep -li "<keyword1>\|<keyword2>\|<keyword3>" ~/.gstack/projects/$SLUG/*-design-*.md 2>/dev/null
+grep -li "<keyword1>\|<keyword2>\|<keyword3>" ~/.gstack/projects/$_SLUG/*-design-*.md 2>/dev/null
 ```
 
 If matches found, read the matching design docs and surface them:
@@ -546,26 +507,16 @@ Present via AskUserQuestion. Do NOT proceed without user approval of the approac
 
 ## Visual Design Exploration
 
-```bash
-_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
-D=""
-[ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/gstack/design/dist/design" ] && D="$_ROOT/.claude/skills/gstack/design/dist/design"
-[ -z "$D" ] && D=~/.claude/skills/gstack/design/dist/design
-[ -x "$D" ] && echo "DESIGN_READY" || echo "DESIGN_NOT_AVAILABLE"
-```
-
-**If `DESIGN_NOT_AVAILABLE`:** Fall back to the HTML wireframe approach below
-(the existing DESIGN_SKETCH section). Visual mockups require the design binary.
-
-**If `DESIGN_READY`:** Generate visual mockup explorations for the user.
+> **Note**: AI mockup generation requires the gstack design binary. In standalone mode,
+> this section falls back to the HTML wireframe approach below (Visual Sketch).
 
 Generating visual mockups of the proposed design... (say "skip" if you don't need visuals)
 
 **Step 1: Set up the design directory**
 
 ```bash
-eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)"
-_DESIGN_DIR=~/.gstack/projects/$SLUG/designs/mockup-$(date +%Y%m%d)
+_SLUG=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || echo ".")")
+_DESIGN_DIR=~/.gstack/projects/$_SLUG/designs/mockup-$(date +%Y%m%d)
 mkdir -p "$_DESIGN_DIR"
 echo "DESIGN_DIR: $_DESIGN_DIR"
 ```
@@ -653,15 +604,15 @@ Write to a temp file:
 SKETCH_FILE="/tmp/gstack-sketch-$(date +%s).html"
 ```
 
-**Step 3: Render and capture**
+**Step 3: Present the wireframe**
 
+Open the wireframe HTML file in the user's browser:
 ```bash
-$B goto "file://$SKETCH_FILE"
-$B screenshot /tmp/gstack-sketch.png
+open "$SKETCH_FILE"
 ```
 
-If `$B` is not available (browse binary not set up), skip the render step. Tell the
-user: "Visual sketch requires the browse binary. Run the setup script to enable it."
+If `open` fails (headless environment), tell the user: "Wireframe written to [path] —
+open it in your browser to see the sketch."
 
 **Step 4: Present and iterate**
 
@@ -726,8 +677,8 @@ Count the signals. You'll use this count in Phase 6 to determine which tier of c
 
 ### Builder Profile Append
 
-After counting signals, append a session entry to the builder profile. This is the single
-source of truth for all closing state (tier, resource dedup, journey tracking).
+After counting signals, append a session entry to the local builder profile. This is the
+single source of truth for all closing state (tier, resource dedup, journey tracking).
 
 ```bash
 mkdir -p "${GSTACK_HOME:-$HOME/.gstack}"
@@ -745,7 +696,7 @@ Append one JSON line with these fields (substitute actual values from this sessi
 - `topics`: array of 2-3 topic keywords that describe what this session was about
 
 ```bash
-echo '{"date":"TIMESTAMP","mode":"MODE","project_slug":"SLUG","signal_count":N,"signals":SIGNALS_ARRAY,"design_doc":"DOC_PATH","assignment":"ASSIGNMENT_TEXT","resources_shown":[],"topics":TOPICS_ARRAY}' >> "${GSTACK_HOME:-$HOME/.gstack}/builder-profile.jsonl"
+echo '{"date":"TIMESTAMP","mode":"MODE","project_slug":"'"$_SLUG"'","signal_count":N,"signals":SIGNALS_ARRAY,"design_doc":"DOC_PATH","assignment":"ASSIGNMENT_TEXT","resources_shown":[],"topics":TOPICS_ARRAY}' >> "${GSTACK_HOME:-$HOME/.gstack}/builder-profile.jsonl"
 ```
 
 This entry is append-only. The `resources_shown` field will be updated via a second append
@@ -758,7 +709,7 @@ after resource selection in Phase 6 Beat 3.5.
 Write the design document to the project directory.
 
 ```bash
-eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)" && mkdir -p ~/.gstack/projects/$SLUG
+_SLUG=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || echo ".")") && mkdir -p ~/.gstack/projects/$_SLUG
 USER=$(whoami)
 DATETIME=$(date +%Y%m%d-%H%M%S)
 ```
@@ -970,13 +921,28 @@ over time.
 ### Step 1: Read Builder Profile
 
 ```bash
-PROFILE=$(~/.claude/skills/gstack/bin/gstack-builder-profile 2>/dev/null) || PROFILE="SESSION_COUNT: 0
-TIER: introduction"
-SESSION_TIER=$(echo "$PROFILE" | grep "^TIER:" | awk '{print $2}')
-SESSION_COUNT=$(echo "$PROFILE" | grep "^SESSION_COUNT:" | awk '{print $2}')
+PROFILE_FILE="${GSTACK_HOME:-$HOME/.gstack}/builder-profile.jsonl"
+if [ -f "$PROFILE_FILE" ]; then
+  SESSION_COUNT=$(grep -c "\"project_slug\":\"$_SLUG\"" "$PROFILE_FILE" 2>/dev/null || echo 0)
+  TOTAL_SESSIONS=$(wc -l < "$PROFILE_FILE" 2>/dev/null || echo 0)
+  if [ "$TOTAL_SESSIONS" -ge 8 ]; then
+    SESSION_TIER="inner_circle"
+  elif [ "$TOTAL_SESSIONS" -ge 4 ]; then
+    SESSION_TIER="regular"
+  elif [ "$TOTAL_SESSIONS" -ge 2 ]; then
+    SESSION_TIER="welcome_back"
+  else
+    SESSION_TIER="introduction"
+  fi
+else
+  SESSION_COUNT=0
+  TOTAL_SESSIONS=0
+  SESSION_TIER="introduction"
+fi
+echo "TIER: $SESSION_TIER | PROJECT_SESSIONS: $SESSION_COUNT | TOTAL_SESSIONS: $TOTAL_SESSIONS"
 ```
 
-Read the full profile output. You will use these values throughout the closing.
+Read the profile data. You will use these values throughout the closing.
 
 ### Step 2: Follow the Tier Path
 
@@ -1239,10 +1205,12 @@ The design doc at `~/.gstack/projects/` is automatically discoverable by downstr
 ## Capture Learnings
 
 If you discovered a non-obvious pattern, pitfall, or architectural insight during
-this session, log it for future sessions:
+this session, log it locally for future reference:
 
 ```bash
-~/.claude/skills/gstack/bin/gstack-learnings-log '{"skill":"office-hours","type":"TYPE","key":"SHORT_KEY","insight":"DESCRIPTION","confidence":N,"source":"SOURCE","files":["path/to/relevant/file"]}'
+_LEARNINGS_DIR=~/.gstack/projects/$_SLUG/learnings
+mkdir -p "$_LEARNINGS_DIR"
+echo '{"skill":"office-hours","type":"TYPE","key":"SHORT_KEY","insight":"DESCRIPTION","confidence":N,"source":"SOURCE","files":["path/to/relevant/file"]}' >> "$_LEARNINGS_DIR/learnings.jsonl"
 ```
 
 **Types:** `pattern` (reusable approach), `pitfall` (what NOT to do), `preference`

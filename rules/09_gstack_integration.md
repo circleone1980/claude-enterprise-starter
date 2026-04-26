@@ -17,6 +17,8 @@
 
 **用户无需安装 GStack 即可使用所有 GStack 派生技能。**
 
+> **注意**: 技能核心逻辑中的 gstack-learnings-search、gstack-review-log 等 bin/ 调用将在后续版本中完全移除。当前这些调用有 2>/dev/null 保护，不会影响技能执行。
+
 ---
 
 ## 二、Phase 0.5a 触发规则（Think 阶段）

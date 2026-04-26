@@ -175,7 +175,7 @@ claude --team full
 - [GStack 集成](rules/09_gstack_integration.md) - Phase 0.5 触发规则（已独立化）
 - [模式选择引擎](rules/10_mode_selection.md) - Team/Subagent 决策
 - [狂暴模式](rules/11_rage_mode.md) - 全自动开发模式
-- [双模型策略](rules/12_dual_model.md) - GLM-5 + GPT-5.4 协作
+- [双模型策略](rules/12_dual_model.md) - GLM-5.1 + GPT-5.5 协作
 - [Team 生命周期](rules/13_team_lifecycle.md) - 创建/解散流程
 - [Worktree 管理](rules/14_worktree.md) - Git Worktree 隔离开发
 - [对抗审查规则](rules/15_adversarial_review.md) - 左右互搏文档审查

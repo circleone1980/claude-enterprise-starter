@@ -19,7 +19,7 @@ Claude Enterprise Starter 是一个**企业级 Claude Code 配置模板**，将 
 | AI 开发缺乏规范，代码质量不稳定 | 强制 TDD + 代码审查 + 质量门禁 |
 | 需求理解偏差导致返工 | PM/PO/Architect 分角色协作，冻结层文档 |
 | 前后端风格不统一 | 固化技术栈 + UI 风格选择机制 |
-| 大型项目难以管理 | 5 阶段开发流程 + Agent 并行开发 |
+| 大型项目难以管理 | 8+ 阶段开发流程（含 Phase 0.5a/0.5b/1-review/GAN） + Agent 并行开发 |
 | 重复造轮子 | 38 个技能（含 CE 插件）覆盖常见开发场景 |
 
 ### 核心理念
@@ -145,7 +145,7 @@ CLAUDE.local.md
 | `09_gstack_integration.md` | GStack 集成 | Phase 0.5 触发规则（已独立化） |
 | `10_mode_selection.md` | 模式选择引擎 | Team/Subagent 决策 |
 | `11_rage_mode.md` | 狂暴模式 | 全自动开发模式 |
-| `12_dual_model.md` | 双模型策略 | GLM-5 + GPT-5.4 协作 |
+| `12_dual_model.md` | 双模型策略 | GLM-5.1 + GPT-5.5 协作 |
 | `13_team_lifecycle.md` | Team 生命周期 | 创建/解散流程 |
 | `14_worktree.md` | Git Worktree | Worktree 管理 |
 | `15_adversarial_review.md` | 对抗审查 | 左右互搏文档审查 |
@@ -168,7 +168,7 @@ CLAUDE.local.md
 | 文件 | 用途 |
 |------|------|
 | `agent-orchestration.json` | **SSOT**：角色-技能映射的唯一权威定义 |
-| `rage-mode.json` | 狂暴模式：5 阶段自动推进配置 |
+| `rage-mode.json` | 狂暴模式：8+ 阶段自动推进配置（含 Phase 0.5a/0.5b + GAN） |
 | `phase-gates.json` | 质量门禁：每阶段通过条件 |
 | `feature-gates.json` | 功能点级 AC 门禁 |
 | `github-integration.json` | GitHub 集成：自动推送、分支保护 |
@@ -225,7 +225,7 @@ CLAUDE.md 是 Claude Code 的主要配置文件，包含 17 个章节：
 | 十三、验证与信任 | 验证策略、信任校准 |
 | 十四、Agent Team 清理机制 | TeamDelete Bug 修复、强制清理流程 |
 | 十五、智能模式选择引擎 | 评分因子、决策规则、各阶段自动决策 |
-| 十六、双模型协作策略 | GLM-5 + GPT-5.4 Codex、4 层触发架构 |
+| 十六、双模型协作策略 | GLM-5.1 + GPT-5.5 Codex、4 层触发架构 |
 ### 4.2 settings.json — 权限与钩子
 
 **权限控制**：
@@ -532,16 +532,16 @@ Backend-Python-1 ─── ← 1 个 Python 后端 Agent
 
 ### 6.7 双模型协作策略
 
-项目支持 **GLM-5 + Codex GPT-5.4** 双模型协作：
+项目支持 **GLM-5.1 + Codex GPT-5.5** 双模型协作：
 
 | 模型 | 定位 | 优势场景 |
 |------|------|----------|
-| **GLM-5**（主模型） | 代码开发、架构设计、复杂推理 | 所有 Agent 任务的默认模型 |
-| **Codex GPT-5.4**（辅助模型） | 代码审查、对抗审查、Bug 修复 | 功能完成后、部署前 |
+| **GLM-5.1**（主模型） | 代码开发、架构设计、复杂推理 | 所有 Agent 任务的默认模型 |
+| **Codex GPT-5.5**（辅助模型） | 代码审查、对抗审查、Bug 修复 | 功能完成后、部署前 |
 
 **协作流程**：
 ```
-GLM-5（开发实现）→ GPT-5.4（代码审查）→ GLM-5（修复）→ GPT-5.4（批准）→ 合并
+GLM-5.1（开发实现）→ GPT-5.5（代码审查）→ GLM-5.1（修复）→ GPT-5.5（批准）→ 合并
 ```
 
 **4 层触发架构**：
@@ -580,7 +580,7 @@ GLM-5（开发实现）→ GPT-5.4（代码审查）→ GLM-5（修复）→ GPT
 ```
 
 启用后，每次会话结束自动运行 Codex 审查。Stop Gate 内置智能判断：
-- **有代码变更** → 自动触发 Codex 审查（GPT-5.4）
+- **有代码变更** → 自动触发 Codex 审查（GPT-5.5）
 - **纯文档/报告** → 自动跳过
 - **Codex 未安装** → 静默跳过
 

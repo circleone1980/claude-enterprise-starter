@@ -28,14 +28,7 @@ allowed-tools:
 ```bash
 _BRANCH=$(git branch --show-current 2>/dev/null || echo "unknown")
 echo "BRANCH: $_BRANCH"
-_SESSION_DIR="$HOME/.claude-enterprise/sessions"
-mkdir -p "$_SESSION_DIR" 2>/dev/null || true
-touch "$_SESSION_DIR/$PPID" 2>/dev/null || true
-_SESSIONS=$(find "$_SESSION_DIR" -mmin -120 -type f 2>/dev/null | wc -l | tr -d ' ')
-find "$_SESSION_DIR" -mmin +120 -type f -exec rm {} + 2>/dev/null || true
-echo "SESSIONS: $_SESSIONS"
-_REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo ".")
-_SLUG=$(basename "$_REPO_ROOT" 2>/dev/null || echo "unknown")
+_SLUG=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || echo ".")")
 echo "SLUG: $_SLUG"
 ```
 
@@ -50,41 +43,8 @@ around obstacles.
 
 ## DESIGN SETUP (run this check BEFORE any design mockup command)
 
-```bash
-_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
-D=""
-[ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/gstack/design/dist/design" ] && D="$_ROOT/.claude/skills/gstack/design/dist/design"
-[ -z "$D" ] && D=~/.claude/skills/gstack/design/dist/design
-if [ -x "$D" ]; then
-  echo "DESIGN_READY: $D"
-else
-  echo "DESIGN_NOT_AVAILABLE"
-fi
-B=""
-[ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/gstack/browse/dist/browse" ] && B="$_ROOT/.claude/skills/gstack/browse/dist/browse"
-[ -z "$B" ] && B=~/.claude/skills/gstack/browse/dist/browse
-if [ -x "$B" ]; then
-  echo "BROWSE_READY: $B"
-else
-  echo "BROWSE_NOT_AVAILABLE (will use 'open' to view comparison boards)"
-fi
-```
-
-If `DESIGN_NOT_AVAILABLE`: skip visual mockup generation and fall back to the
-existing HTML wireframe approach (`DESIGN_SKETCH`). Design mockups are a
-progressive enhancement, not a hard requirement.
-
-If `BROWSE_NOT_AVAILABLE`: use `open file://...` instead of `$B goto` to open
-comparison boards. The user just needs to see the HTML file in any browser.
-
-If `DESIGN_READY`: the design binary is available for visual mockup generation.
-Commands:
-- `$D generate --brief "..." --output /path.png` — generate a single mockup
-- `$D variants --brief "..." --count 3 --output-dir /path/` — generate N style variants
-- `$D compare --images "a.png,b.png,c.png" --output /path/board.html --serve` — comparison board + HTTP server
-- `$D serve --html /path/board.html` — serve comparison board and collect feedback via HTTP
-- `$D check --image /path.png --brief "..."` — vision quality gate
-- `$D iterate --session /path/session.json --feedback "..." --output /path.png` — iterate
+Design/browse binaries are not bundled. Visual mockup generation uses WebSearch
+and inline image generation as alternatives. Comparison boards use `open file://...`.
 
 **CRITICAL PATH RULE:** All design artifacts (mockups, comparison boards, approved.json)
 MUST be saved to `~/.gstack/projects/$SLUG/designs/`, NEVER to `.context/`,
@@ -93,46 +53,15 @@ data, not project files. They persist across branches, conversations, and worksp
 
 ## SETUP (run this check BEFORE any browse command)
 
-```bash
-_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
-B=""
-[ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/gstack/browse/dist/browse" ] && B="$_ROOT/.claude/skills/gstack/browse/dist/browse"
-[ -z "$B" ] && B=~/.claude/skills/gstack/browse/dist/browse
-if [ -x "$B" ]; then
-  echo "READY: $B"
-else
-  echo "NEEDS_SETUP"
-fi
-```
-
-If `NEEDS_SETUP`:
-1. Tell the user: "gstack browse needs a one-time build (~10 seconds). OK to proceed?" Then STOP and wait.
-2. Run: `cd <SKILL_DIR> && ./setup`
-3. If `bun` is not installed:
-   ```bash
-   if ! command -v bun >/dev/null 2>&1; then
-     BUN_VERSION="1.3.10"
-     BUN_INSTALL_SHA="bab8acfb046aac8c72407bdcce903957665d655d7acaa3e11c7c4616beae68dd"
-     tmpfile=$(mktemp)
-     curl -fsSL "https://bun.sh/install" -o "$tmpfile"
-     actual_sha=$(shasum -a 256 "$tmpfile" | awk '{print $1}')
-     if [ "$actual_sha" != "$BUN_INSTALL_SHA" ]; then
-       echo "ERROR: bun install script checksum mismatch" >&2
-       echo "  expected: $BUN_INSTALL_SHA" >&2
-       echo "  got:      $actual_sha" >&2
-       rm "$tmpfile"; exit 1
-     fi
-     BUN_VERSION="$BUN_VERSION" bash "$tmpfile"
-     rm "$tmpfile"
-   fi
-   ```
+Browse binary is not bundled. Use `open file://...` to view HTML files in the
+user's default browser. No setup required.
 
 ---
 
 ## Step 0: Input Detection
 
 ```bash
-eval "$(~/.claude/skills/gstack/bin/gstack-slug 2>/dev/null)"
+# _SLUG is set in preamble
 ```
 
 Detect what design context exists for this project. Run all four checks:
@@ -304,20 +233,12 @@ If no framework detected: default to vanilla HTML, no question needed.
 
 ### Pretext Source Embedding
 
-For **vanilla HTML output**, check for the vendored Pretext bundle:
+For **vanilla HTML output**, use the CDN import for Pretext:
 ```bash
-_PRETEXT_VENDOR=""
-_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
-[ -n "$_ROOT" ] && [ -f "$_ROOT/.claude/skills/gstack/design-html/vendor/pretext.js" ] && _PRETEXT_VENDOR="$_ROOT/.claude/skills/gstack/design-html/vendor/pretext.js"
-[ -z "$_PRETEXT_VENDOR" ] && [ -f ~/.claude/skills/gstack/design-html/vendor/pretext.js ] && _PRETEXT_VENDOR=~/.claude/skills/gstack/design-html/vendor/pretext.js
-[ -n "$_PRETEXT_VENDOR" ] && echo "VENDOR: $_PRETEXT_VENDOR" || echo "VENDOR_MISSING"
+echo "PRETEXT_SOURCE: CDN (esm.sh)"
 ```
 
-- If `VENDOR` found: read the file and inline it in a `<script>` tag. The HTML file
-  is fully self-contained with zero network dependencies.
-- If `VENDOR_MISSING`: use CDN import as fallback:
-  `<script type="module">import { prepare, layout, prepareWithSegments, walkLineRanges, layoutNextLine, layoutWithLines } from 'https://esm.sh/@chenglou/pretext'</script>`
-  Add a comment: `<!-- FALLBACK: vendor/pretext.js missing, using CDN -->`
+- Use CDN import: `<script type="module">import { prepare, layout, prepareWithSegments, walkLineRanges, layoutNextLine, layoutWithLines } from 'https://esm.sh/@chenglou/pretext'</script>`
 
 For **framework output**, add to the project's dependencies instead:
 ```bash

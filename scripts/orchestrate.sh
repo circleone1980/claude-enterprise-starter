@@ -302,7 +302,7 @@ run_codex_phase_hook() {
   case "$phase_id" in
     2)
       # Phase 2 完成 → Codex 代码审查
-      log_info "Phase 2 完成，执行 Codex (GPT-5.4) 代码审查..."
+      log_info "Phase 2 完成，执行 Codex (GPT-5.5) 代码审查..."
       if [ -f "$CODEX_SCRIPT" ]; then
         mkdir -p "$PROJECT_ROOT/.claude/logs"
         node "$CODEX_SCRIPT" review --wait --scope working-tree 2>&1 | \
@@ -314,7 +314,7 @@ run_codex_phase_hook() {
       ;;
     4)
       # Phase 4 完成 → 部署前对抗审查
-      log_info "Phase 4 完成，执行 Codex (GPT-5.4) 对抗审查..."
+      log_info "Phase 4 完成，执行 Codex (GPT-5.5) 对抗审查..."
       if [ -f "$CODEX_SCRIPT" ]; then
         mkdir -p "$PROJECT_ROOT/.claude/logs"
         node "$CODEX_SCRIPT" adversarial-review --wait --scope working-tree 2>&1 | \

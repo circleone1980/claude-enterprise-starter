@@ -63,10 +63,10 @@
 
 | 触发场景 | 调用技能 | 适用角色 |
 |---------|---------|---------|
-| 遇到**设计困惑/方案选型** | `Skill brainstorming` | 所有角色 |
-| PM/PO 发现**产品方向偏离** | `Skill brainstorming` → `Skill product-requirements` | PM, PO |
-| Architect 发现**技术选型困难** | `Skill brainstorming` | Architect |
-| UI Designer 遇到**设计选择困难** | `Skill brainstorming` | UI Designer |
+| 遇到**设计困惑/方案选型** | `Skill ce:brainstorm` | 所有角色 |
+| PM/PO 发现**产品方向偏离** | `Skill ce:brainstorm` → `Skill product-requirements` | PM, PO |
+| Architect 发现**技术选型困难** | `Skill ce:brainstorm` | Architect |
+| UI Designer 遇到**设计选择困难** | `Skill ce:brainstorm` | UI Designer |
 
 ### 1.2 架构设计完成
 
@@ -122,10 +122,10 @@
 
 | 触发场景 | 调用技能 | 适用角色 |
 |---------|---------|---------|
-| Frontend 遇到 **Bug** | `Skill systematic-debugging` | Frontend |
-| Backend 遇到 **Bug** | `Skill systematic-debugging` | Backend |
-| QA 发现 **Bug** | `Skill systematic-debugging` | QA |
-| 任何角色**卡住超过 15 分钟** | `Skill brainstorming` | 所有角色 |
+| Frontend 遇到 **Bug** | 使用内置调试能力逐步排查 | Frontend |
+| Backend 遇到 **Bug** | 使用内置调试能力逐步排查 | Backend |
+| QA 发现 **Bug** | 使用内置调试能力逐步排查 | QA |
+| 任何角色**卡住超过 15 分钟** | `Skill ce:brainstorm` | 所有角色 |
 
 ### 2.3 完成功能实现
 
@@ -133,7 +133,7 @@
 |---------|---------|---------|
 | Frontend/Backend **完成代码编写** | `Skill code-review` 🔴 | Frontend, Backend |
 | 涉及**安全敏感代码**（认证、加密、SQL） | `Skill security-review` 🔴 ⚡ | Backend, DevOps |
-| 功能实现完成，准备提交 | `Skill verification-before-completion` 🔴 | 所有开发角色 |
+| 功能实现完成，准备提交 | `Skill verification-loop` 🔴 | 所有开发角色 |
 
 ---
 
@@ -142,7 +142,7 @@
 | 触发场景 | 调用技能 | 适用角色 |
 |---------|---------|---------|
 | QA **开始测试** | `Skill tdd`（了解测试策略） | QA |
-| QA 发现 **Bug** | `Skill systematic-debugging` | QA |
+| QA 发现 **Bug** | 使用内置调试能力逐步排查 | QA |
 | 测试完成后 | `Skill code-review`（审查测试代码） | QA |
 
 ---
@@ -151,7 +151,7 @@
 
 | 触发场景 | 调用技能 | 适用角色 |
 |---------|---------|---------|
-| DevOps **准备部署** | `Skill verification-before-completion` | DevOps |
+| DevOps **准备部署** | `Skill verification-loop` | DevOps |
 | DevOps 涉及**安全敏感操作** | `Skill security-review` ⚡ | DevOps |
 
 ---
@@ -160,9 +160,9 @@
 
 | 触发场景 | 调用技能 | 适用角色 |
 |---------|---------|---------|
-| 需要**多个 Agent 并行开发** | `Skill dispatching-parallel-agents` | Architect, PM |
-| 需要将任务**委托给子代理** | `Skill subagent-driven-development` | 所有角色 |
-| 需要使用 **Git worktrees** | `Skill using-git-worktrees` | 所有角色 |
+| 需要**多个 Agent 并行开发** | Agent 工具并行调度 | Architect, PM |
+| 需要将任务**委托给子代理** | 直接使用 Agent 工具创建子代理 | 所有角色 |
+| 需要使用 **Git worktrees** | 详见 `rules/14_worktree.md` | 所有角色 |
 
 ---
 
@@ -171,7 +171,7 @@
 | 触发场景 | 调用技能 | 适用角色 |
 |---------|---------|---------|
 | 发现**可复用模式** | `Skill continuous-learning` | 所有角色 |
-| 需要创建**新技能** | `Skill writing-skills` | Architect |
+| 需要创建**新技能** | `Skill writing-plans` | Architect |
 
 ---
 
@@ -184,10 +184,10 @@ Agent --name "{角色名称}" \
   --subagent-type "{对应类型}" \
   --prompt "你是{角色}。必须遵循以下流程：
     1. 🔴 调用 Skill design-context --role {角色} 获取设计约束
-    2. 🔴 遇到设计困惑 → 调用 Skill brainstorming
+    2. 🔴 遇到设计困惑 → 调用 Skill ce:brainstorm
     3. 🔴 开始开发 → 调用 Skill tdd
-    4. 🔴 遇到 Bug → 调用 Skill systematic-debugging
-    5. 🔴 完成代码 → 调用 Skill verification-before-completion
+    4. 🔴 遇到 Bug → 使用内置调试能力逐步排查
+    5. 🔴 完成代码 → 调用 Skill verification-loop
     6. 🔴 完成后 → 调用 Skill code-review
     7. {角色特定技能调用}
     任务：..."
@@ -212,12 +212,12 @@ Agent --name "{角色名称}" \
 
 当多个技能可能同时适用时，按以下顺序调用：
 
-1. **Process skills**（流程技能）: `brainstorming`, `systematic-debugging` — 决定 HOW to approach
+1. **Process skills**（流程技能）: `ce:brainstorm`, 内置调试能力 — 决定 HOW to approach
 2. **Implementation skills**（实现技能）: `tdd`, `springboot-patterns` — 指导 execution
 
 **示例**：
-- "Let's build X" → `brainstorming` first, then `tdd`
-- "Fix this bug" → `systematic-debugging` first, then domain-specific skills
+- "Let's build X" → `ce:brainstorm` first, then `tdd`
+- "Fix this bug" → 内置调试能力 first, then domain-specific skills
 
 ---
 
@@ -225,8 +225,8 @@ Agent --name "{角色名称}" \
 
 | 类型 | 技能 | 使用方式 |
 |------|------|---------|
-| **Rigid（刚性）** | `tdd`, `systematic-debugging` | 严格遵循，不要跳过步骤 |
-| **Flexible（灵活）** | `brainstorming`, `springboot-patterns` | 根据上下文适配原则 |
+| **Rigid（刚性）** | `tdd`, `verification-loop` | 严格遵循，不要跳过步骤 |
+| **Flexible（灵活）** | `ce:brainstorm`, `springboot-patterns` | 根据上下文适配原则 |
 
 ---
 
@@ -246,13 +246,13 @@ Claude Code 内置技能无需安装，直接通过 `/` 命令调用：
 
 ## 十-B、Codex 双模型触发规则
 
-> 开发用 GLM-5，代码审查和 Bug 修复用 Codex (GPT-5.4)
+> 开发用 GLM-5.1，代码审查和 Bug 修复用 Codex (GPT-5.5)
 
 | 触发场景 | Codex 命令 | 适用阶段 | 说明 |
 |---------|-----------|---------|------|
-| 完成 Feature 开发 | `/codex:review` | Phase 2, 3 | GPT-5.4 独立审查代码 |
-| 发现 Bug | `/codex:rescue` | Phase 2, 3 | GPT-5.4 诊断+修复 |
-| 部署前最终检查 | `/codex:adversarial-review` | Phase 5 | GPT-5.4 对抗审查 |
+| 完成 Feature 开发 | `/codex:review` | Phase 2, 3 | GPT-5.5 独立审查代码 |
+| 发现 Bug | `/codex:rescue` | Phase 2, 3 | GPT-5.5 诊断+修复 |
+| 部署前最终检查 | `/codex:adversarial-review` | Phase 5 | GPT-5.5 对抗审查 |
 | 会话结束 | Codex Stop Review Gate | 全阶段 | 自动（需 `/codex:setup` 启用） |
 | 卡住需要第二意见 | `/codex:rescue` | 全阶段 | 诊断+第二实现方案 |
 

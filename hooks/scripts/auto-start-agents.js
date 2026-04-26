@@ -158,7 +158,7 @@ function generatePrompt(name, agent) {
     codexSection = `
 
     Codex 审查提醒（双模型协作）:
-    - 完成任务后，主进程会自动调用 Codex (GPT-5.4) 进行代码审查
+    - 完成任务后，主进程会自动调用 Codex (GPT-5.5) 进行代码审查
     - 如果遇到困难，建议主进程使用 ${rescue}
     - 不要自行调用 Codex 命令`;
   }

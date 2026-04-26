@@ -1,7 +1,7 @@
 # Claude Code 官方文档对比分析报告
 
-> 对比日期: 2026-04-11
-> 版本: v2.6.0
+> 对比日期: 2026-04-26
+> 版本: v3.1.0
 > 官方文档: https://code.claude.com/docs/en/claude-directory
 
 ---
@@ -14,7 +14,7 @@
 |------|------|------|------|------|
 | `CLAUDE.md` | 项目 + 全局 | ✓ | ✅ 已有 | 核心指令文件 |
 | `CLAUDE.local.md` | 仅项目 | ✗ | ✅ 已补充 | 个人项目偏好模板 |
-| `rules/*.md` | 项目 + 全局 | ✓ | ✅ 已有 | 10 个规则文件 |
+| `rules/*.md` | 项目 + 全局 | ✓ | ✅ 已有 | 17 个规则文件 |
 | `settings.json` | 项目 + 全局 | ✓ | ✅ 已有 | 共享设置 |
 | `settings.local.json` | 仅项目 | ✗ | ✅ 已补充 | 个人设置覆盖模板 |
 | `.mcp.json` | 仅项目 | ✓ | ✅ 已有 | MCP 工具集成 |
@@ -22,7 +22,7 @@
 | `skills/<name>/SKILL.md` | 项目 + 全局 | ✓ | ✅ 已有 | 多个自定义技能 |
 | `commands/*.md` | 项目 + 全局 | ✓ | ✅ 已补充 | 3 个命令文件 |
 | `output-styles/*.md` | 项目 + 全局 | ✓ | ✅ 已补充 | 3 个输出风格 |
-| `agents/*.md` | 项目 + 全局 | ✓ | ✅ 已有 | 15 个代理定义 |
+| `agents/*.md` | 项目 + 全局 | ✓ | ✅ 已有 | 16 个代理定义 |
 | `agent-memory/<name>/` | 项目 + 全局 | ✓ | ✅ 已补充 | 代理记忆目录 |
 
 ### 项目特有的扩展（非官方）
@@ -69,14 +69,14 @@
 claude-enterprise-starter/
 ├── .claude/                     # ✅ 额外的技能目录
 │   └── skills/prisma-database-setup/
-├── agents/                      # ✅ 15 个代理定义
+├── agents/                      # ✅ 16 个代理定义
 ├── agent-memory/                # ✅ 已补充
 ├── automation/                  # ✨ 项目扩展
 ├── commands/                    # ✅ 已补充
 ├── hooks/                       # ✨ 项目扩展（18 个钩子脚本）
 ├── output-styles/               # ✅ 已补充
-├── rules/                       # ✅ 10 个规则文件
-├── skills/                      # ✅ 36 个技能
+├── rules/                       # ✅ 17 个规则文件
+├── skills/                      # ✅ 38 个技能
 ├── templates/                   # ✨ 项目扩展（含 code-headers/）
 ├── workspace/                   # ✨ 目标项目工作区
 ├── .mcp.json                    # ✅
@@ -191,11 +191,11 @@ CLAUDE.local.md
 - [x] `CLAUDE.local.md` (模板)
 - [x] `settings.local.json` (模板)
 - [x] `.worktreeinclude`
-- [x] `rules/*.md` (10 个)
-- [x] `skills/*/SKILL.md` (36 个)
+- [x] `rules/*.md` (17 个)
+- [x] `skills/*/SKILL.md` (38 个)
 - [x] `commands/*.md` (3 个)
 - [x] `output-styles/*.md` (3 个)
-- [x] `agents/*.md` (15 个)
+- [x] `agents/*.md` (16 个)
 - [x] `agent-memory/*/MEMORY.md` (3 个)
 
 ### 项目扩展 ✨
@@ -206,5 +206,5 @@ CLAUDE.local.md
 
 ---
 
-*报告更新时间: 2026-04-11*
-*版本: v2.6.0*
+*报告更新时间: 2026-04-26*
+*版本: v3.1.0*

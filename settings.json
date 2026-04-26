@@ -65,6 +65,7 @@
   "hasCompletedOnboarding": true,
   "customInstructions": {
     "rageMode": {
+      "_ref": "详见 automation/rage-mode.json",
       "enabled": true,
       "description": "狂暴模式 - Claude Code 全权接管开发任务",
       "features": {
@@ -75,6 +76,7 @@
       }
     },
     "agentTeamEnforcement": {
+      "_ref": "详见 automation/agent-orchestration.json agents 节",
       "enabled": true,
       "rules": [
         "All backend development MUST use subagent-type: everything-claude-code:java-reviewer (Java) or everything-claude-code:python-reviewer (Python)",
@@ -91,6 +93,7 @@
       }
     },
     "gstackIntegration": {
+      "_ref": "详见 automation/agent-orchestration.json gstackConfig 节",
       "enabled": true,
       "description": "GStack 产品设计层 - Phase 0.5 Think + Plan（已独立化，无需全局安装）",
       "features": {
@@ -103,6 +106,7 @@
       "backwardCompatible": true
     },
     "compoundEngineering": {
+      "_ref": "详见 automation/agent-orchestration.json 各 agent requiredSkills",
       "enabled": true,
       "description": "Compound Engineering 全局插件集成（需全局安装 CE 插件）",
       "skills": ["ce:brainstorm", "ce:plan", "ce:review", "ce:compound"],
