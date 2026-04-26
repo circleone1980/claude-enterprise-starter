@@ -418,6 +418,11 @@ for (const [name, agent] of Object.entries(ssot.agents)) {
   if (agent.gstackOnly && !gstackEnabled) continue;
   for (const skill of (agent.requiredSkills || [])) {
     allSkills.add(skill);
+    // CE plugin skills (ce:*) are provided by external MCP server, not local directories
+    if (skill.startsWith('ce:')) {
+      log_ok(`${name} → ${skill} (CE 插件，跳过本地检查)`);
+      continue;
+    }
     const skillPath = path.join(SKILLS_DIR, skill, 'SKILL.md');
     if (fs.existsSync(skillPath)) {
       log_ok(`${name} → skills/${skill}/SKILL.md 存在`);
