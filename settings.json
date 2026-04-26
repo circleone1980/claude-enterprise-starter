@@ -91,8 +91,8 @@
       }
     },
     "gstackIntegration": {
-      "enabled": false,
-      "description": "GStack 产品设计层 - Phase 0.5 Think + Plan",
+      "enabled": true,
+      "description": "GStack 产品设计层 - Phase 0.5 Think + Plan（已独立化，无需全局安装）",
       "features": {
         "officeHours": true,
         "designConsultation": true,
@@ -101,7 +101,24 @@
         "autoplan": true
       },
       "backwardCompatible": true
+    },
+    "compoundEngineering": {
+      "enabled": true,
+      "description": "Compound Engineering 全局插件集成（需全局安装 CE 插件）",
+      "skills": ["ce:brainstorm", "ce:plan", "ce:review", "ce:compound"],
+      "documentHandoff": {
+        "brainstormOutput": "docs/brainstorms/",
+        "planOutput": "docs/plans/",
+        "reviewOutput": "docs/reviews/",
+        "compoundOutput": "docs/solutions/"
+      }
+    },
+    "adversarialReview": {
+      "enabled": true,
+      "description": "对抗审查（左右互搏）— 文档创建过程中的对立视角审查",
+      "maxChallengesPerRound": 5,
+      "maxRounds": 3
     }
   },
-  "_comment": "Updated 2026-04-21 - v3.0.0: Agent Teams enabled, hooks moved to hooks.json as SSOT"
+  "_comment": "Updated 2026-04-26 - v3.1.0: GStack independence + CE integration + adversarial review"
 }

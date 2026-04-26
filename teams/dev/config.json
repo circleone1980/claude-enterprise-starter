@@ -31,6 +31,12 @@
       "role": "测试工程师",
       "agentMd": "agents/qa.md",
       "subagentType": "everything-claude-code:tdd-guide"
+    },
+    {
+      "name": "review-champion",
+      "role": "对抗审查",
+      "agentMd": "agents/review-champion.md",
+      "subagentType": "general-purpose"
     }
   ]
 }

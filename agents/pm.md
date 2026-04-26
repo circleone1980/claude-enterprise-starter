@@ -48,3 +48,4 @@ phase: 1
 ### 完成
 - 输出 PRD + Sprint 计划
 - 验证冻结层文档通过门禁
+- **人工干预点**: `AskUserQuestion` — "PRD 初稿已就绪。建议运行 `/adversarial-review prd` 进行对抗审查。是否现在执行？"

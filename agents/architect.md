@@ -56,3 +56,4 @@ phase: 1
 ### 完成
 - 验证冻结层文档通过门禁
 - 确认架构文档完整且可执行
+- **人工干预点**: `AskUserQuestion` — "架构设计完成。建议: 1) `/plan-eng-review` 工程审查 2) `/adversarial-review design` 对抗审查。是否执行？"

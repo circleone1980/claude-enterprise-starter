@@ -18,10 +18,11 @@
 | `prisma` | [Prisma](https://www.prisma.io) | MIT |
 | `ui-ux-pro-max-skill` | UI/UX Pro Max Plugin | 参考原项目许可 |
 | `custom` | 本项目自建 | 本项目许可 |
+| `ce-plugin` | Compound Engineering Plugin (全局安装) | MIT |
 
 ---
 
-## Skills 注册表（36 个）
+## Skills 注册表（38 个）
 
 ### ECC 来源
 
@@ -104,6 +105,22 @@
 | `llm-integration` | LLM API 集成模式 |
 | `vlm-integration` | VLM 视觉语言模型集成 |
 
+### CE 插件来源（全局安装）
+
+| Skill | 说明 |
+|-------|------|
+| `ce:brainstorm` | 多方案脑暴，收敛为需求规格 |
+| `ce:plan` | 历史经验规划，细粒度任务 |
+| `ce:review` | 多维度专项评审 |
+| `ce:compound` | 知识沉淀，经验复利 |
+
+### 新增自建（v3.1.0）
+
+| Skill | 说明 |
+|-------|------|
+| `qa` | Playwright MCP 浏览器测试（基于 gstack/qa 精简） |
+| `adversarial-review` | 对抗审查"左右互搏"编排 |
+
 ---
 
 ## 已移除 Skills（v2.7.1）
@@ -116,6 +133,6 @@
 
 ---
 
-*最后更新: 2026-04-12*
-*Skills 总数: 36*
+*最后更新: 2026-04-26*
+*Skills 总数: 38*
 *用途: 合规审计、上游更新追踪、技能来源溯源*

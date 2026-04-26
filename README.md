@@ -9,7 +9,7 @@
 > 🚀 Enterprise-grade Claude Code configuration template with Agent Team orchestration, Rage Mode automation, TDD workflow, and production-ready configurations.
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-blue)](https://code.claude.com)
-[![Version](https://img.shields.io/badge/Version-2.6.0-green)](./CLAUDE.md)
+[![Version](https://img.shields.io/badge/Version-3.1.0-green)](./CLAUDE.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 ### Core Architecture
@@ -18,7 +18,7 @@
 
 **How It Works**: Projects go through a 5-phase pipeline (Phase 0: Init → Phase 0.5: Product Design [optional, GStack] → Phase 1: Requirements → Phase 2: Development → Phase 3: Testing → Phase 4: UX Review → Phase 5: Deployment), with each phase requiring quality gate passage. A separate GAN Harness loop (Planner → Generator → Evaluator) handles quality-driven feature development.
 
-**Key Metrics**: 15 Agent roles | 36 Skills | 18 Hook scripts | 10 Rule files | 7 Automation configs
+**Key Metrics**: 16 Agent roles | 38 Skills | 18 Hook scripts | 16 Rule files | 7 Automation configs
 
 ### Module Dependency Topology
 
@@ -28,7 +28,7 @@ graph TB
     SETTINGS["settings.json — Permissions + Hooks + Rage Mode"]
     MCP[".mcp.json — MCP Servers"]
 
-    subgraph Rules["Rules (10)"]
+    subgraph Rules["Rules (16)"]
         R0["00_global"]
         R1["01_development"]
         R2["02_database"]
@@ -39,9 +39,11 @@ graph TB
         R7["07_skill_triggers"]
         R8["08_code_comments"]
         R9["09_gstack_integration"]
+        R15["15_adversarial_review"]
+        R16["16_ce_integration"]
     end
 
-    subgraph Skills["Skills (36)"]
+    subgraph Skills["Skills (38)"]
         S_REQ["Requirements: product-requirements, autoplan"]
         S_DEV["Development: tdd, antfu, springboot-*"]
         S_UI["UI: ui-ux-pro-max, ui-style-selector"]
@@ -49,9 +51,10 @@ graph TB
         S_AI["AI/ML: llm, vlm"]
         S_GAN["GAN: gan-harness"]
         S_GSTACK["GStack: office-hours, design-shotgun, autoplan, gstack-bridge"]
+        S_CE["CE: brainstorm, plan, review, compound"]
     end
 
-    subgraph Agents["Agent Roles (15)"]
+    subgraph Agents["Agent Roles (16)"]
         A_PM["PM / PO"]
         A_ARCH["Architect"]
         A_UI["UI Designer"]
@@ -64,6 +67,7 @@ graph TB
         A_GAN["GAN Planner / Generator / Evaluator"]
         A_GS_PD["GStack Product Designer"]
         A_GS_DR["GStack Design Reviewer"]
+        A_RC["Review Champion"]
     end
 
     subgraph Hooks["Hook Scripts (18)"]
@@ -108,7 +112,7 @@ graph TB
 | **Rage Mode** 🔴 | Full automation - auto GitHub push, agent health monitoring, phase advancement |
 | **TDD Workflow** | Enforced Test-Driven Development with Red-Green-Refactor cycle |
 | **Quality Gates** | 4-stage verification: functionality, code review, testing, documentation |
-| **Skills System** | 36 integrated skills with advanced frontmatter configuration |
+| **Skills System** | 38 integrated skills with advanced frontmatter configuration |
 | **Backend Dual-Stack** 🆕 | Java + Python backend (SpringBoot + Prisma + LLM + VLM + Workflow) |
 | **GAN Harness** 🆕 | Planner→Generator→Evaluator loop for quality-driven development |
 | **Hook Reinforcement** 🆕 | 18 hooks covering full lifecycle (commit quality, config protection, edit accumulator, GStack guards) |
@@ -200,7 +204,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── 07_skill_triggers.md         # Skill triggers + global phase flowchart
 │   ├── 08_code_comments.md          # Code comment standards (Chinese + versioning) 🆕
 │   └── 09_gstack_integration.md     # GStack Phase 0.5 integration rules 🆕
-├── skills/                          # Skills (36 skills from ECC/superpowers/gstack/official/custom)
+├── skills/                          # Skills (38 skills from ECC/superpowers/gstack/official/custom)
 │   ├── ui-style-selector/           # UI style auto-selection (60 templates)
 │   ├── design-context/              # Auto-load design docs by role
 │   ├── tdd/                         # TDD workflow
@@ -597,7 +601,7 @@ Agent --name "Backend-Python-1" \
 
 **工作原理**: 项目经历 5 阶段流水线（Phase 0: 初始化 → Phase 0.5: 产品设计 [可选, GStack] → Phase 1: 需求分析 → Phase 2: 开发实现 → Phase 3: 测试验证 → Phase 4: 产品体验 → Phase 5: 部署发布），每个阶段必须通过质量门禁才能推进。独立的 GAN Harness 循环（Planner → Generator → Evaluator）负责质量驱动的功能开发。
 
-**关键指标**: 15 个 Agent 角色 | 36 个技能 | 18 个 Hook 脚本 | 10 个规则文件 | 7 个自动化配置
+**关键指标**: 16 个 Agent 角色 | 38 个技能 | 18 个 Hook 脚本 | 16 个规则文件 | 7 个自动化配置
 
 ### 模块依赖拓扑
 
@@ -607,7 +611,7 @@ graph TB
     SETTINGS["settings.json — 权限 + Hook + 狂暴模式"]
     MCP[".mcp.json — MCP 服务器"]
 
-    subgraph Rules["规则系统 (10)"]
+    subgraph Rules["规则系统 (16)"]
         R0["00_global"]
         R1["01_development"]
         R2["02_database"]
@@ -618,9 +622,11 @@ graph TB
         R7["07_skill_triggers"]
         R8["08_code_comments"]
         R9["09_gstack_integration"]
+        R15["15_adversarial_review"]
+        R16["16_ce_integration"]
     end
 
-    subgraph Skills["技能系统 (36)"]
+    subgraph Skills["技能系统 (38)"]
         S_REQ["需求类: product-requirements, autoplan"]
         S_DEV["开发类: tdd, antfu, springboot-*"]
         S_UI["UI类: ui-ux-pro-max, ui-style-selector"]
@@ -628,9 +634,10 @@ graph TB
         S_AI["AI类: llm, vlm"]
         S_GAN["GAN类: gan-harness"]
         S_GSTACK["GStack类: office-hours, design-shotgun, autoplan, gstack-bridge"]
+        S_CE["CE类: brainstorm, plan, review, compound"]
     end
 
-    subgraph Agents["Agent 角色 (15)"]
+    subgraph Agents["Agent 角色 (16)"]
         A_PM["PM / PO"]
         A_ARCH["架构师"]
         A_UI["UI 设计师"]
@@ -643,6 +650,7 @@ graph TB
         A_GAN["GAN 规划/生成/评估"]
         A_GS_PD["GStack 产品设计师"]
         A_GS_DR["GStack 设计审查员"]
+        A_RC["Review Champion"]
     end
 
     subgraph Hooks["Hook 脚本 (18)"]
@@ -687,7 +695,7 @@ graph TB
 | **狂暴模式** 🔴 | 全自动开发 - 自动 GitHub 推送、Agent 监控、阶段推进 |
 | **TDD 工作流** | 强制测试驱动开发，Red-Green-Refactor 循环 |
 | **质量门禁** | 4 阶段验证：功能、代码审查、测试、文档 |
-| **技能系统** | 36 个集成技能（ECC/superpowers/gstack/official/custom），全部配置高级 Frontmatter |
+| **技能系统** | 38 个集成技能（ECC/superpowers/gstack/official/custom），全部配置高级 Frontmatter |
 | **后端双栈** 🆕 | Java + Python 后端（SpringBoot + Prisma + LLM + VLM + Workflow） |
 | **GAN Harness** 🆕 | Planner→Generator→Evaluator 循环，质量驱动开发 |
 | **Hook 强化** 🆕 | 18 个 Hooks 覆盖全生命周期（提交质量、配置保护、编辑累积器、GStack 守卫） |
@@ -778,7 +786,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── 07_skill_triggers.md         # 技能触发 + 全局流程图
 │   ├── 08_code_comments.md          # 代码注释规范（中文注释 + 版本控制） 🆕
 │   └── 09_gstack_integration.md     # GStack Phase 0.5 集成规则 🆕
-├── skills/                          # 技能系统（36 个，来自 ECC/superpowers/gstack/official/custom）
+├── skills/                          # 技能系统（38 个，来自 ECC/superpowers/gstack/official/custom）
 │   ├── ui-style-selector/           # UI 风格自动选择（60 模板）
 │   ├── design-context/              # 按角色自动加载设计文档
 │   ├── tdd/                         # TDD 工作流
@@ -1194,5 +1202,5 @@ MIT License
 
 ---
 
-*Template Version: 2.6.0*
-*Last Updated: 2026-04-11*
+*Template Version: 3.1.0*
+*Last Updated: 2026-04-26*

@@ -1,6 +1,6 @@
 # Claude Enterprise Starter 使用手册
 
-> 版本: 2.6.0 | 最后更新: 2026-04-11
+> 版本: 3.1.0 | 最后更新: 2026-04-26
 
 本手册帮助团队成员快速上手 Claude Enterprise Starter 模板项目。
 
@@ -20,12 +20,12 @@ Claude Enterprise Starter 是一个**企业级 Claude Code 配置模板**，将 
 | 需求理解偏差导致返工 | PM/PO/Architect 分角色协作，冻结层文档 |
 | 前后端风格不统一 | 固化技术栈 + UI 风格选择机制 |
 | 大型项目难以管理 | 5 阶段开发流程 + Agent 并行开发 |
-| 重复造轮子 | 36 个内置技能覆盖常见开发场景 |
+| 重复造轮子 | 38 个技能（含 CE 插件）覆盖常见开发场景 |
 
 ### 核心理念
 
 ```
-AI Agent Team（15 角色并行）
+AI Agent Team（16 角色（含对抗审查 Review Champion）并行）
   + TDD（测试驱动开发）
   + Quality Gates（质量门禁）
   + Document System（冻结/演化/ADR 三层文档）
@@ -145,11 +145,11 @@ CLAUDE.local.md
 
 ### 3.3 技能系统 (`skills/`)
 
-36 个技能（来自 ECC/superpowers/gstack/official/custom），详见[第五章](#五技能系统skills)。
+38 个技能（来自 ECC/superpowers/gstack/official/custom/ce-plugin），详见[第五章](#五技能系统skills)。
 
 ### 3.4 代理系统 (`agents/`)
 
-15 个角色定义文件，每个包含：
+16 个角色定义文件，每个包含：
 - 角色职责描述
 - 必调技能列表
 - 标准操作流程（SOP）
@@ -209,11 +209,11 @@ CLAUDE.md 是 Claude Code 的主要配置文件，包含 17 个章节：
 | 五、需求分析方法 | Business Capability → Technical Implementation |
 | 六、系统设计粒度要求 | 功能树结构：Module → Feature → Capability → API |
 | 七、开发质量流程 | 功能完整性、代码评审、编译测试、文档更新、注释合规 |
-| 八、Agent Team Skills | 角色-技能映射（15 角色）、启动格式、禁止行为 |
+| 八、Agent Team Skills | 角色-技能映射（16 角色）、启动格式、禁止行为 |
 | 九、狂暴模式 | 自动化能力、阶段推进（含 Phase 0.5）、安全边界 |
 | 十、模组化规则加载 | 9 个模块化规则文件 |
-| 十一、代理定义 | 15 个角色定义文件路径 |
-| 十二、技能文件 | 36 个技能文件路径 |
+| 十一、代理定义 | 16 个角色定义文件路径 |
+| 十二、技能文件 | 38 个技能文件路径 |
 | 十三、验证与信任 | 验证策略、信任校准 |
 | 十四、Agent Team 清理机制 | TeamDelete Bug 修复、强制清理流程 |
 | 十五、智能模式选择引擎 | 评分因子、决策规则、各阶段自动决策 |
@@ -1259,4 +1259,4 @@ Skill content and instructions here...
 
 ---
 
-*使用手册版本: 2.6.0 | 项目模板: [GitHub](https://github.com/circleone1980/claude-enterprise-starter)*
+*使用手册版本: 3.1.0 | 项目模板: [GitHub](https://github.com/circleone1980/claude-enterprise-starter)*
