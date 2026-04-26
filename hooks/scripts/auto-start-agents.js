@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Auto Start Agents v3.0 — SSOT + 智能模式评分引擎
+ * Auto Start Agents v4.0 — SSOT + 智能模式评分引擎 + Prompt 生成
  *
  * 核心变更（vs v1 硬编码版）:
  *   1. 从 automation/agent-orchestration.json（SSOT）读取所有配置
@@ -278,8 +278,10 @@ function main() {
         .filter(([_, a]) => String(a.phase) === String(targetPhase))
         .map(([name]) => name);
 
-  // 决定子阶段（仅 Phase 2）
-  const subPhase = String(targetPhase) === '2' ? '2B' : null;
+  // 决定子阶段（仅 Phase 2: 2A=接口对齐, 2B=独立开发）
+  // 默认 2B（独立开发），如果需要接口对齐则由 orchestrate.sh 指定
+  const subPhaseArg = process.argv.find(a => a.startsWith('--subphase='));
+  const subPhase = subPhaseArg ? subPhaseArg.split('=')[1] : (String(targetPhase) === '2' ? '2B' : null);
 
   // 为每个角色构建启动指令
   const modeDecisions = [];
@@ -335,7 +337,7 @@ function main() {
   // 构建输出
   const output = {
     type: 'agent-spawn-instructions',
-    version: '3.0.0',
+    version: '4.0.0',
     currentPhase: targetPhase,
     subPhase,
     modeDecisions,
@@ -349,8 +351,82 @@ function main() {
     }
   };
 
-  // 输出 JSON 到 stdout
-  console.log(JSON.stringify(output, null, 2));
+  // 检查 --format=prompt 参数
+  const formatPrompt = process.argv.includes('--format=prompt');
+
+  if (formatPrompt) {
+    // 输出 Claude Code 可直接执行的 prompt 文本
+    outputAsPrompt(output, targetPhase);
+  } else {
+    // 默认输出 JSON
+    console.log(JSON.stringify(output, null, 2));
+  }
+}
+
+/**
+ * 以 prompt 格式输出 — Claude Code 主会话可直接执行
+ */
+function outputAsPrompt(output, phaseId) {
+  const lines = [];
+  lines.push(`# Phase ${phaseId} Agent 启动指令`);
+  lines.push(``);
+  lines.push(`> 生成时间: ${new Date().toISOString()}`);
+  lines.push(`> 总计 ${output.summary.totalAgents} 个 Agent（Team: ${output.summary.teamMode}, Subagent: ${output.summary.subagentMode}）`);
+  lines.push(``);
+
+  // Team 模式
+  const teamAgents = output.teamAgents;
+  if (teamAgents.length > 0) {
+    lines.push(`## 创建 Team`);
+    lines.push(``);
+    lines.push('```');
+    lines.push(`TeamCreate({ team_name: "phase${phaseId}-team", description: "Phase ${phaseId} ${output.summary.phaseDescription}" })`);
+    lines.push('```');
+    lines.push(``);
+
+    lines.push(`## 启动 Team Agents`);
+    lines.push(``);
+    for (const agent of teamAgents) {
+      lines.push('```');
+      lines.push(`Agent({`);
+      lines.push(`  description: "${agent.name} — Phase ${phaseId}",`);
+      lines.push(`  name: "${agent.name}",`);
+      lines.push(`  subagent_type: "${agent.subagentType}",`);
+      lines.push(`  team_name: "phase${phaseId}-team",`);
+      lines.push(`  prompt: \`${agent.prompt}\``);
+      lines.push(`})`);
+      lines.push('```');
+      lines.push(``);
+    }
+  }
+
+  // Subagent 模式
+  const subagentTasks = output.subagentTasks;
+  if (subagentTasks.length > 0) {
+    lines.push(`## 启动 Subagents${subagentTasks[0].parallel ? '（并行）' : '（顺序）'}`);
+    lines.push(``);
+    for (const agent of subagentTasks) {
+      lines.push('```');
+      lines.push(`Agent({`);
+      lines.push(`  description: "${agent.name} — Phase ${phaseId}",`);
+      lines.push(`  name: "${agent.name}",`);
+      lines.push(`  subagent_type: "${agent.subagentType}",`);
+      lines.push(`  prompt: \`${agent.prompt}\``);
+      lines.push(`})`);
+      lines.push('```');
+      lines.push(``);
+    }
+  }
+
+  // 过程追踪提醒
+  lines.push(`## 过程追踪`);
+  lines.push(``);
+  lines.push(`完成后创建过程追踪记录:`);
+  lines.push(`- 路径: docs/process-trace/phase${phaseId}/`);
+  lines.push(`- 必须记录: 使用的 Agent、调用的 Skill、关键决策`);
+  lines.push(``);
+
+  console.log(lines.join('\n'));
 }
 
 /**

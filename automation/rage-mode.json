@@ -1,6 +1,6 @@
 {
   "name": "rage-mode",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "enabled": true,
   "description": "狂暴模式 - Claude Code 全权接管开发任务",
   "features": {
@@ -27,9 +27,11 @@
   "phases": [
     {
       "id": 0,
-      "name": "项目初始化",
-      "autoAdvance": true,
-      "actions": ["初始化目录结构", "配置开发环境", "创建 GitHub 仓库"]
+      "name": "产品构思与初始化",
+      "autoAdvance": false,
+      "requiredAgents": ["Brainstormer"],
+      "qualityGates": ["头脑风暴笔记已生成", "用户已确认方向"],
+      "actions": ["与用户进行产品构思讨论", "探索技术路线", "收敛需求方向", "初始化目录结构"]
     },
     {
       "id": "0.5a",
@@ -68,7 +70,7 @@
       "id": 2,
       "name": "开发实现",
       "autoAdvance": true,
-      "requiredAgents": ["UI-Designer", "Frontend", "Backend-Java", "Backend-Python"],
+      "requiredAgents": ["UI-Designer", "Frontend", "Backend-Python"],
       "qualityGates": ["代码实现完成", "单元测试通过", "代码审查通过"]
     },
     {
@@ -110,5 +112,5 @@
     "onAgentFailure": true,
     "onAllComplete": true
   },
-  "_comment": "v2.1.0 - Added GStack Phase 0.5a/0.5b entries (gstackOnly: true)"
+  "_comment": "v3.0.0 - Phase 0 = brainstorming + Python default backend"
 }

@@ -43,7 +43,18 @@
 
 ## 开发前检查清单
 
-**Java 后端开发**:
+**Python 后端开发**（默认后端）:
+- [ ] 1. 🔴 调用 `Skill design-context --role backend` 获取设计约束
+- [ ] 2. 🔴 调用 `Skill tdd` 启动 TDD 流程
+- [ ] 3. 调用 `Skill prisma-database-setup` 获取数据库配置
+- [ ] 4. 调用 `Skill llm-integration` 获取 LLM 集成指导（如需）
+- [ ] 5. 编写测试用例（Red 阶段）
+- [ ] 6. 实现代码（Green 阶段）
+- [ ] 7. 重构优化（Refactor 阶段）
+- [ ] 8. 调用 `Skill code-review` 审查代码
+- [ ] 9. 确保测试覆盖率 >80%
+
+**Java 后端开发**（可选，需 ADR 审批）:
 - [ ] 1. 🔴 调用 `Skill springboot-patterns` 获取 SpringBoot 架构模式
 - [ ] 2. 🔴 调用 `Skill springboot-tdd` 启动 TDD 流程
 - [ ] 3. 调用 `Skill jpa-patterns` 获取 JPA 数据访问指导

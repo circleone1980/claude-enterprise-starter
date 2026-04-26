@@ -1,8 +1,25 @@
 {
   "name": "agent-orchestration",
-  "version": "3.2.0",
+  "version": "4.0.0",
   "enabled": true,
+  "defaultBackend": "python",
   "agents": {
+    "Brainstormer": {
+      "subagentType": "everything-claude-code:planner",
+      "requiredSkills": ["ce-brainstorm", "design-context"],
+      "parallelizable": false,
+      "dependencies": [],
+      "count": 1,
+      "phase": 0,
+      "modeSelection": {
+        "communicationNeed": 3,
+        "crossLayerDependency": 0,
+        "contextPressure": 1,
+        "roleCount": 0,
+        "writeConflictRisk": 0
+      },
+      "agentMd": "agents/brainstormer.md"
+    },
     "Product-Designer": {
       "subagentType": "general-purpose",
       "requiredSkills": ["office-hours", "design-consultation", "design-shotgun", "design-html"],
@@ -373,6 +390,6 @@
     "restartDelay": 10000,
     "alertOnFailure": true
   },
-  "_comment": "SSOT v3.2.0 - Updated 2026-04-26 - CE Deep Integration + Knowledge Compounder + Multi-Review",
+  "_comment": "SSOT v4.0.0 - Updated 2026-04-27 - Brainstormer Agent + Python default backend + full lifecycle enforcement",
   "_ssot_note": "CLAUDE.md 第七节、rules/04、rules/07、agents/*.md 均引用此文件，不重复定义"
 }

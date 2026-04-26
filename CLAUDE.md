@@ -1,4 +1,4 @@
-# Claude Code 项目模板 v3.2
+# Claude Code 项目模板 v4.0
 
 > 📋 **使用说明**: 复制此目录到新项目的 `.claude/` 目录，根据项目需求修改配置
 
@@ -38,9 +38,10 @@
 - pnpm 9+
 - Vitest + React Testing Library
 
-### 后端（Java + Python 双栈）
-- Java 17+ / Spring Boot 3.x / Maven 3.9+
-- Python 3.12+ / OpenAI SDK / Anthropic SDK
+### 后端（Python 默认，Java 可选）
+- Python 3.12+ / FastAPI / uv
+- OpenAI SDK / Anthropic SDK
+- Java 17+ / Spring Boot 3.x（需 ADR 审批）
 
 ---
 
@@ -102,6 +103,7 @@
 
 | 角色               | 核心技能                            | Agent 类型       |
 | ------------------ | -------------------------------------- | ---------------- |
+| **Brainstormer** | ce-brainstorm, design-context                   | planner          |
 | Product Designer   | office-hours, design-consultation, design-shotgun, design-html    | general-purpose  |
 | Design Reviewer    | autoplan, plan-ceo-review, plan-eng-review                               | general-purpose  |
 | PM             | product-requirements, ce-brainstorm                   | planner          |
@@ -109,11 +111,14 @@
 | Review Champion | adversarial-review, plan-ceo-review, plan-eng-review, ce-review, ce-brainstorm | general-purpose  |
 | UI Designer    | ui-ux-pro-max, ui-style-selector       | general-purpose  |
 | Frontend       | tdd, antfu, ce-work                    | typescript-reviewer |
-| Backend-Java   | springboot-patterns, springboot-tdd, ce-work | java-reviewer    |
 | Backend-Python | tdd, prisma-database-setup, ce-work    | python-reviewer  |
+| Backend-Java   | springboot-patterns, springboot-tdd, ce-work | java-reviewer    |
 | QA             | tdd, verification-loop, qa, ce-review  | tdd-guide        |
 | DevOps         | code-review, security-review, ce-review, ce-compound | general-purpose  |
 | Knowledge Compounder | ce-compound                       | general-purpose  |
+
+> **Brainstormer** 是 Phase 0 专用 Agent，在 PM 写 PRD 前与用户进行产品构思。
+> **Backend-Python** 为默认后端，Backend-Java 需 ADR 审批。
 
 详细配置: [rules/04_agent_team.md](rules/04_agent_team.md)
 
@@ -183,9 +188,18 @@ claude --team full
 - [Worktree 管理](rules/14_worktree.md) - Git Worktree 隔离开发
 - [对抗审查规则](rules/15_adversarial_review.md) - 左右互搏文档审查
 - [CE 插件集成](rules/16_ce_integration.md) - Compound Engineering 技能映射
+- [过程追踪规则](rules/17_process_trace.md) - 产出物过程记录、门禁追踪检查
+
+### 执行工具
+
+- **全生命周期执行计划**: [docs/LIFECYCLE-EXECUTION-PLAN.md](docs/LIFECYCLE-EXECUTION-PLAN.md) — 每 Phase 的 Agent/Skill/产出物/门禁
+- **阶段 prompt 生成**: `bash scripts/orchestrate.sh --phase=N` — 生成可执行的 Agent 启动指令
+- **缺口检测**: `node scripts/gap-detector.js --phase=N` — 检测产出物/过程追踪/门禁缺口
+- **workspace 清理**: `node scripts/workspace-cleanup.js` — 清理 workspace 以便重新执行
 
 ---
 
-*模板版本: 3.2.0*
-*最后更新: 2026-04-26*
-*重大变更: CE 深度集成（5 技能全覆盖） + Knowledge Compounder + 多评审机制 + 版本交付自动化*
+*模板版本: 4.0.0*
+*最后更新: 2026-04-27*
+*重大变更: Brainstormer Agent + Python 默认后端 + 全生命周期 prompt 生成器 + 缺口检测 + workspace 清理*
+*重大变更: 过程追踪系统（Rule 17 + process-trace-check.js + 门禁升级）*

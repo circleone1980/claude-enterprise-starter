@@ -1,8 +1,29 @@
 {
   "name": "phase-gates",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "enabled": true,
   "gates": {
+    "phase0_brainstorm_complete": {
+      "conditions": [
+        {
+          "description": "头脑风暴笔记已生成",
+          "check": "node -e \"const d='docs/brainstorms/';const f=require('fs');if(!f.existsSync(d)){process.exit(1)}process.exit(f.readdirSync(d).some(x=>x.endsWith('.md'))?0:1)\"",
+          "checkType": "dir_has_md"
+        },
+        {
+          "description": "过程追踪记录已创建",
+          "check": "node -e \"require('fs').existsSync('docs/process-trace/phase0/')||process.exit(1)\"",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "用户已确认方向",
+          "check": "node -e \"require('fs').existsSync('.user-confirmed')||process.exit(1)\"",
+          "checkType": "file_exists"
+        }
+      ],
+      "autoAdvance": false,
+      "requireApproval": true
+    },
     "phase0_to_phase0.5": {
       "conditions": [
         {
@@ -111,6 +132,21 @@
           "description": "任务已分配",
           "check": "node -e \"require('fs').existsSync('docs/requirements/sprint-plan.md')||process.exit(1)\"",
           "checkType": "file_exists"
+        },
+        {
+          "description": "过程追踪记录已创建",
+          "check": "node -e \"require('fs').existsSync('docs/process-trace/phase1/')||process.exit(1)\"",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "过程追踪内容完整",
+          "check": "node hooks/scripts/process-trace-check.js --phase=phase1",
+          "checkType": "command_succeeds"
+        },
+        {
+          "description": "对抗审查已执行",
+          "check": "node -e \"const f=require('fs');const d='docs/reviews/';if(!f.existsSync(d)){process.exit(1)}const files=f.readdirSync(d).filter(f=>f.endsWith('.md'));process.exit(files.length>=1?0:1)\"",
+          "checkType": "command_succeeds"
         }
       ],
       "autoAdvance": true,
@@ -142,6 +178,11 @@
           "description": "所有 Feature AC 验收通过",
           "check": "node hooks/scripts/ac-gate-check.js --all-features-passed",
           "checkType": "command_succeeds"
+        },
+        {
+          "description": "开发阶段过程追踪已创建",
+          "check": "node -e \"require('fs').existsSync('docs/process-trace/phase2/')||process.exit(1)\"",
+          "checkType": "file_exists"
         }
       ],
       "autoAdvance": true,
@@ -229,5 +270,5 @@
     "escalateOnFailure": true,
     "notificationChannel": "console"
   },
-  "_comment": "v2.1.0 - Added phase0_to_phase0.5 and phase0.5_to_phase1 gates for GStack"
+  "_comment": "v3.0.0 - Phase 0 brainstorm gate + process trace checks for all phases"
 }

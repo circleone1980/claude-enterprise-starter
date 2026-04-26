@@ -26,7 +26,13 @@
 - ❌ npm、yarn（使用 pnpm 替代）
 - ❌ Jest（使用 Vitest 替代）
 
-如需变更技术栈，必须通过 ADR 流程审批。
+后端默认技术栈为 **Python/FastAPI**：
+- Python 3.12+ / FastAPI / uv
+- 测试: pytest + httpx
+- AI SDK: OpenAI SDK / Anthropic SDK
+
+如需使用 Java/Spring Boot，需通过 ADR 流程审批。
+如需变更前端技术栈，必须通过 ADR 流程审批。
 
 ## TDD 流程（强制）
 

@@ -1,6 +1,6 @@
 {
-  "version": "2.1.0",
-  "_comment": "Updated 2026-04-11 - GStack integration: gstack-output-validator + gstack-phase-guard",
+  "version": "2.3.0",
+  "_comment": "Updated 2026-04-27 - v4.0.0 framework + gap-detector integration",
   "hooks": {
     "PreToolUse": [
       {
@@ -102,6 +102,11 @@
             "type": "command",
             "command": "node hooks/scripts/gstack-phase-guard.js",
             "description": "GStack Phase 0.5 门禁验证"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/process-trace-check.js --phase=phase1",
+            "description": "过程追踪完整性检查（Rule 17）"
           }
         ]
       },
@@ -178,6 +183,17 @@
             "command": "node hooks/scripts/session-evaluate.js",
             "timeout": 10,
             "description": "评估会话可提取模式（配合 continuous-learning skill）"
+          }
+        ]
+      },
+      {
+        "id": "stop:gap-detect",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/gap-detector.js --phase=current 2>/dev/null || true",
+            "timeout": 15,
+            "description": "缺口检测（配合 gap-detector.js）"
           }
         ]
       }
