@@ -1,6 +1,6 @@
 {
   "name": "full",
-  "description": "完整团队 - 包含所有16个agent角色，覆盖产品设计、开发、测试、运维、对抗审查全流程",
+  "description": "完整团队 - 包含所有17个agent角色，覆盖产品设计、开发、测试、运维、对抗审查、知识沉淀全流程",
   "members": [
     {
       "name": "product-designer",
@@ -96,6 +96,12 @@
       "name": "review-champion",
       "role": "对抗审查",
       "agentMd": "agents/review-champion.md",
+      "subagentType": "general-purpose"
+    },
+    {
+      "name": "knowledge-compounder",
+      "role": "知识沉淀",
+      "agentMd": "agents/knowledge-compounder.md",
       "subagentType": "general-purpose"
     }
   ]

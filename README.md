@@ -9,7 +9,7 @@
 > 🚀 Enterprise-grade Claude Code configuration template with Agent Team orchestration, Rage Mode automation, TDD workflow, and production-ready configurations.
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-blue)](https://code.claude.com)
-[![Version](https://img.shields.io/badge/Version-3.1.0-green)](./CLAUDE.md)
+[![Version](https://img.shields.io/badge/Version-3.2.0-green)](./CLAUDE.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 ### Core Architecture
@@ -18,7 +18,7 @@
 
 **How It Works**: Projects go through a 5-phase pipeline (Phase 0: Init → Phase 0.5: Product Design [optional, GStack] → Phase 1: Requirements → Phase 2: Development → Phase 3: Testing → Phase 4: UX Review → Phase 5: Deployment), with each phase requiring quality gate passage. A separate GAN Harness loop (Planner → Generator → Evaluator) handles quality-driven feature development.
 
-**Key Metrics**: 16 Agent roles | 38 Skills | 18 Hook scripts | 17 Rule files | 7 Automation configs
+**Key Metrics**: 17 Agent roles | 38 Skills | 18 Hook scripts | 17 Rule files | 7 Automation configs
 
 **Quick Start**: Copy `.claude/` to your project → run `claude` → type `/doctor` to validate. See [Operation Manual (Chinese)](docs/GUIDE.md#十二操作手册最佳实践与命令速查) for detailed workflows and command reference.
 
@@ -61,7 +61,7 @@ graph TB
         S_CE["CE: brainstorm, plan, review, compound"]
     end
 
-    subgraph Agents["Agent Roles (16)"]
+    subgraph Agents["Agent Roles (17)"]
         A_PM["PM / PO"]
         A_ARCH["Architect"]
         A_UI["UI Designer"]
@@ -75,6 +75,7 @@ graph TB
         A_GS_PD["GStack Product Designer"]
         A_GS_DR["GStack Design Reviewer"]
         A_RC["Review Champion"]
+        A_KC["Knowledge Compounder"]
     end
 
     subgraph Hooks["Hook Scripts (18)"]
@@ -115,7 +116,7 @@ graph TB
 
 | Feature | Description |
 |---------|-------------|
-| **Agent Team** | 16 specialized roles collaborating in parallel (PM, PO, Architect, Designer, Frontend, Backend-Java, Backend-Python, QA, DevOps, Product Experience, GAN Planner/Generator/Evaluator, GStack Product Designer, GStack Design Reviewer, Review Champion) |
+| **Agent Team** | 17 specialized roles collaborating in parallel (PM, PO, Architect, Designer, Frontend, Backend-Java, Backend-Python, QA, DevOps, Product Experience, GAN Planner/Generator/Evaluator, GStack Product Designer, GStack Design Reviewer, Review Champion, Knowledge Compounder) |
 | **Rage Mode** 🔴 | Full automation - auto GitHub push, agent health monitoring, phase advancement |
 | **TDD Workflow** | Enforced Test-Driven Development with Red-Green-Refactor cycle |
 | **Quality Gates** | 4-stage verification: functionality, code review, testing, documentation |
@@ -128,7 +129,7 @@ graph TB
 | **UI Style Selector** | 60 brand design templates with auto-scenario matching |
 | **Tech Stack** | React + TypeScript + Vite 6 (frontend fixed), Java + SpringBoot + Python (backend) |
 | **SSOT Architecture** | `automation/agent-orchestration.json` as single source of truth |
-| **Per-Role SOP** | Standard Operating Procedure for all 16 agent roles |
+| **Per-Role SOP** | Standard Operating Procedure for all 17 agent roles |
 | **Document System** | Frozen/Evolution/ADR document layers with design-context skill for auto-loading |
 | **Skill Triggers** | Global phase flowchart (Phase 1-5) + dynamic trigger rules |
 | **Commands** | Custom slash commands: `/commit`, `/pr`, `/review` |
@@ -139,6 +140,11 @@ graph TB
 | **GStack Integration** 🆕 | Phase 0.5 Product Design layer - YC-style ideation, design exploration, automated review, seamless handoff to PRD |
 | **Design Shotgun** 🆕 | Generate 4-6 UI variants, browser comparison panel, taste memory for iterative design |
 | **Auto Plan Review** 🆕 | Automated CEO→Design→Engineering→DX review pipeline with scoring ≥7.0 threshold |
+| **CE Full Integration** 🆕 | 5 skills (brainstorm/plan/work/review/compound) fully automated into workflow |
+| **Multi-Review Architecture** 🆕 | CE + Codex + Built-in triple review at every phase boundary |
+| **Knowledge Auto-Compounder** 🆕 | Automatic experience extraction at phase transitions via dedicated agent |
+| **Structured Dev Progress** 🆕 | ce-work enforces single-task iteration with auto progress tracking |
+| **Version Delivery Automation** 🆕 | scripts/release.js for automated CHANGELOG, version sync, git tag |
 
 ### Technology Stack (Inferred from Configuration)
 
@@ -178,6 +184,17 @@ graph TB
 | Configure workspace path | `automation/workspace.json` + `hooks/scripts/lib/workspace-resolver.js` |
 | Dual-model Codex integration | `CLAUDE.md` Section XVI + Codex plugin hooks |
 | Enable/disable GStack | `scripts/gstack-toggle.js` + `automation/agent-orchestration.json` gstackConfig |
+
+### Prerequisites
+
+| Requirement | Status | Description |
+|-------------|--------|-------------|
+| **CE Plugin** | **Required** | Compound Engineering plugin — 5 skills (brainstorm/plan/work/review/compound) fully integrated into the workflow. Installation: see `docs/CE-SETUP.md` |
+| **Node.js** | Required | For hook scripts, config validation, and automation |
+| **Git** | Required | Version control with worktree support |
+| **Claude Code** | Required | Compatible Claude Code CLI |
+
+> **CE Plugin Health Check**: Run `node scripts/ce-health-check.js` to verify installation.
 
 ### Quick Start
 
@@ -255,7 +272,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── plan-eng-review/            # 工程架构审查 🆕
 │   ├── plan-devex-review/          # 开发者体验审查 🆕
 │   └── gstack-bridge/              # Phase 0.5→1 交接 🆕
-├── agents/                          # Agent definitions with SOP (16 roles)
+├── agents/                          # Agent definitions with SOP (17 roles)
 │   ├── pm.md                        # Project Manager
 │   ├── po.md                        # Product Owner
 │   ├── architect.md                 # Architect
@@ -272,6 +289,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── product-designer.md         # GStack Product Designer 🆕
 │   ├── design-reviewer.md          # GStack Design Reviewer 🆕
 │   └── review-champion.md          # Review Champion 🆕
+│   └── knowledge-compounder.md    # Knowledge Compounder agent definition
 ├── automation/                      # Automation configs
 │   ├── agent-orchestration.json     # SSOT: role-skill mapping
 │   ├── rage-mode.json               # Rage mode phases & features
@@ -321,6 +339,8 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
     ├── ac-tracker-sync.js           # AC markdown → JSON sync 🆕
     ├── ac-coverage-report.js        # AC coverage report generator 🆕
     └── validate-config.js           # Configuration validator 🆕
+    ├── ce-health-check.js           # CE plugin health check
+    └── release.js                   # Version delivery automation
 
 templates/
 └── code-headers/                    # Code comment templates 🆕
@@ -344,6 +364,7 @@ workspace/                           # Target project directory 🆕
 ├── dev/                             # Evolution layer: Dev guides
 │   ├── 01_开发环境搭建.md             # Environment setup
 │   ├── 02_编码规范.md                 # Coding standards
+│   └── progress.md                 # ce-work progress tracking template
 │   └── 03_Git工作流.md               # Git workflow
 ├── test/                            # Evolution layer: Test docs
 │   ├── 01_测试计划.md                 # Test plan
@@ -374,6 +395,8 @@ tips/                                # Reference guides & design resources
 .worktreeinclude                     # Git worktree config
 CLAUDE.local.md.example              # Local config template (gitignored)
 QUICKSTART.md                        # 5-minute quick start guide
+docs/CE-SETUP.md                     # CE plugin installation guide
+CHANGELOG.md                         # Version changelog
 package.json                         # Test infrastructure (zero external deps) 🆕
 .github/workflows/validate.yml       # CI: validate + test on push/PR 🆕
 test/                                # Automated test suite (154 tests) 🆕
@@ -433,6 +456,7 @@ test/                                # Automated test suite (154 tests) 🆕
 | GAN Evaluator | Quality evaluation | gan-harness | general-purpose |
 | Product Designer | GStack product ideation & UI exploration | office-hours 🔴, design-consultation, design-shotgun, design-html | general-purpose |
 | Design Reviewer | GStack plan review & handoff | autoplan 🔴, plan-*-review, gstack-bridge 🔴 | general-purpose |
+| Knowledge Compounder | Phase transition experience extraction | ce-compound | general-purpose |
 
 ### Frontend Tech Stack (Fixed)
 
@@ -626,7 +650,7 @@ Agent --name "Backend-Python-1" \
 
 **工作原理**: 项目经历 5 阶段流水线（Phase 0: 初始化 → Phase 0.5: 产品设计 [可选, GStack] → Phase 1: 需求分析 → Phase 2: 开发实现 → Phase 3: 测试验证 → Phase 4: 产品体验 → Phase 5: 部署发布），每个阶段必须通过质量门禁才能推进。独立的 GAN Harness 循环（Planner → Generator → Evaluator）负责质量驱动的功能开发。
 
-**关键指标**: 16 个 Agent 角色 | 38 个技能 | 18 个 Hook 脚本 | 17 个规则文件 | 7 个自动化配置
+**关键指标**: 17 个 Agent 角色 | 38 个技能 | 18 个 Hook 脚本 | 17 个规则文件 | 7 个自动化配置
 
 **操作手册**: 复制 `.claude/` 到你的项目 → 运行 `claude` → 输入 `/doctor` 验证配置。详细操作指南见 [使用手册第十二章](docs/GUIDE.md#十二操作手册最佳实践与命令速查)。
 
@@ -669,7 +693,7 @@ graph TB
         S_CE["CE类: brainstorm, plan, review, compound"]
     end
 
-    subgraph Agents["Agent 角色 (16)"]
+    subgraph Agents["Agent 角色 (17)"]
         A_PM["PM / PO"]
         A_ARCH["架构师"]
         A_UI["UI 设计师"]
@@ -683,6 +707,7 @@ graph TB
         A_GS_PD["GStack 产品设计师"]
         A_GS_DR["GStack 设计审查员"]
         A_RC["Review Champion"]
+        A_KC["知识沉淀师"]
     end
 
     subgraph Hooks["Hook 脚本 (18)"]
@@ -723,7 +748,7 @@ graph TB
 
 | 功能 | 说明 |
 |------|------|
-| **Agent Team** | 16 个专业角色并行协作（PM、PO、架构师、设计师、前端、Java后端、Python后端、QA、DevOps、产品体验师、GAN 规划/生成/评估、GStack 产品设计师、GStack 设计审查员、Review Champion） |
+| **Agent Team** | 17 个专业角色并行协作（PM、PO、架构师、设计师、前端、Java后端、Python后端、QA、DevOps、产品体验师、GAN 规划/生成/评估、GStack 产品设计师、GStack 设计审查员、Review Champion、知识沉淀师） |
 | **狂暴模式** 🔴 | 全自动开发 - 自动 GitHub 推送、Agent 监控、阶段推进 |
 | **TDD 工作流** | 强制测试驱动开发，Red-Green-Refactor 循环 |
 | **质量门禁** | 4 阶段验证：功能、代码审查、测试、文档 |
@@ -736,7 +761,7 @@ graph TB
 | **UI 风格选择** | 60 个品牌设计模板，基于场景自动匹配 |
 | **技术栈** | React + TypeScript + Vite 6（前端固化），Java + SpringBoot + Python（后端） |
 | **SSOT 架构** | `automation/agent-orchestration.json` 单一真相源 |
-| **角色 SOP** | 全部 16 个角色标准化操作流程 |
+| **角色 SOP** | 全部 17 个角色标准化操作流程 |
 | **文档体系** | 冻结层/演化层/ADR 三层文档体系 |
 | **技能触发** | 全局阶段流程图（Phase 1-5）+ 动态触发规则 |
 | **命令系统** | 自定义斜杠命令：`/commit`、`/pr`、`/review` |
@@ -747,6 +772,11 @@ graph TB
 | **GStack 集成** 🆕 | Phase 0.5 产品设计屋 — YC 式构思、设计探索、自动审查、无缝交接 PRD |
 | **Design Shotgun** 🆕 | 生成 4-6 个 UI 变体，浏览器对比面板，品味记忆迭代设计 |
 | **自动计划审查** 🆕 | 自动 CEO→设计→工程→DX 审查流水线，评分阈值 ≥7.0 |
+| **CE 全链路集成** 🆕 | 5 个技能（brainstorm/plan/work/review/compound）全自动嵌入工作流 |
+| **多维审查架构** 🆕 | CE + Codex + 内置三重审查覆盖每个阶段边界 |
+| **知识自动沉淀** 🆕 | 阶段转换时通过专属 Agent 自动提取经验并结构化存储 |
+| **结构化开发进度** 🆕 | ce-work 强制单任务迭代，自动追踪开发进度 |
+| **版本交付自动化** 🆕 | scripts/release.js 自动生成 CHANGELOG、同步版本号、创建 git tag |
 
 ### 技术栈全景（从配置文件推断）
 
@@ -785,6 +815,17 @@ graph TB
 | 修改 UI 设计流程 | `skills/ui-style-selector/` + `tips/UI设计风格/` |
 | 工作区路径配置 | `automation/workspace.json` + `hooks/scripts/lib/workspace-resolver.js` |
 | Codex 双模型集成 | `CLAUDE.md` 十六节 + Codex 插件钩子 |
+
+### 前置条件
+
+| 要求 | 状态 | 说明 |
+|------|------|------|
+| **CE 插件** | **必需** | Compound Engineering 插件 — 5 个技能（brainstorm/plan/work/review/compound）已全面集成到工作流。安装指南：`docs/CE-SETUP.md` |
+| **Node.js** | 必需 | 用于 Hook 脚本、配置验证和自动化 |
+| **Git** | 必需 | 支持 worktree 的版本控制 |
+| **Claude Code** | 必需 | 兼容版本的 Claude Code CLI |
+
+> **CE 插件健康检查**: 运行 `node scripts/ce-health-check.js` 验证安装状态。
 
 ### 快速开始
 
@@ -862,7 +903,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── plan-eng-review/            # 工程架构审查 🆕
 │   ├── plan-devex-review/          # 开发者体验审查 🆕
 │   └── gstack-bridge/              # Phase 0.5→1 交接 🆕
-├── agents/                          # 代理定义（16 个角色，各含 SOP）
+├── agents/                          # 代理定义（17 个角色，各含 SOP）
 │   ├── pm.md                        # 项目经理
 │   ├── po.md                        # 产品负责人
 │   ├── architect.md                 # 架构师
@@ -879,6 +920,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   ├── product-designer.md         # GStack 产品设计师 🆕
 │   ├── design-reviewer.md          # GStack 设计审查员 🆕
 │   └── review-champion.md          # Review Champion 🆕
+│   └── knowledge-compounder.md    # Knowledge Compounder agent definition
 ├── automation/                      # 自动化配置
 │   ├── agent-orchestration.json     # SSOT：角色-技能映射唯一真相源
 │   ├── rage-mode.json               # 狂暴模式阶段与功能
@@ -928,6 +970,8 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
     ├── ac-tracker-sync.js           # AC markdown → JSON 同步 🆕
     ├── ac-coverage-report.js        # AC 覆盖率报告生成 🆕
     └── validate-config.js           # 配置验证器 🆕
+    ├── ce-health-check.js           # CE 插件健康检查
+    └── release.js                   # 版本交付自动化
 
 templates/
 └── code-headers/                    # 代码注释模板 🆕
@@ -953,7 +997,8 @@ docs/                                # 项目文档（来自模板）
 ├── dev/                             # 演化层：开发指南
 │   ├── 01_开发环境搭建.md             # 环境搭建
 │   ├── 02_编码规范.md                 # 编码规范
-│   └── 03_Git工作流.md               # Git 工作流
+│   ├── 03_Git工作流.md               # Git 工作流
+│   └── progress.md                 # ce-work 进度追踪模板
 ├── test/                            # 演化层：测试文档
 │   ├── 01_测试计划.md                 # 测试计划
 │   ├── 02_测试用例.md                 # 测试用例
@@ -983,6 +1028,8 @@ tips/                                # 参考指南与设计资源
 .worktreeinclude                     # Git worktree 配置
 CLAUDE.local.md.example              # 本地配置模板（gitignored）
 QUICKSTART.md                        # 5 分钟快速开始
+docs/CE-SETUP.md                     # CE 插件安装指南
+CHANGELOG.md                         # 版本变更日志
 package.json                         # 测试基础设施（零外部依赖） 🆕
 .github/workflows/validate.yml       # CI：推送/PR 时自动验证 + 测试 🆕
 test/                                # 自动化测试套件（154 个测试） 🆕
@@ -1011,6 +1058,7 @@ test/                                # 自动化测试套件（154 个测试） 
 | GAN 评估器 | 质量评估 | gan-harness | general-purpose |
 | 产品设计师 | GStack 产品构思与 UI 探索 | office-hours 🔴, design-consultation, design-shotgun, design-html | general-purpose |
 | 设计审查员 | GStack 计划审查与交接 | autoplan 🔴, plan-*-review, gstack-bridge 🔴 | general-purpose |
+| 知识沉淀师 | 阶段转换时的经验提取与结构化存储 | ce-compound | general-purpose |
 
 ### 技能 Frontmatter 高级配置
 
@@ -1249,5 +1297,5 @@ MIT License
 
 ---
 
-*Template Version: 3.1.0*
+*Template Version: 3.2.0*
 *Last Updated: 2026-04-26*

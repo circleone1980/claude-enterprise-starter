@@ -1,6 +1,6 @@
 # Claude Enterprise Starter 使用手册
 
-> 版本: 3.1.0 | 最后更新: 2026-04-26
+> 版本: 3.2.0 | 最后更新: 2026-04-26
 
 本手册帮助团队成员快速上手 Claude Enterprise Starter 模板项目。
 
@@ -44,11 +44,23 @@ AI Agent Team（16 角色（含对抗审查 Review Champion）并行）
 | **Node.js** | 18+ | 运行钩子脚本 |
 | **Git** | 2.30+ | 版本管理 |
 | **pnpm** | 9+ | 前端包管理 |
+| **CE 插件** | 最新版 | 必需依赖，全阶段 5 技能覆盖 |
 
 安装 Claude Code：
 ```bash
 npm install -g @anthropic-ai/claude-code
 ```
+
+安装 CE 插件（必需依赖）：
+```bash
+# 全局安装 Compound Engineering 插件
+npm install -g @anthropic-ai/claude-code-ce-plugin
+
+# 健康检查（确认 CE 插件安装成功）
+node scripts/ce-health-check.js
+```
+
+> **CE 插件为必需依赖**，未安装将阻塞阶段推进。详见 `docs/CE-SETUP.md`。
 
 ### 2.2 复制模板到项目
 
@@ -423,6 +435,7 @@ Skill product-requirements --effort high
 | **GAN Evaluator** | 质量评估、评分反馈 | general-purpose | 否 | Subagent | 1 |
 | **Product Designer** | GStack 产品构思与 UI 探索 | general-purpose | 是 | Subagent | 1 |
 | **Design Reviewer** | GStack 计划审查与交接 | general-purpose | 否 | Subagent | 1 |
+| **Knowledge Compounder** | 知识沉淀与经验复用 | general-purpose | 否 | Subagent | 1 |
 
 > **模式说明**：
 > - **Team**: 通过 `TeamCreate` 创建协作团队，Agent 之间可互相通信、共享任务列表
@@ -1260,13 +1273,16 @@ Skill design-context --role architect
 # 3. 编写架构设计
 /writing-plans
 
-# 4. 选择 UI 风格
+# 4. 架构设计后调用 /ce-plan 生成细粒度任务清单
+/ce-plan
+
+# 5. 选择 UI 风格
 /ui-style-selector
 
-# 5. [关键] 架构设计完成后启动对抗审查
+# 6. [关键] 架构设计完成后启动对抗审查
 /adversarial-review design
 
-# 6. API 设计完成后也可对抗审查
+# 7. API 设计完成后也可对抗审查
 /adversarial-review api
 ```
 
@@ -1298,14 +1314,36 @@ Skill design-context --role architect
 ### 12.4 Phase 2 — 开发实施
 
 > 适用角色：Frontend, Backend-Java, Backend-Python
+> 核心流程由 `/ce-work` 驱动，确保单任务迭代 + TDD + 自动进度追踪
+
+#### ce-work 核心流程
+
+```
+/ce-work 启动
+  |
+  +-- 单任务迭代（一次只做一个 Task）
+  |     |
+  |     +-- TDD 循环: Red → Green → Refactor
+  |     |     |
+  |     |     +-- Red:   编写失败测试
+  |     |     +-- Green: 最小实现通过测试
+  |     |     +-- Refactor: 重构优化，确认测试仍通过
+  |     |
+  |     +-- 自动记录进度到 docs/dev/progress.md
+  |     +-- Blocker 追踪与上报
+  |
+  +-- Task 完成 → /code-review
+  |
+  +-- 所有 Task 完成 → Phase 2 门禁检查
+```
 
 #### 前端开发
 
 ```bash
-# 1. TDD 驱动开发
-/tdd
+# 1. 启动 ce-work 驱动开发（内含 TDD 循环）
+/ce-work
 
-# 2. React 最佳实践
+# 2. React 最佳实践（ce-work 内自动激活）
 /react-best-practices
 
 # 3. UI 开发
@@ -1324,8 +1362,8 @@ Skill design-context --role architect
 #### 后端开发（Java）
 
 ```bash
-# 1. TDD
-/tdd
+# 1. 启动 ce-work 驱动开发（内含 TDD 循环）
+/ce-work
 
 # 2. Spring Boot 模式
 /springboot-patterns
@@ -1349,8 +1387,8 @@ Skill design-context --role architect
 #### 后端开发（Python）
 
 ```bash
-# 1. TDD
-/tdd
+# 1. 启动 ce-work 驱动开发（内含 TDD 循环）
+/ce-work
 
 # 2. 数据库配置
 /prisma-database-setup
@@ -1384,8 +1422,8 @@ Skill design-context --role architect
 # 4. 安全审查
 /security-review
 
-# 5. 多维度代码审查
-/ce-review               # 需 CE 插件
+# 5. 完成后调用 /ce-review 进行多维度审查
+/ce-review
 ```
 
 **/qa 测试报告输出**：
@@ -1422,18 +1460,22 @@ Skill design-context --role architect
 
 # 4. 知识沉淀（本轮经验总结）
 /ce-compound
+
+# 5. 版本交付自动化
+node scripts/release.js
 ```
 
 ### 12.8 CE 插件技能速查
 
-> 前置条件：全局安装 Compound Engineering 插件
+> **CE 插件为必需依赖**，未安装将阻塞阶段推进。安装指南: `docs/CE-SETUP.md` | 健康检查: `node scripts/ce-health-check.js`
 
 | 命令 | 用途 | 适用阶段 | 适用角色 |
 |------|------|---------|---------|
 | `/ce-brainstorm` | ≥2 种方案脑暴，收敛为需求规格 | Phase 0.5-1 | PM, Architect |
 | `/ce-plan` | 检索历史经验，拆分细粒度任务 | Phase 1-2 | Architect |
+| `/ce-work` | 单任务迭代 + TDD + 进度追踪 | Phase 2 | Frontend, Backend-Java, Backend-Python |
 | `/ce-review` | 6 类+扩展评审，输出独立报告 | Phase 2-5 | QA, DevOps, Review Champion |
-| `/ce-compound` | 经验存入 docs/solutions/ | Phase 5（阶段结束） | DevOps |
+| `/ce-compound` | 经验存入 docs/solutions/ | Phase 5（阶段结束） | DevOps, Knowledge Compounder |
 
 **CE 文档流转路径**：
 ```
@@ -1559,6 +1601,74 @@ Phase 3           → /qa --diff-aware → /security-review
 | `/ce-review` | CE | 多维评审 |
 | `/ce-compound` | CE | 知识沉淀 |
 
+### 12.13 多评审机制
+
+> 系统提供 4 层评审架构，确保代码和文档质量。
+
+| 评审层 | 工具/技能 | 触发时机 | 审查维度 |
+|--------|-----------|----------|----------|
+| **CE 评审** | `/ce-review` | Phase 3 QA、Phase 5 部署前 | 6 类 + 扩展维度，输出独立报告 |
+| **Codex 评审** | `/codex:review` | Feature 完成、阶段门禁 | GLM-5.1 与 GPT-5.5 交叉审查 |
+| **内置评审** | `/code-review`, `/security-review` | 代码编写完成后 | 代码质量、安全漏洞 |
+| **对抗审查** | `/adversarial-review` | PRD/架构/API/UI 初稿完成后 | 左右互搏，挑战假设与遗漏 |
+
+**评审流程优先级**：
+
+```
+文档类: 对抗审查 → CE 评审（可选）
+代码类: 内置评审 → CE 评审 → Codex 评审（门禁）
+部署前: 安全审查 → CE 评审 → Codex 对抗审查（Phase 4→5 门禁）
+```
+
+**产出物路径**：
+- CE 评审报告: `docs/reviews/{topic}-review.md`
+- Codex 评审报告: 由 Codex 工具直接输出
+- 对抗审查记录: 内嵌于文档的 `<!-- ADVERSARIAL-REVIEW -->` 区段
+
+### 12.14 结构化开发进度追踪
+
+> `/ce-work` 内置进度追踪机制，自动维护开发进度文档。
+
+**进度文件**: `docs/dev/progress.md`
+
+**追踪内容**：
+
+| 字段 | 说明 |
+|------|------|
+| Task ID | 任务编号（对应 ce-plan 拆分结果） |
+| Task 描述 | 当前任务摘要 |
+| 状态 | `pending` / `in-progress` / `completed` / `blocked` |
+| TDD 阶段 | `Red` / `Green` / `Refactor` / `Done` |
+| Blocker | 阻塞原因（无阻塞则为空） |
+| 完成时间 | 任务完成的时间戳 |
+
+**工作流程**：
+
+```
+/ce-work 启动
+  |
+  +-- 读取 docs/dev/progress.md（不存在则创建）
+  |
+  +-- 选择下一个 pending 状态的 Task
+  |
+  +-- 状态变更为 in-progress
+  |     |
+  |     +-- Red:   写失败测试 → 记录 TDD 阶段 = Red
+  |     +-- Green: 最小实现 → 记录 TDD 阶段 = Green
+  |     +-- Refactor: 重构 → 记录 TDD 阶段 = Refactor
+  |     |
+  |     +-- 遇到 Blocker → 状态变更为 blocked，记录原因
+  |
+  +-- Task 完成 → 状态变更为 completed，记录完成时间
+  |
+  +-- 自动写入 docs/dev/progress.md
+```
+
+**Blocker 处理**：
+- `/ce-work` 检测到 blocker 时自动标记并记录原因
+- 超过 15 分钟未解决自动触发 `/ce-brainstorm` 寻求替代方案
+- Blocker 解除后状态恢复为 in-progress
+
 ---
 
 ## 附录
@@ -1641,4 +1751,4 @@ Phase 3           → /qa --diff-aware → /security-review
 
 ---
 
-*使用手册版本: 3.1.0 | 项目模板: [GitHub](https://github.com/circleone1980/claude-enterprise-starter)*
+*使用手册版本: 3.2.0 | 项目模板: [GitHub](https://github.com/circleone1980/claude-enterprise-starter)*

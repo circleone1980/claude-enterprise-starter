@@ -2,7 +2,7 @@ const { test, describe } = require('node:test');
 const assert = require('node:assert');
 const { loadJSON, listSkillDirs, listAgentFiles, listRuleFiles, ROOT } = require('../helpers/config-loader');
 
-const EXPECTED_AGENT_COUNT = 16;
+const EXPECTED_AGENT_COUNT = 17;
 const EXPECTED_SKILL_COUNT = 38;
 const EXPECTED_RULE_COUNT = 17;
 

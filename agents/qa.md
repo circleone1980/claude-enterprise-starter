@@ -24,6 +24,7 @@ phase: 3
 | 🔴 必调 | tdd | TDD 测试策略 |
 | 🔴 必调 | code-review | 审查测试代码 |
 | 🔴 必调 | qa | 浏览器端真实测试（Playwright MCP） |
+| 🔴 必调 | ce-review | CE 多维评审，Phase 3 代码/文档审查 |
 | 🟡 辅助 | security-review | 安全审查 |
 
 ## 输出格式
@@ -53,6 +54,7 @@ phase: 3
 
 ### 完成
 - `Skill code-review` - 审查测试代码
+- `Skill ce-review` - CE 多维度审查（6+ 维度独立评审）
 - 生成 AC 通过率汇总
 - 运行 `node scripts/ac-tracker-sync.js` 同步状态
 - 验证测试覆盖率 >80% + 无 P0/P1 Bug + 所有 P0 AC 状态为 passed

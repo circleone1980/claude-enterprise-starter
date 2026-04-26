@@ -17,3 +17,5 @@ jobs:
         run: node scripts/validate-config.js
       - name: Run test suite
         run: node --test test/**/*.test.js
+      # CE Plugin health check (optional in CI — validates config only)
+      # To enable full CE validation, add: npm install -g @anthropic/ce-plugin

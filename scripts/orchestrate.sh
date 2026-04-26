@@ -294,37 +294,74 @@ cmd_status() {
 # L1 自动层: Phase 2 完成后 review, Phase 4 完成后 adversarial-review
 CODEX_SCRIPT=$(find ~/.claude/plugins -name "codex-companion.mjs" 2>/dev/null | head -1)
 
-run_codex_phase_hook() {
+# --- 多评审钩子（CE + Codex + Compound） ---
+run_multi_review_hook() {
   local phase_id="$1"
 
   [ "$DRY_RUN" = true ] && return
 
+  log_info "Phase $phase_id 多评审检查..."
+
   case "$phase_id" in
+    1)
+      # Phase 1→2: CE 需求评审 + 经验沉淀
+      log_info "执行 CE 需求多维评审..."
+      run_compound_hook "phase-1"
+      ;;
     2)
-      # Phase 2 完成 → Codex 代码审查
-      log_info "Phase 2 完成，执行 Codex (GPT-5.5) 代码审查..."
-      if [ -f "$CODEX_SCRIPT" ]; then
-        mkdir -p "$PROJECT_ROOT/.claude/logs"
-        node "$CODEX_SCRIPT" review --wait --scope working-tree 2>&1 | \
-          tee "$PROJECT_ROOT/.claude/logs/codex-review-phase2.md" || \
-          log_warn "Codex review 失败（不阻塞流程）"
-      else
-        log_warn "Codex 插件未安装，跳过自动审查"
-      fi
+      # Phase 2→3: Codex 审查 + CE 代码评审 + 经验沉淀
+      run_codex_review
+      log_info "执行 CE 代码多维评审..."
+      run_compound_hook "phase-2"
+      ;;
+    3)
+      # Phase 3→4: CE 测试评审 + 经验沉淀
+      log_info "执行 CE 测试多维评审..."
+      run_compound_hook "phase-3"
       ;;
     4)
-      # Phase 4 完成 → 部署前对抗审查
-      log_info "Phase 4 完成，执行 Codex (GPT-5.5) 对抗审查..."
-      if [ -f "$CODEX_SCRIPT" ]; then
-        mkdir -p "$PROJECT_ROOT/.claude/logs"
-        node "$CODEX_SCRIPT" adversarial-review --wait --scope working-tree 2>&1 | \
-          tee "$PROJECT_ROOT/.claude/logs/codex-adversarial-phase4.md" || \
-          log_warn "Codex adversarial review 失败（不阻塞流程）"
-      else
-        log_warn "Codex 插件未安装，跳过对抗审查"
-      fi
+      # Phase 4→5: CE 体验评审 + 经验沉淀
+      log_info "执行 CE 体验多维评审..."
+      run_compound_hook "phase-4"
+      ;;
+    5)
+      # Phase 5→完成: Codex 对抗 + CE 全面评审 + 经验沉淀
+      run_codex_adversarial
+      log_info "执行 CE 全面多维评审..."
+      run_compound_hook "phase-5"
       ;;
   esac
+}
+
+run_codex_review() {
+  if [ -f "$CODEX_SCRIPT" ]; then
+    log_info "执行 Codex (GPT-5.5) 代码审查..."
+    mkdir -p "$PROJECT_ROOT/.claude/logs"
+    node "$CODEX_SCRIPT" review --wait --scope working-tree 2>&1 | \
+      tee "$PROJECT_ROOT/.claude/logs/codex-review-phase2.md" || \
+      log_warn "Codex review 失败（不阻塞流程）"
+  else
+    log_warn "Codex 插件未安装，跳过自动审查"
+  fi
+}
+
+run_codex_adversarial() {
+  if [ -f "$CODEX_SCRIPT" ]; then
+    log_info "执行 Codex (GPT-5.5) 对抗审查..."
+    mkdir -p "$PROJECT_ROOT/.claude/logs"
+    node "$CODEX_SCRIPT" adversarial-review --wait --scope working-tree 2>&1 | \
+      tee "$PROJECT_ROOT/.claude/logs/codex-adversarial-phase5.md" || \
+      log_warn "Codex adversarial review 失败（不阻塞流程）"
+  else
+    log_warn "Codex 插件未安装，跳过对抗审查"
+  fi
+}
+
+run_compound_hook() {
+  local phase_id="$1"
+  log_info "触发知识沉淀 ($phase_id)..."
+  node "$PROJECT_ROOT/hooks/scripts/auto-start-agents.js" --phase=compound --source-phase="$phase_id" 2>/dev/null || \
+    log_warn "知识沉淀触发失败（不阻塞流程）"
 }
 
 # --- 主流程 ---
@@ -358,7 +395,7 @@ main() {
           run_phase "$phase_id"
           if [ "$DRY_RUN" = false ]; then
             save_phase "$phase_id"
-            run_codex_phase_hook "$phase_id"
+            run_multi_review_hook "$phase_id"
             cleanup_team "$((phase_id + 1))"
           fi
         done
@@ -368,7 +405,7 @@ main() {
           run_phase "$phase_id"
           if [ "$DRY_RUN" = false ]; then
             save_phase "$phase_id"
-            run_codex_phase_hook "$phase_id"
+            run_multi_review_hook "$phase_id"
             cleanup_team "$((phase_id + 1))"
           fi
         done

@@ -13,7 +13,7 @@
  *
  * 用法: node scripts/validate-config.js
  *
- * Updated: 2026-04-11
+ * Updated: 2026-04-26
  */
 
 const fs = require('fs');
@@ -447,6 +447,110 @@ if (fs.existsSync(SKILLS_DIR)) {
   log_ok(`Skills 目录总数: ${skillDirs.length}，注册表引用: ${allSkills.size}`);
 } else {
   log_fail('skills/ 目录不存在');
+}
+
+console.log('');
+
+// === 检查 9: CE Plugin 配置验证 ===
+console.log('--- 检查 9: CE Plugin 配置验证（必需依赖） ---');
+
+const CE_REQUIRED_SKILLS = ['ce-brainstorm', 'ce-plan', 'ce-work', 'ce-review', 'ce-compound'];
+const allCeSkills = new Set();
+
+for (const [name, agent] of Object.entries(ssot.agents)) {
+  if (agent.gstackOnly && !gstackEnabled) continue;
+  for (const skill of (agent.requiredSkills || [])) {
+    if (skill.startsWith('ce-')) {
+      allCeSkills.add(skill);
+    }
+  }
+}
+
+for (const required of CE_REQUIRED_SKILLS) {
+  if (allCeSkills.has(required)) {
+    log_ok(`CE 技能 "${required}" 已在 SSOT 中声明`);
+  } else {
+    log_fail(`CE 技能 "${required}" 未在任何 agent 的 requiredSkills 中声明`);
+  }
+}
+
+// 检查无旧 ce: 前缀
+let hasOldPrefix = false;
+for (const [name, agent] of Object.entries(ssot.agents)) {
+  for (const skill of (agent.requiredSkills || [])) {
+    if (skill.startsWith('ce:')) {
+      hasOldPrefix = true;
+      log_fail(`Agent "${name}" 使用旧格式 "${skill}"（应为 "ce-" 前缀）`);
+    }
+  }
+}
+if (!hasOldPrefix) {
+  log_ok('所有 CE 技能使用正确的前缀格式 "ce-"');
+}
+
+console.log('');
+
+// === 检查 10: Knowledge-Compounder 存在性 ===
+console.log('--- 检查 10: Knowledge-Compounder Agent ---');
+
+if (ssot.agents['Knowledge-Compounder']) {
+  const kc = ssot.agents['Knowledge-Compounder'];
+  log_ok('Knowledge-Compounder 存在于 SSOT');
+
+  if (kc.requiredSkills && kc.requiredSkills.includes('ce-compound')) {
+    log_ok('Knowledge-Compounder requiredSkills 包含 ce-compound');
+  } else {
+    log_fail('Knowledge-Compounder 缺少 ce-compound 技能');
+  }
+
+  if (kc.agentMd) {
+    const kcPath = path.join(PROJECT_ROOT, kc.agentMd);
+    if (fs.existsSync(kcPath)) {
+      log_ok(`Knowledge-Compounder agentMd 文件存在: ${kc.agentMd}`);
+    } else {
+      log_fail(`Knowledge-Compounder agentMd 文件不存在: ${kc.agentMd}`);
+    }
+  }
+
+  if ((kc.dependencies || []).length === 0) {
+    log_ok('Knowledge-Compounder 无依赖（可独立启动）');
+  } else {
+    log_warn(`Knowledge-Compounder 有依赖: ${kc.dependencies.join(', ')}`);
+  }
+} else {
+  log_fail('Knowledge-Compounder 不在 SSOT agents 中');
+}
+
+console.log('');
+
+// === 检查 11: 开发 agent 含 ce-work ===
+console.log('--- 检查 11: 开发 Agent 含 ce-work ---');
+
+const DEV_AGENTS = ['Frontend', 'Backend-Java', 'Backend-Python', 'GAN-Generator'];
+for (const agentName of DEV_AGENTS) {
+  if (ssot.agents[agentName]) {
+    if (ssot.agents[agentName].requiredSkills.includes('ce-work')) {
+      log_ok(`${agentName} requiredSkills 包含 ce-work`);
+    } else {
+      log_fail(`${agentName} requiredSkills 缺少 ce-work`);
+    }
+  }
+}
+
+console.log('');
+
+// === 检查 12: workConfig 配置 ===
+console.log('--- 检查 12: workConfig 配置 ---');
+
+if (ssot.workConfig) {
+  log_ok('workConfig 存在');
+  if (ssot.workConfig.enabled) log_ok('workConfig.enabled = true');
+  else log_warn('workConfig.enabled = false');
+  if (ssot.workConfig.singleTaskMode) log_ok('workConfig.singleTaskMode = true');
+  if (ssot.workConfig.tddIntegration) log_ok('workConfig.tddIntegration = true');
+  if (ssot.workConfig.progressFile) log_ok(`progressFile: ${ssot.workConfig.progressFile}`);
+} else {
+  log_warn('workConfig 不存在');
 }
 
 console.log('');

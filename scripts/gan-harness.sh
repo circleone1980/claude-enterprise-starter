@@ -185,6 +185,38 @@ SCORE: X.X/10
   return 0
 }
 
+# --- CE 多维评审 ---
+run_gan_ce_review() {
+  local iteration="$1"
+
+  # 从 SSOT 读取 multiReview 配置
+  local multi_review_enabled
+  multi_review_enabled=$(node -e "
+    const ssot = require('$SSOT');
+    console.log(ssot.ganConfig && ssot.ganConfig.multiReview && ssot.ganConfig.multiReview.enabled ? 'true' : 'false');
+  " 2>/dev/null || echo "false")
+
+  if [ "$multi_review_enabled" != "true" ]; then
+    return
+  fi
+
+  log_info "执行 CE 多维评审 (迭代 $iteration)..."
+
+  local eval_file="$OUTPUT_DIR/evaluation.md"
+
+  # 追加 CE 评审标记到 evaluation.md
+  {
+    echo ""
+    echo "## CE Multi-Dimensional Review (Iteration $iteration)"
+    echo ""
+    echo "> 此评审由 CE 插件自动触发，提供 6+ 维度独立审查。"
+    echo "> 触发命令: \`/ce-review --scope gan-iteration-${iteration}\`"
+    echo ""
+  } >> "$eval_file"
+
+  log_ok "CE 评审标记已追加到 $eval_file"
+}
+
 # --- 主循环 ---
 main() {
   check_deps
@@ -223,6 +255,9 @@ main() {
     }
 
     score=$(cat "$OUTPUT_DIR/score.txt" 2>/dev/null || echo "0")
+
+    # CE 多维评审（如果启用）
+    run_gan_ce_review "$iteration"
 
     log_info "迭代 $iteration 评分: $score / 10（阈值: $THRESHOLD）"
 

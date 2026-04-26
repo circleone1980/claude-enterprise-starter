@@ -109,7 +109,7 @@
       "_ref": "详见 automation/agent-orchestration.json 各 agent requiredSkills",
       "enabled": true,
       "description": "Compound Engineering 全局插件集成（需全局安装 CE 插件）",
-      "skills": ["ce-brainstorm", "ce-plan", "ce-review", "ce-compound"],
+      "skills": ["ce-brainstorm", "ce-plan", "ce-work", "ce-review", "ce-compound"],
       "documentHandoff": {
         "brainstormOutput": "docs/brainstorms/",
         "planOutput": "docs/plans/",

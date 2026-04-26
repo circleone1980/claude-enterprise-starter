@@ -22,6 +22,7 @@ phase: gan
 | 优先级 | 技能 | 用途 |
 |--------|------|------|
 | 🔴 必调 | tdd | TDD 开发流程（通用） |
+| 🔴 必调 | ce-work | 核心执行引擎（含 TDD 循环 + 进度追踪） |
 | 🔴 必调 | antfu | 前端工具链规范 |
 | 🟡 辅助 | springboot-patterns | SpringBoot 架构模式（仅 Java/SpringBoot 项目） |
 | 🟡 辅助 | springboot-tdd | SpringBoot TDD 流程（仅 Java/SpringBoot 项目） |
@@ -43,7 +44,10 @@ phase: gan
 1. 阅读 spec.md
 2. 选择技术栈
 3. 初始化项目结构
-4. 按 Sprint 顺序实现所有功能
+4. 使用 `/ce-work` 按 Sprint 顺序实现所有功能:
+   - 单任务迭代，每个子任务内嵌 TDD (Red → Green → Refactor)
+   - 自动生成进度笔记到 docs/dev/notes/
+   - 更新 docs/dev/progress.md
 5. 确保 dev server 运行
 
 ### 后续轮 (有反馈)

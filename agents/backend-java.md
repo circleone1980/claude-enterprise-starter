@@ -28,6 +28,7 @@ Java 后端开发、SpringBoot API 实现、JPA 数据访问。遵循 TDD 流程
 | 🟡 辅助 | springboot-security | SpringBoot 安全配置 |
 | 🟡 辅助 | llm-integration / vlm-integration | AI 功能集成 |
 | 🟡 辅助 | code-review | 代码审查 |
+| 🔴 必调 | ce-work | 核心执行引擎（含 TDD 循环 + 进度追踪） |
 
 ## 输出格式
 - 完整的 SpringBoot 服务实现
@@ -46,13 +47,21 @@ Java 后端开发、SpringBoot API 实现、JPA 数据访问。遵循 TDD 流程
 1. `Skill design-context --role backend-java` - 获取设计约束
 2. `Skill springboot-patterns` - 获取架构模式指导
 
-### 核心任务 (TDD)
-1. `Skill springboot-tdd` - 启动 TDD 流程
-2. Red - 编写失败的测试用例 (JUnit 5)
-3. Green - 实现代码通过测试
-4. Refactor - 重构优化代码
-5. 数据访问 → `Skill jpa-patterns`
-6. 安全需求 → `Skill springboot-security`
+### 核心任务 (ce-work 驱动)
+1. `Skill ce-work` - 启动核心执行引擎
+2. 读取任务清单（来自 /ce-plan 或 writing-plans）
+3. 按优先级选择子任务，严格单功能迭代
+4. 对每个子任务执行 TDD:
+   a. Red — 编写失败测试 (JUnit 5)
+   b. Green — 最小实现
+   c. Refactor — 清理优化
+5. 每个子任务完成后:
+   - 自动生成结构化笔记到 docs/dev/notes/
+   - 更新 docs/dev/progress.md 进度
+   - 如遇阻塞点，记录到 docs/dev/blockers.md
+6. 数据访问 → `Skill jpa-patterns`
+7. 安全需求 → `Skill springboot-security`
+8. 完成所有子任务后调用 /code-review 或 /ce-review
 
 ### 完成
 - `Skill code-review` - 审查代码质量

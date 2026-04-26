@@ -24,6 +24,7 @@ phase: 1
 | 🔴 必调 | writing-plans | 编写系统架构设计和实施计划 |
 | 🔴 必调 | ui-style-selector | 确认 UI 视觉方向 |
 | 🟡 辅助 | ce-brainstorm | 技术选型困难时设计探索 |
+| 🟡 辅助 | ce-plan | 基于历史经验的任务拆分 |
 | 🟡 辅助 | code-review | 审查技术方案的代码实现 |
 
 ## 输出格式
@@ -49,8 +50,9 @@ phase: 1
 3. 数据库设计 → 填充 `docs/design/02_数据库设计.md`
 4. API 设计 → 填充 `docs/design/03_API接口设计.md`
 5. UI 风格确认 → `Skill ui-style-selector`
-6. 编写实施计划 → `Skill writing-plans`
-7. ADR 审查 → 审批小型 ADR
+6. 任务拆分 → `Skill ce-plan`（基于历史经验生成细粒度任务清单）
+7. 编写实施计划 → `Skill writing-plans`
+8. ADR 审查 → 审批小型 ADR
 
 ### 完成
 - 验证冻结层文档通过门禁

@@ -1,4 +1,4 @@
-# Claude Code 项目模板 v3.1
+# Claude Code 项目模板 v3.2
 
 > 📋 **使用说明**: 复制此目录到新项目的 `.claude/` 目录，根据项目需求修改配置
 
@@ -106,13 +106,14 @@
 | Design Reviewer    | autoplan, plan-ceo-review, plan-eng-review                               | general-purpose  |
 | PM             | product-requirements, ce-brainstorm                   | planner          |
 | Architect      | writing-plans, ce-brainstorm, ce-plan                          | architect        |
-| Review Champion | adversarial-review, plan-ceo-review, plan-eng-review | general-purpose  |
+| Review Champion | adversarial-review, plan-ceo-review, plan-eng-review, ce-review, ce-brainstorm | general-purpose  |
 | UI Designer    | ui-ux-pro-max, ui-style-selector       | general-purpose  |
-| Frontend       | tdd, antfu                             | typescript-reviewer |
-| Backend-Java   | springboot-patterns, springboot-tdd    | java-reviewer    |
-| Backend-Python | tdd, prisma-database-setup             | python-reviewer  |
+| Frontend       | tdd, antfu, ce-work                    | typescript-reviewer |
+| Backend-Java   | springboot-patterns, springboot-tdd, ce-work | java-reviewer    |
+| Backend-Python | tdd, prisma-database-setup, ce-work    | python-reviewer  |
 | QA             | tdd, verification-loop, qa, ce-review  | tdd-guide        |
-| DevOps         | code-review, security-review, ce-review | general-purpose  |
+| DevOps         | code-review, security-review, ce-review, ce-compound | general-purpose  |
+| Knowledge Compounder | ce-compound                       | general-purpose  |
 
 详细配置: [rules/04_agent_team.md](rules/04_agent_team.md)
 
@@ -120,15 +121,17 @@
 
 ## 八、CE 插件集成
 
-> **前置条件**: 全局安装 Compound Engineering 插件
-> **集成范围**: 仅需求/设计/评审阶段（不含 /ce:work）
+> **前置条件**: CE 插件为**必需依赖**，未安装阻塞阶段推进
+> **集成范围**: 全阶段 5 技能全覆盖（brainstorm/plan/work/review/compound）
+> **安装指南**: `docs/CE-SETUP.md` | **健康检查**: `node scripts/ce-health-check.js`
 
 | 技能 | 命令 | 用途 |
 |------|------|------|
 | 方案脑暴 | `/ce-brainstorm` | ≥2 种实现路径，收敛为需求规格 |
 | 经验规划 | `/ce-plan` | 检索历史经验，拆分细粒度任务 |
+| 核心执行 | `/ce-work` | 单任务迭代 + TDD + 进度追踪（Phase 2 核心） |
 | 多维评审 | `/ce-review` | 6 类+扩展评审，独立报告 |
-| 知识沉淀 | `/ce-compound` | 经验存入 docs/solutions/ |
+| 知识沉淀 | `/ce-compound` | 经验存入 docs/solutions/（阶段转换自动触发） |
 
 详细规则: [rules/16_ce_integration.md](rules/16_ce_integration.md)
 
@@ -155,7 +158,7 @@
 # 标准开发团队
 claude --team dev
 
-# 全功能团队（含 QA/DevOps/产品体验师/对抗审查）
+# 全功能团队（含 QA/DevOps/产品体验师/对抗审查/知识沉淀）
 claude --team full
 ```
 
@@ -183,6 +186,6 @@ claude --team full
 
 ---
 
-*模板版本: 3.1.0*
+*模板版本: 3.2.0*
 *最后更新: 2026-04-26*
-*重大变更: GStack 独立化 + CE 插件集成 + 对抗审查 + /qa 浏览器测试*
+*重大变更: CE 深度集成（5 技能全覆盖） + Knowledge Compounder + 多评审机制 + 版本交付自动化*

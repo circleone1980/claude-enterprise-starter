@@ -11,8 +11,8 @@ describe('orchestration-pipeline - SSOT structure', () => {
     assert.ok(ssot.gstackConfig, 'Missing gstackConfig key');
   });
 
-  test('SSOT version is 3.1.0', () => {
-    assert.strictEqual(ssot.version, '3.1.0');
+  test('SSOT version is 3.2.0', () => {
+    assert.strictEqual(ssot.version, '3.2.0');
   });
 
   test('SSOT is enabled', () => {
@@ -28,7 +28,7 @@ describe('orchestration-pipeline - phase coverage', () => {
     const phases = new Set(agentNames.map(name => String(agents[name].phase)));
 
     // Verify expected phases exist
-    const expectedPhases = ['0.5a', '0.5b', '1', '2', '3', '4', '5', '1-review', 'gan'];
+    const expectedPhases = ['0.5a', '0.5b', '1', '2', '3', '4', '5', '1-review', 'gan', 'compound'];
     for (const expectedPhase of expectedPhases) {
       assert.ok(phases.has(expectedPhase), `Missing phase: ${expectedPhase}`);
     }
@@ -175,5 +175,22 @@ describe('orchestration-pipeline - ganConfig', () => {
     assert.ok(gc.threshold !== undefined);
     assert.ok(gc.maxIterations !== undefined);
     assert.ok(gc.outputDir);
+  });
+
+  test('ganConfig has multiReview configuration', () => {
+    const gc = ssot.ganConfig;
+    assert.ok(gc.multiReview, 'Missing multiReview in ganConfig');
+    assert.strictEqual(gc.multiReview.enabled, true);
+    assert.ok(Array.isArray(gc.multiReview.reviewers));
+  });
+});
+
+describe('orchestration-pipeline - workConfig', () => {
+  test('workConfig exists and is valid', () => {
+    assert.ok(ssot.workConfig, 'Missing workConfig');
+    assert.strictEqual(ssot.workConfig.enabled, true);
+    assert.strictEqual(ssot.workConfig.singleTaskMode, true);
+    assert.ok(ssot.workConfig.progressFile);
+    assert.ok(ssot.workConfig.tddIntegration);
   });
 });

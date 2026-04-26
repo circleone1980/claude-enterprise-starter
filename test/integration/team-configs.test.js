@@ -13,7 +13,7 @@ const allAgentKeys = Object.keys(ssot.agents);
  *
  * full team (16 roles): All agents in SSOT
  */
-const DEV_TEAM = ['PM', 'Architect', 'Frontend', 'Backend-Java', 'Backend-Python', 'QA', 'Review-Champion'];
+const DEV_TEAM = ['PM', 'Architect', 'Frontend', 'Backend-Java', 'Backend-Python', 'QA', 'Review-Champion', 'Knowledge-Compounder'];
 const FULL_TEAM = allAgentKeys;
 
 describe('team-configs - dev team', () => {
@@ -54,8 +54,8 @@ describe('team-configs - dev team', () => {
 });
 
 describe('team-configs - full team', () => {
-  test('full team has 16 members', () => {
-    assert.strictEqual(FULL_TEAM.length, 16, `Expected 16 members, got ${FULL_TEAM.length}`);
+  test('full team has 17 members', () => {
+    assert.strictEqual(FULL_TEAM.length, 17, `Expected 17 members, got ${FULL_TEAM.length}`);
   });
 
   test('all full team members exist in SSOT agents', () => {

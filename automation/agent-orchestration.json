@@ -1,6 +1,6 @@
 {
   "name": "agent-orchestration",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "enabled": true,
   "agents": {
     "Product-Designer": {
@@ -104,7 +104,7 @@
     },
     "Frontend": {
       "subagentType": "everything-claude-code:typescript-reviewer",
-      "requiredSkills": ["tdd", "antfu", "vitest", "ui-ux-pro-max", "code-review"],
+      "requiredSkills": ["tdd", "antfu", "vitest", "ui-ux-pro-max", "code-review", "ce-work"],
       "parallelizable": true,
       "dependencies": ["PM", "Architect"],
       "count": 3,
@@ -126,7 +126,7 @@
     },
     "Backend-Java": {
       "subagentType": "everything-claude-code:java-reviewer",
-      "requiredSkills": ["springboot-patterns", "springboot-tdd", "springboot-security", "jpa-patterns", "java-coding-standards", "llm-integration", "vlm-integration", "code-review"],
+      "requiredSkills": ["springboot-patterns", "springboot-tdd", "springboot-security", "jpa-patterns", "java-coding-standards", "llm-integration", "vlm-integration", "code-review", "ce-work"],
       "parallelizable": true,
       "dependencies": ["PM", "Architect"],
       "count": 2,
@@ -155,7 +155,7 @@
     },
     "Backend-Python": {
       "subagentType": "everything-claude-code:python-reviewer",
-      "requiredSkills": ["tdd", "prisma-database-setup", "llm-integration", "vlm-integration", "code-review"],
+      "requiredSkills": ["tdd", "prisma-database-setup", "llm-integration", "vlm-integration", "code-review", "ce-work"],
       "parallelizable": true,
       "dependencies": ["PM", "Architect"],
       "count": 1,
@@ -244,7 +244,7 @@
     },
     "Review-Champion": {
       "subagentType": "general-purpose",
-      "requiredSkills": ["adversarial-review", "plan-ceo-review", "plan-eng-review"],
+      "requiredSkills": ["adversarial-review", "plan-ceo-review", "plan-eng-review", "ce-review", "ce-brainstorm"],
       "parallelizable": false,
       "dependencies": [],
       "count": 1,
@@ -276,7 +276,7 @@
     },
     "GAN-Generator": {
       "subagentType": "general-purpose",
-      "requiredSkills": ["gan-harness", "tdd", "code-review", "springboot-patterns", "antfu"],
+      "requiredSkills": ["gan-harness", "tdd", "code-review", "springboot-patterns", "antfu", "ce-work"],
       "parallelizable": false,
       "dependencies": ["GAN-Planner"],
       "count": 1,
@@ -306,6 +306,27 @@
         "writeConflictRisk": 0
       },
       "agentMd": "agents/gan-evaluator.md"
+    },
+    "Knowledge-Compounder": {
+      "subagentType": "general-purpose",
+      "requiredSkills": ["ce-compound"],
+      "parallelizable": false,
+      "dependencies": [],
+      "count": 1,
+      "phase": "compound",
+      "modeSelection": {
+        "communicationNeed": 0,
+        "crossLayerDependency": 0,
+        "contextPressure": 1,
+        "roleCount": 0,
+        "writeConflictRisk": 0
+      },
+      "agentMd": "agents/knowledge-compounder.md",
+      "compoundConfig": {
+        "triggerPhases": ["1-to-2", "2-to-3", "3-to-4", "5-to-complete"],
+        "outputDir": "docs/solutions",
+        "autoCreateIndex": true
+      }
     }
   },
   "modeThresholds": {
@@ -330,7 +351,20 @@
     "enabled": true,
     "threshold": 7.0,
     "maxIterations": 3,
-    "outputDir": "output"
+    "outputDir": "output",
+    "multiReview": {
+      "enabled": true,
+      "reviewers": ["ce-review", "code-review"],
+      "mergeStrategy": "append-to-evaluation"
+    }
+  },
+  "workConfig": {
+    "enabled": true,
+    "singleTaskMode": true,
+    "progressFile": "docs/dev/progress.md",
+    "blockersFile": "docs/dev/blockers.md",
+    "autoNotes": true,
+    "tddIntegration": true
   },
   "healthMonitoring": {
     "enabled": true,
@@ -339,6 +373,6 @@
     "restartDelay": 10000,
     "alertOnFailure": true
   },
-  "_comment": "SSOT v3.1.0 - Updated 2026-04-26 - GStack Independence + CE Integration + Adversarial Review",
+  "_comment": "SSOT v3.2.0 - Updated 2026-04-26 - CE Deep Integration + Knowledge Compounder + Multi-Review",
   "_ssot_note": "CLAUDE.md 第七节、rules/04、rules/07、agents/*.md 均引用此文件，不重复定义"
 }

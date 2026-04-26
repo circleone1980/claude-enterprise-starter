@@ -23,6 +23,8 @@ phase: 5
 | 🔴 必调 | design-context | 获取部署架构和基础设施配置 |
 | 🔴 必调 | verification-loop | 部署前完整验证 |
 | 🔴 必调 | code-review | 审查部署脚本和配置 |
+| 🔴 必调 | ce-review | CE 多维评审，Phase 5 代码/配置审查 |
+| 🔴 必调 | ce-compound | 知识沉淀，Phase 5 完成后经验提取 |
 | 🟡 辅助 | security-review | 安全操作审查 |
 
 ## 输出格式
@@ -48,5 +50,8 @@ phase: 5
 
 ### 完成
 - `Skill code-review` - 审查部署配置
+- `Skill ce-review` - CE 多维度审查
 - 内置 `/simplify` - 最终质量检查
+- `Skill ce-compound` - 沉淀本轮迭代经验到 docs/solutions/
+- 运行 `node scripts/release.js --dry-run` 预览版本交付
 - 验证部署成功 + 无回滚

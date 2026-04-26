@@ -211,8 +211,37 @@ ${acList}
     - 注释模板见 templates/code-headers/`;
   }
 
+  // CE 必需依赖提醒
+  const ceSkills = skills.filter(s => s.startsWith('ce-'));
+  let ceSection = '';
+  if (ceSkills.length > 0) {
+    ceSection = `
+
+    CE Plugin（必需依赖）:
+    - CE plugin is a REQUIRED dependency. All ce-* skills must be available.
+    - If any ce-* skill is unavailable, STOP and report the error.
+    - CE skills to use: ${ceSkills.join(', ')}`;
+  }
+
+  // ce-work 工作流注入
+  let workSection = '';
+  if (skills.includes('ce-work')) {
+    workSection = `
+
+    开发工作流（ce-work 驱动）:
+    - Use /ce-work as the core execution engine for ALL development tasks.
+    - /ce-work enforces:
+      * Single-task iteration (no multitasking)
+      * Auto progress notes after each sub-task
+      * Blocker/dependency tracking
+      * TDD cycle (Red → Green → Refactor) within each iteration
+      * Code style consistency checks
+    - Progress file: docs/dev/progress.md
+    - Blockers file: docs/dev/blockers.md`;
+  }
+
   return `你是 ${name}。必须遵循以下流程：
-${skillCalls}${tddSection}${reviewSection}${codexSection}${acSection}${workspaceSection}${commentSection}
+${skillCalls}${tddSection}${reviewSection}${codexSection}${acSection}${workspaceSection}${commentSection}${ceSection}${workSection}
 
     任务：等待分配具体任务`;
 }

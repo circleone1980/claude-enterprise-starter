@@ -74,9 +74,9 @@ describe('regression - directory structure counts', () => {
     assert.strictEqual(rules.length, 17, `Expected 17 rule files, got ${rules.length}: ${rules.join(', ')}`);
   });
 
-  test('agents/ directory has exactly 16 .md files', () => {
+  test('agents/ directory has exactly 17 .md files', () => {
     const agents = listAgentFiles();
-    assert.strictEqual(agents.length, 16, `Expected 16 agent files, got ${agents.length}: ${agents.join(', ')}`);
+    assert.strictEqual(agents.length, 17, `Expected 17 agent files, got ${agents.length}: ${agents.join(', ')}`);
   });
 
   test('skills/ has exactly 38 subdirectories (excluding _shared)', () => {
@@ -131,5 +131,29 @@ describe('regression - CLAUDE.md references', () => {
       claudeMd.includes('14_worktree.md'),
       'CLAUDE.md missing reference to rules/14_worktree.md'
     );
+  });
+});
+
+describe('regression - ce-work integration', () => {
+  const ssot = loadJSON('automation/agent-orchestration.json');
+
+  test('Frontend has ce-work in requiredSkills', () => {
+    assert.ok(ssot.agents.Frontend.requiredSkills.includes('ce-work'),
+      'Frontend missing ce-work');
+  });
+
+  test('Backend-Java has ce-work in requiredSkills', () => {
+    assert.ok(ssot.agents['Backend-Java'].requiredSkills.includes('ce-work'),
+      'Backend-Java missing ce-work');
+  });
+
+  test('Backend-Python has ce-work in requiredSkills', () => {
+    assert.ok(ssot.agents['Backend-Python'].requiredSkills.includes('ce-work'),
+      'Backend-Python missing ce-work');
+  });
+
+  test('GAN-Generator has ce-work in requiredSkills', () => {
+    assert.ok(ssot.agents['GAN-Generator'].requiredSkills.includes('ce-work'),
+      'GAN-Generator missing ce-work');
   });
 });

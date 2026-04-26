@@ -5,7 +5,7 @@ const { parseFrontmatter } = require('../helpers/frontmatter-parser');
 const path = require('path');
 const fs = require('fs');
 
-const EXPECTED_AGENT_COUNT = 16;
+const EXPECTED_AGENT_COUNT = 17;
 
 /** 有效的 subagentType 前缀 */
 const VALID_SUBAGENT_PREFIXES = [
@@ -23,7 +23,7 @@ const GHOST_SKILLS = [
 
 /** 有效的 phase 值 */
 const VALID_PHASES = [
-  '0.5a', '0.5b', '1', '1-review', '2', '3', '4', '5', 'gan',
+  '0.5a', '0.5b', '1', '1-review', '2', '3', '4', '5', 'gan', 'compound',
 ];
 
 /**
@@ -34,7 +34,7 @@ function parseAgentMD(filePath) {
   return { frontmatter: parseFrontmatter(raw), content: raw };
 }
 
-describe('Agent Frontmatter - 16 个 agent 验证', () => {
+describe('Agent Frontmatter - 17 个 agent 验证', () => {
   const agentFiles = listAgentFiles();
   const ssot = loadJSON('automation/agent-orchestration.json');
 
