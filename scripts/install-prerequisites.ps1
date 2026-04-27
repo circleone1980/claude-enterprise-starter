@@ -57,21 +57,33 @@ Write-Host ""
 # ---- Step 3: 部署 GStack ----
 Write-Host "=== 3/5 部署 GStack ===" -ForegroundColor Yellow
 
+# 前置检查: Bun（GStack setup 依赖）
+$bunExists = $null -ne (Get-Command bun -ErrorAction SilentlyContinue)
+if ($bunExists) {
+    Write-Host "[OK] Bun 已安装" -ForegroundColor Green
+} else {
+    Write-Host "[WARN] Bun 未安装 — GStack setup 需要 Bun" -ForegroundColor Yellow
+    Write-Host "  安装 Bun: powershell -c `"irm bun.sh/install.ps1 | iex`""
+    Write-Host "  跳过 GStack 部署（安装 Bun 后重新运行）"
+}
+
 $gstackDir = "$env:USERPROFILE\.claude\skills\gstack"
 
-if (Test-Path $gstackDir) {
-    Write-Host "[OK] GStack 已部署 ($gstackDir)" -ForegroundColor Green
-    Write-Host "  更新中..."
-    Push-Location $gstackDir
-    git pull 2>$null
-    Pop-Location
-} else {
-    Write-Host "  克隆 GStack..."
-    git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git $gstackDir
-    Push-Location $gstackDir
-    bash ./setup
-    Pop-Location
-    Write-Host "[OK] GStack 部署完成" -ForegroundColor Green
+if ($bunExists) {
+    if (Test-Path $gstackDir) {
+        Write-Host "[OK] GStack 已部署 ($gstackDir)" -ForegroundColor Green
+        Write-Host "  更新中..."
+        Push-Location $gstackDir
+        git pull 2>$null
+        Pop-Location
+    } else {
+        Write-Host "  克隆 GStack..."
+        git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git $gstackDir
+        Push-Location $gstackDir
+        bash ./setup
+        Pop-Location
+        Write-Host "[OK] GStack 部署完成" -ForegroundColor Green
+    }
 }
 
 Write-Host ""
@@ -121,5 +133,5 @@ Write-Host "  claude plugin update ecc"
 Write-Host "  claude plugin update compound-engineering"
 Write-Host "  claude plugin update ui-ux-pro-max"
 Write-Host "  claude plugin update codex"
-Write-Host "  cd $gstackDir; git pull"
+Write-Host "  cd $gstackDir; git pull; bash ./setup"
 Write-Host ""

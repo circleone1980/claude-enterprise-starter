@@ -26,7 +26,7 @@ describe('regression - SKILL.md name fields', () => {
 
   test('tdd and code-review have no local SKILL.md (plugin-provided)', () => {
     assert.ok(!fs.existsSync(path.join(ROOT, 'skills/tdd/SKILL.md')), 'tdd should not have local SKILL.md (superpowers plugin)');
-    assert.ok(!fs.existsSync(path.join(ROOT, 'skills/code-review/SKILL.md')), 'code-review should not have local SKILL.md (code-review plugin)');
+    assert.ok(!fs.existsSync(path.join(ROOT, 'skills/code-review/SKILL.md')), 'code-review should not have local SKILL.md (provided by ecc plugin)');
   });
 });
 

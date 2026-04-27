@@ -66,16 +66,28 @@ echo ""
 # ---- Step 3: 部署 GStack ----
 echo "=== 3/5 部署 GStack 到本地 ==="
 
-GSTACK_DIR="$HOME/.claude/skills/gstack"
-if [ -d "$GSTACK_DIR" ]; then
-  ok "GStack 已部署 ($GSTACK_DIR)"
-  echo "  更新中..."
-  cd "$GSTACK_DIR" && git pull 2>/dev/null && ok "GStack 已更新" || warn "GStack 更新失败"
+# 前置检查: Bun（GStack setup 依赖）
+if command -v bun &>/dev/null; then
+  ok "Bun 已安装"
 else
-  echo "  克隆 GStack..."
-  git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git "$GSTACK_DIR"
-  cd "$GSTACK_DIR" && chmod +x ./setup && ./setup
-  ok "GStack 部署完成"
+  warn "Bun 未安装 — GStack setup 需要 Bun"
+  echo "  安装 Bun: curl -fsSL https://bun.sh/install | bash"
+  echo "  跳过 GStack 部署（安装 Bun 后重新运行）"
+  GSTACK_DIR=""
+fi
+
+GSTACK_DIR="$HOME/.claude/skills/gstack"
+if [ -n "$GSTACK_DIR" ]; then
+  if [ -d "$GSTACK_DIR" ]; then
+    ok "GStack 已部署 ($GSTACK_DIR)"
+    echo "  更新中..."
+    cd "$GSTACK_DIR" && git pull 2>/dev/null && ok "GStack 已更新" || warn "GStack 更新失败"
+  else
+    echo "  克隆 GStack..."
+    git clone --single-branch --depth 1 https://github.com/garrytan/gstack.git "$GSTACK_DIR"
+    cd "$GSTACK_DIR" && chmod +x ./setup && ./setup
+    ok "GStack 部署完成"
+  fi
 fi
 
 echo ""
@@ -132,5 +144,5 @@ echo "  claude plugin update ecc"
 echo "  claude plugin update compound-engineering"
 echo "  claude plugin update ui-ux-pro-max"
 echo "  claude plugin update codex"
-echo "  cd ~/.claude/skills/gstack && git pull"
+echo "  cd ~/.claude/skills/gstack && git pull && ./setup"
 echo ""

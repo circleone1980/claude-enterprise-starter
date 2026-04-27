@@ -32,17 +32,16 @@
 ## 三、前置插件（必需）
 
 > **安装**: `bash scripts/install-prerequisites.sh` 或 `powershell scripts\install-prerequisites.ps1`
-> **更新**: `claude plugin update <name>` + `cd ~/.claude/skills/gstack && git pull`
+> **更新**: `claude plugin update <name>` + `cd ~/.claude/skills/gstack && git pull && ./setup`
 
 | 插件/部署 | 提供内容 | 安装方式 |
 |-----------|---------|---------|
 | superpowers | test-driven-development, systematic-debugging, requesting/receiving-code-review, writing-plans | `claude plugin install superpowers` |
-| ecc | springboot-*, jpa-patterns, java-coding-standards, verification-loop, search-first, security-review, strategic-compact, continuous-learning, gan-style-harness | `claude plugin install ecc` |
+| ecc | springboot-*, jpa-patterns, java-coding-standards, verification-loop, search-first, security-review, strategic-compact, continuous-learning, gan-style-harness, **code-review** | `claude plugin install ecc` |
 | compound-engineering | ce-brainstorm, ce-plan, ce-work, ce-review, ce-compound | `claude plugin install compound-engineering` |
 | ui-ux-pro-max | UI/UX 设计智能 | `claude plugin install ui-ux-pro-max` |
-| code-review | PR 代码审查 | `claude plugin install code-review` |
 | openai-codex | GPT-5.5 代码审查 (`/codex:review`/`rescue`/`adversarial-review`) | `claude plugin install codex` |
-| GStack (本地部署) | office-hours, design-*, autoplan, plan-*-review | `git clone` 到 `~/.claude/skills/gstack/` |
+| GStack (本地部署) | office-hours, design-*, autoplan, plan-*-review | 前置: [Bun](https://bun.sh)；`git clone` + `./setup` |
 
 详细安装: [scripts/install-prerequisites.sh](scripts/install-prerequisites.sh)
 

@@ -39,6 +39,7 @@
 | `strategic-compact` | strategic-compact | 战略性上下文压缩 |
 | `continuous-learning` | continuous-learning | 持续学习本能系统 |
 | `gan-harness` | gan-style-harness | GAN 生成对抗网络式开发 |
+| `code-review` | code-review | 深度多维度代码审查 |
 
 ### Superpowers 来源
 
@@ -61,12 +62,6 @@
 | `plan-eng-review` | 工程架构审查 |
 | `plan-devex-review` | 开发者体验审查 |
 | `gstack-bridge` | Phase 0.5→1 交接协议 |
-
-### claude-plugins-official 来源
-
-| Skill | 上游名称 | 说明 |
-|-------|---------|------|
-| `code-review` | code-review | 官方 PR 代码审查 |
 
 ### 全局 Skills (`~/.claude/skills/`)
 

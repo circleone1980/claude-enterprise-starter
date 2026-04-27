@@ -30,7 +30,7 @@ describe('交叉引用 - 跨文件引用一致性', () => {
     'jpa-patterns', 'java-coding-standards', 'verification-loop',
     'search-first', 'security-review', 'strategic-compact',
     'continuous-learning', 'gan-style-harness',
-    // code-review plugin
+    // code-review (provided by ecc plugin)
     'code-review',
     // ui-ux-pro-max plugin
     'ui-ux-pro-max',
