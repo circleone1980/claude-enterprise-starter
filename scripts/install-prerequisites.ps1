@@ -38,7 +38,8 @@ $plugins = @(
     "compound-engineering",
     "ui-ux-pro-max",
     "context7",
-    "playwright"
+    "playwright",
+    "codex"
 )
 
 foreach ($plugin in $plugins) {
@@ -78,7 +79,7 @@ Write-Host ""
 # ---- Step 4: 启用插件 ----
 Write-Host "=== 4/5 启用插件 ===" -ForegroundColor Yellow
 
-$enablePlugins = @("superpowers", "ecc", "compound-engineering", "ui-ux-pro-max")
+$enablePlugins = @("superpowers", "ecc", "compound-engineering", "ui-ux-pro-max", "codex")
 foreach ($plugin in $enablePlugins) {
     claude plugin enable $plugin 2>$null
     if ($LASTEXITCODE -eq 0) {
@@ -119,5 +120,6 @@ Write-Host "  claude plugin update superpowers"
 Write-Host "  claude plugin update ecc"
 Write-Host "  claude plugin update compound-engineering"
 Write-Host "  claude plugin update ui-ux-pro-max"
+Write-Host "  claude plugin update codex"
 Write-Host "  cd $gstackDir; git pull"
 Write-Host ""

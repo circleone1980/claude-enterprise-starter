@@ -59,6 +59,7 @@ install_plugin "compound-engineering" "compound-engineering-plugin"
 install_plugin "ui-ux-pro-max" "ui-ux-pro-max-skill"
 install_plugin "context7" "claude-plugins-official"
 install_plugin "playwright" "claude-plugins-official"
+install_plugin "codex" "openai-codex"
 
 echo ""
 
@@ -91,6 +92,7 @@ enable_plugin "superpowers"
 enable_plugin "ecc"
 enable_plugin "compound-engineering"
 enable_plugin "ui-ux-pro-max"
+enable_plugin "codex"
 
 echo ""
 
@@ -104,6 +106,10 @@ claude plugin list 2>/dev/null || echo "  (无法获取插件列表)"
 echo ""
 echo "--- GStack ---"
 [ -f "$GSTACK_DIR/SKILL.md" ] && ok "GStack SKILL.md 存在" || fail "GStack SKILL.md 缺失"
+
+echo ""
+echo "--- Codex 插件 ---"
+claude plugin list 2>/dev/null | grep -i codex && ok "Codex 插件已安装" || warn "Codex 插件未安装（双模型审查不可用）"
 
 echo ""
 echo "--- CE 插件技能 ---"
@@ -125,5 +131,6 @@ echo "  claude plugin update superpowers"
 echo "  claude plugin update ecc"
 echo "  claude plugin update compound-engineering"
 echo "  claude plugin update ui-ux-pro-max"
+echo "  claude plugin update codex"
 echo "  cd ~/.claude/skills/gstack && git pull"
 echo ""
