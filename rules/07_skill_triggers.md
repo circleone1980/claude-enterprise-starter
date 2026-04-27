@@ -14,7 +14,7 @@
 
 ---
 
-## 零-B、GStack Phase 0.5 触发规则
+## GStack Phase 0.5 触发规则
 
 > 当 GStack 启用时（`gstackConfig.enabled: true`），Phase 0.5 在 Phase 0 和 Phase 1 之间执行。
 > 当 GStack 禁用时（默认），Phase 0 直接进入 Phase 1，行为不变。
