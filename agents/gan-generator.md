@@ -21,13 +21,13 @@ phase: gan
 
 | 优先级 | 技能 | 用途 |
 |--------|------|------|
-| 🔴 必调 | tdd | TDD 开发流程（通用） |
+| 🔴 必调 | test-driven-development | TDD 开发流程（通用） |
 | 🔴 必调 | ce-work | 核心执行引擎（含 TDD 循环 + 进度追踪） |
 | 🔴 必调 | antfu | 前端工具链规范 |
 | 🟡 辅助 | springboot-patterns | SpringBoot 架构模式（仅 Java/SpringBoot 项目） |
 | 🟡 辅助 | springboot-tdd | SpringBoot TDD 流程（仅 Java/SpringBoot 项目） |
 
-> **条件技能说明**: `springboot-patterns` 和 `springboot-tdd` 仅在项目技术栈为 Java/SpringBoot 时使用。非 Java 项目使用通用 `tdd` 技能即可。
+> **条件技能说明**: `springboot-patterns` 和 `springboot-tdd` 仅在项目技术栈为 Java/SpringBoot 时使用。非 Java 项目使用通用 `test-driven-development` 技能即可。
 
 ## 输出格式
 - 完整的可运行代码

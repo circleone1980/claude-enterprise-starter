@@ -6,12 +6,6 @@ const { loadJSON, listSkillDirs, listAgentFiles, listRuleFiles, ROOT } = require
 const { parseMD } = require('../helpers/frontmatter-parser');
 
 describe('regression - SKILL.md name fields', () => {
-  test('tdd SKILL.md name === "tdd"', () => {
-    const { frontmatter } = parseMD(path.join(ROOT, 'skills/tdd/SKILL.md'));
-    assert.ok(frontmatter, 'tdd SKILL.md missing frontmatter');
-    assert.strictEqual(frontmatter.name, 'tdd');
-  });
-
   test('ui-style-selector SKILL.md name === "ui-style-selector"', () => {
     const { frontmatter } = parseMD(path.join(ROOT, 'skills/ui-style-selector/SKILL.md'));
     assert.ok(frontmatter, 'ui-style-selector SKILL.md missing frontmatter');
@@ -24,11 +18,15 @@ describe('regression - SKILL.md name fields', () => {
     assert.strictEqual(frontmatter.name, 'user-onboarding');
   });
 
-  test('code-review SKILL.md has name field', () => {
-    const { frontmatter } = parseMD(path.join(ROOT, 'skills/code-review/SKILL.md'));
-    assert.ok(frontmatter, 'code-review SKILL.md missing frontmatter');
-    assert.ok(frontmatter.name, 'code-review SKILL.md missing name field');
-    assert.strictEqual(frontmatter.name, 'code-review');
+  test('using-ce-framework SKILL.md name === "using-ce-framework"', () => {
+    const { frontmatter } = parseMD(path.join(ROOT, 'skills/using-ce-framework/SKILL.md'));
+    assert.ok(frontmatter, 'using-ce-framework SKILL.md missing frontmatter');
+    assert.strictEqual(frontmatter.name, 'using-ce-framework');
+  });
+
+  test('tdd and code-review have no local SKILL.md (plugin-provided)', () => {
+    assert.ok(!fs.existsSync(path.join(ROOT, 'skills/tdd/SKILL.md')), 'tdd should not have local SKILL.md (superpowers plugin)');
+    assert.ok(!fs.existsSync(path.join(ROOT, 'skills/code-review/SKILL.md')), 'code-review should not have local SKILL.md (code-review plugin)');
   });
 });
 
@@ -69,19 +67,19 @@ describe('regression - SSOT agent configuration', () => {
 });
 
 describe('regression - directory structure counts', () => {
-  test('rules/ directory has exactly 17 .md files', () => {
+  test('rules/ directory has exactly 19 .md files', () => {
     const rules = listRuleFiles();
-    assert.strictEqual(rules.length, 17, `Expected 17 rule files, got ${rules.length}: ${rules.join(', ')}`);
+    assert.strictEqual(rules.length, 19, `Expected 19 rule files, got ${rules.length}: ${rules.join(', ')}`);
   });
 
-  test('agents/ directory has exactly 17 .md files', () => {
+  test('agents/ directory has exactly 18 .md files', () => {
     const agents = listAgentFiles();
-    assert.strictEqual(agents.length, 17, `Expected 17 agent files, got ${agents.length}: ${agents.join(', ')}`);
+    assert.strictEqual(agents.length, 18, `Expected 18 agent files, got ${agents.length}: ${agents.join(', ')}`);
   });
 
-  test('skills/ has exactly 38 subdirectories (excluding _shared)', () => {
+  test('skills/ has exactly 15 subdirectories (excluding _shared)', () => {
     const skills = listSkillDirs();
-    assert.strictEqual(skills.length, 38, `Expected 38 skill directories, got ${skills.length}: ${skills.join(', ')}`);
+    assert.strictEqual(skills.length, 15, `Expected 15 skill directories, got ${skills.length}: ${skills.join(', ')}`);
   });
 });
 
@@ -107,19 +105,19 @@ describe('regression - no stale references', () => {
 });
 
 describe('regression - README.md content', () => {
-  test('README.md contains "17 Rule files" (English)', () => {
+  test('README.md contains "19 Rule files" (English)', () => {
     const readme = fs.readFileSync(path.join(ROOT, 'README.md'), 'utf8');
     assert.ok(
-      readme.includes('17 Rule files'),
-      'README.md missing "17 Rule files"'
+      readme.includes('19 Rule files'),
+      'README.md missing "19 Rule files"'
     );
   });
 
-  test('README.md contains "17 个规则文件" (Chinese)', () => {
+  test('README.md contains "19 个规则文件" (Chinese)', () => {
     const readme = fs.readFileSync(path.join(ROOT, 'README.md'), 'utf8');
     assert.ok(
-      readme.includes('17 个规则文件'),
-      'README.md missing "17 个规则文件"'
+      readme.includes('19 个规则文件'),
+      'README.md missing "19 个规则文件"'
     );
   });
 });

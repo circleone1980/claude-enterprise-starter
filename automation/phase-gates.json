@@ -156,22 +156,22 @@
       "conditions": [
         {
           "description": "所有代码已实现",
-          "check": "node -e \"require('fs').existsSync('.phase2-code-complete')||process.exit(1)\"",
+          "check": "node -e \"require('fs').existsSync('.claude/logs/.phase2-code-complete')||require('fs').existsSync('.phase2-code-complete')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "单元测试覆盖率 > 80%",
-          "check": "node -e \"require('fs').existsSync('.phase2-coverage-pass')||process.exit(1)\"",
+          "check": "node -e \"require('fs').existsSync('.claude/logs/.phase2-coverage-pass')||require('fs').existsSync('.phase2-coverage-pass')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "所有单元测试通过",
-          "check": "node -e \"require('fs').existsSync('.phase2-tests-pass')||process.exit(1)\"",
+          "check": "node -e \"require('fs').existsSync('.claude/logs/.phase2-tests-pass')||require('fs').existsSync('.phase2-tests-pass')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "代码审查已完成",
-          "check": "node -e \"require('fs').existsSync('.phase2-review-pass')||process.exit(1)\"",
+          "check": "node -e \"require('fs').existsSync('.claude/logs/.phase2-review-pass')||require('fs').existsSync('.phase2-review-pass')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
@@ -192,17 +192,17 @@
       "conditions": [
         {
           "description": "所有测试用例通过",
-          "check": "node -e \"require('fs').existsSync('.phase3-tests-pass')||process.exit(1)\"",
+          "check": "node -e \"require('fs').existsSync('.claude/logs/.phase3-tests-pass')||require('fs').existsSync('.phase3-tests-pass')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "集成测试通过",
-          "check": "node -e \"require('fs').existsSync('.phase3-integration-pass')||process.exit(1)\"",
+          "check": "node -e \"require('fs').existsSync('.claude/logs/.phase3-integration-pass')||require('fs').existsSync('.phase3-integration-pass')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "E2E 测试通过",
-          "check": "node -e \"require('fs').existsSync('.phase3-e2e-pass')||process.exit(1)\"",
+          "check": "node -e \"require('fs').existsSync('.claude/logs/.phase3-e2e-pass')||require('fs').existsSync('.phase3-e2e-pass')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
@@ -218,7 +218,7 @@
       "conditions": [
         {
           "description": "产品体验测试已完成",
-          "check": "node -e \"require('fs').existsSync('.phase4-ux-complete')||process.exit(1)\"",
+          "check": "node -e \"require('fs').existsSync('.claude/logs/.phase4-ux-complete')||require('fs').existsSync('.phase4-ux-complete')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
@@ -228,7 +228,7 @@
         },
         {
           "description": "关键体验问题已修复",
-          "check": "node -e \"require('fs').existsSync('.phase4-ux-fixes-complete')||process.exit(1)\"",
+          "check": "node -e \"require('fs').existsSync('.claude/logs/.phase4-ux-fixes-complete')||require('fs').existsSync('.phase4-ux-fixes-complete')||process.exit(1)\"",
           "checkType": "file_exists"
         }
       ],
@@ -239,17 +239,17 @@
       "conditions": [
         {
           "description": "部署成功",
-          "check": "node -e \"require('fs').existsSync('.phase5-deploy-success')||process.exit(1)\"",
+          "check": "node -e \"require('fs').existsSync('.claude/logs/.phase5-deploy-success')||require('fs').existsSync('.phase5-deploy-success')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "健康检查通过",
-          "check": "node -e \"require('fs').existsSync('.phase5-health-check-pass')||process.exit(1)\"",
+          "check": "node -e \"require('fs').existsSync('.claude/logs/.phase5-health-check-pass')||require('fs').existsSync('.phase5-health-check-pass')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {
           "description": "文档已更新",
-          "check": "node -e \"require('fs').existsSync('.phase5-docs-updated')||process.exit(1)\"",
+          "check": "node -e \"require('fs').existsSync('.claude/logs/.phase5-docs-updated')||require('fs').existsSync('.phase5-docs-updated')||process.exit(1)\"",
           "checkType": "file_exists"
         },
         {

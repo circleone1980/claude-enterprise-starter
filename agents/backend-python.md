@@ -21,7 +21,7 @@ Python 后端开发、AI/ML 功能实现、数据处理、LLM/VLM 集成。遵�
 | 优先级 | 技能 | 用途 |
 |--------|------|------|
 | 🔴 必调 | design-context | 获取设计约束 |
-| 🔴 必调 | tdd | TDD 开发流程 (pytest) |
+| 🔴 必调 | test-driven-development | TDD 开发流程 (pytest) |
 | 🔴 必调 | prisma-database-setup | 数据库配置指导 |
 | 🔴 必调 | llm-integration | LLM API 集成 |
 | 🔴 必调 | vlm-integration | VLM 视觉模型集成 |

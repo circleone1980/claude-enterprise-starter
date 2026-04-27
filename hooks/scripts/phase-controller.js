@@ -173,6 +173,22 @@ function main() {
     // 全部通过 → 推进阶段
     const nextPhase = currentPhase + 1;
 
+    // 自动创建标记文件（由 Hook 创建，不是 LLM）
+    const markerFile = path.join(PHASE_LOG_DIR, `.phase${currentPhase}-gate-passed`);
+    try {
+      if (!fs.existsSync(PHASE_LOG_DIR)) {
+        fs.mkdirSync(PHASE_LOG_DIR, { recursive: true });
+      }
+      fs.writeFileSync(markerFile, JSON.stringify({
+        phase: currentPhase,
+        passedAt: new Date().toISOString(),
+        gateResults: results
+      }, null, 2));
+    } catch (e) {
+      // 标记文件创建失败不阻塞流程
+      console.error(`[phase-controller] Marker file warning: ${e.message}`);
+    }
+
     // 清理上阶段 Team
     cleanPreviousTeam(nextPhase, rageMode);
 

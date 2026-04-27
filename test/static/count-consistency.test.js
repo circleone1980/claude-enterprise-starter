@@ -2,9 +2,9 @@ const { test, describe } = require('node:test');
 const assert = require('node:assert');
 const { loadJSON, listSkillDirs, listAgentFiles, listRuleFiles, ROOT } = require('../helpers/config-loader');
 
-const EXPECTED_AGENT_COUNT = 17;
-const EXPECTED_SKILL_COUNT = 38;
-const EXPECTED_RULE_COUNT = 17;
+const EXPECTED_AGENT_COUNT = 18;
+const EXPECTED_SKILL_COUNT = 15;
+const EXPECTED_RULE_COUNT = 19;
 
 describe('数量一致性 - 文件/配置计数校验', () => {
   test(`agent 文件数量 = ${EXPECTED_AGENT_COUNT}`, () => {

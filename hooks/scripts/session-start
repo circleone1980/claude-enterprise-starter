@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# session-start — SessionStart hook for CE Framework
+#
+# 在每次会话启动时注入 using-ce-framework 元技能内容，
+# 确保 LLM 从第一条回复就知道框架的存在和使用规则。
+#
+# 参考: superpowers/hooks/session-start
+# Updated: 2026-04-27
+
+set -euo pipefail
+
+# Determine project root directory
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+
+# 1. 读取元技能内容
+META_SKILL="${PROJECT_ROOT}/skills/using-ce-framework/SKILL.md"
+if [ ! -f "$META_SKILL" ]; then
+  # 元技能文件不存在，静默退出
+  echo '{}'
+  exit 0
+fi
+
+meta_content=$(cat "$META_SKILL")
+
+# 2. 读取当前阶段信息
+PHASE_FILE="${PROJECT_ROOT}/.claude/logs/current-phase.json"
+phase_info="未初始化"
+if [ -f "$PHASE_FILE" ]; then
+  phase_info=$(cat "$PHASE_FILE" 2>/dev/null || echo "读取失败")
+fi
+
+# 3. 读取项目版本
+version_info="4.1.0"
+if [ -f "${PROJECT_ROOT}/package.json" ]; then
+  version_info=$(node -e "try{console.log(require('${PROJECT_ROOT}/package.json').version)}catch(e){console.log('4.1.0')}" 2>/dev/null || echo "4.1.0")
+fi
+
+# 4. JSON 转义函数
+escape_for_json() {
+    local s="$1"
+    s="${s//\\/\\\\}"
+    s="${s//\"/\\\"}"
+    s="${s//$'\n'/\\n}"
+    s="${s//$'\r'/\\r}"
+    s="${s//$'\t'/\\t}"
+    printf '%s' "$s"
+}
+
+meta_escaped=$(escape_for_json "$meta_content")
+phase_escaped=$(escape_for_json "$phase_info")
+
+# 5. 构建注入上下文
+session_context="<EXTREMELY_IMPORTANT>\\n你正在使用 CE Framework v${version_info}。\\n\\n**以下是你的元技能 'using-ce-framework'——你使用所有 Skills 的入门指南。对于其他所有 Skills，使用 'Skill' 工具按需加载：**\\n\\n${meta_escaped}\\n\\n**当前阶段信息：**\\n${phase_escaped}\\n</EXTREMELY_IMPORTANT>"
+
+# 6. 输出（适配 Claude Code hook 格式）
+# Claude Code 使用 hookSpecificOutput.additionalContext（嵌套格式）
+printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "SessionStart",\n    "additionalContext": "%s"\n  }\n}\n' "$session_context"
+
+exit 0

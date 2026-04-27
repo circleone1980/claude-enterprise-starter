@@ -54,8 +54,8 @@ describe('team-configs - dev team', () => {
 });
 
 describe('team-configs - full team', () => {
-  test('full team has 17 members', () => {
-    assert.strictEqual(FULL_TEAM.length, 17, `Expected 17 members, got ${FULL_TEAM.length}`);
+  test('full team has 18 members', () => {
+    assert.strictEqual(FULL_TEAM.length, 18, `Expected 18 members, got ${FULL_TEAM.length}`);
   });
 
   test('all full team members exist in SSOT agents', () => {

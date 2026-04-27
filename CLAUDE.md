@@ -1,6 +1,22 @@
-# Claude Code 项目模板 v4.0
+# Claude Code 项目模板 v4.1
 
 > 📋 **使用说明**: 复制此目录到新项目的 `.claude/` 目录，根据项目需求修改配置
+
+---
+
+## 零-A、入口规则（SessionStart 自动注入）
+
+> **状态**: 每次会话启动时，`using-ce-framework` 元技能通过 SessionStart Hook 自动注入
+> **你不需要手动调用** — 它已经在你的上下文中
+> **如果看不到 Iron Laws 和 Red Flags 表**，说明注入失败，检查 `hooks/hooks.json` 的 SessionStart 配置
+
+**核心规则**:
+1. **1% 规则** — 只要有 1% 可能性某个 Skill 适用，必须先调用
+2. **Iron Laws** — 6 条铁律不可违反（TDD / 验证 / 调试 / Review / 阶段 / 追踪）
+3. **Hard Gates** — 门禁由 PreToolUse Hook 强制执行，不可绕过
+4. **SUBAGENT-STOP** — 子 agent 跳过元技能，直接执行任务
+
+详细规则: [rules/18_entry_management.md](rules/18_entry_management.md)
 
 ---
 
@@ -10,6 +26,24 @@
 > **自动触发**: 通过 `automation/agent-orchestration.json` 的 `gstackConfig.enabled` 控制
 
 详细规则: [rules/09_gstack_integration.md](rules/09_gstack_integration.md)
+
+---
+
+## 零-B、前置插件（必需）
+
+> **安装**: `bash scripts/install-prerequisites.sh` 或 `powershell scripts\install-prerequisites.ps1`
+> **更新**: `claude plugin update <name>` + `cd ~/.claude/skills/gstack && git pull`
+
+| 插件/部署 | 提供内容 | 安装方式 |
+|-----------|---------|---------|
+| superpowers | test-driven-development, systematic-debugging, requesting/receiving-code-review, writing-plans | `claude plugin install superpowers` |
+| ecc | springboot-*, jpa-patterns, java-coding-standards, verification-loop, search-first, security-review, strategic-compact, continuous-learning, gan-style-harness | `claude plugin install ecc` |
+| compound-engineering | ce-brainstorm, ce-plan, ce-work, ce-review, ce-compound | `claude plugin install compound-engineering` |
+| ui-ux-pro-max | UI/UX 设计智能 | `claude plugin install ui-ux-pro-max` |
+| code-review | PR 代码审查 | `claude plugin install code-review` |
+| GStack (本地部署) | office-hours, design-*, autoplan, plan-*-review | `git clone` 到 `~/.claude/skills/gstack/` |
+
+详细安装: [scripts/install-prerequisites.sh](scripts/install-prerequisites.sh)
 
 ---
 
@@ -108,13 +142,13 @@
 | Design Reviewer    | autoplan, plan-ceo-review, plan-eng-review                               | general-purpose  |
 | PM             | product-requirements, ce-brainstorm                   | planner          |
 | Architect      | writing-plans, ce-brainstorm, ce-plan                          | architect        |
-| Review Champion | adversarial-review, plan-ceo-review, plan-eng-review, ce-review, ce-brainstorm | general-purpose  |
+| Review Champion | adversarial-review, ce-review, ce-brainstorm | general-purpose  |
 | UI Designer    | ui-ux-pro-max, ui-style-selector       | general-purpose  |
-| Frontend       | tdd, antfu, ce-work                    | typescript-reviewer |
-| Backend-Python | tdd, prisma-database-setup, ce-work    | python-reviewer  |
+| Frontend       | test-driven-development, antfu, ce-work                    | typescript-reviewer |
+| Backend-Python | test-driven-development, prisma-database-setup, ce-work    | python-reviewer  |
 | Backend-Java   | springboot-patterns, springboot-tdd, ce-work | java-reviewer    |
-| QA             | tdd, verification-loop, qa, ce-review  | tdd-guide        |
-| DevOps         | code-review, security-review, ce-review, ce-compound | general-purpose  |
+| QA             | test-driven-development, verification-loop, qa, ce-review  | tdd-guide        |
+| DevOps         | ce-review, ce-compound | general-purpose  |
 | Knowledge Compounder | ce-compound                       | general-purpose  |
 
 > **Brainstormer** 是 Phase 0 专用 Agent，在 PM 写 PRD 前与用户进行产品构思。
@@ -189,6 +223,7 @@ claude --team full
 - [对抗审查规则](rules/15_adversarial_review.md) - 左右互搏文档审查
 - [CE 插件集成](rules/16_ce_integration.md) - Compound Engineering 技能映射
 - [过程追踪规则](rules/17_process_trace.md) - 产出物过程记录、门禁追踪检查
+- [入口管理规则](rules/18_entry_management.md) - SessionStart 注入 + PreToolUse 门禁 + 元技能
 
 ### 执行工具
 
@@ -199,7 +234,7 @@ claude --team full
 
 ---
 
-*模板版本: 4.0.0*
+*模板版本: 5.0.0*
 *最后更新: 2026-04-27*
-*重大变更: Brainstormer Agent + Python 默认后端 + 全生命周期 prompt 生成器 + 缺口检测 + workspace 清理*
-*重大变更: 过程追踪系统（Rule 17 + process-trace-check.js + 门禁升级）*
+*重大变更: 插件优先架构 — 本地技能 42→15，superpowers/ecc/CE/ui-ux-pro-max 插件 + GStack 本地部署*
+*重大变更: 入口管理系统（SessionStart 注入 + PreToolUse 门禁 + using-ce-framework 元技能）*

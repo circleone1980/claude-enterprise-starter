@@ -20,19 +20,39 @@ describe('交叉引用 - 跨文件引用一致性', () => {
     assert.strictEqual(missing.length, 0, `缺少 agentMd 文件:\n${missing.join('\n')}`);
   });
 
-  test('每个非 ce-* requiredSkill 在 skills/ 下有对应目录', () => {
+  // v5.0.0: 插件提供的技能列表（不再有本地目录）
+  const PLUGIN_SKILLS = new Set([
+    // superpowers
+    'test-driven-development', 'writing-plans', 'systematic-debugging',
+    'requesting-code-review', 'receiving-code-review',
+    // ECC
+    'springboot-patterns', 'springboot-tdd', 'springboot-security',
+    'jpa-patterns', 'java-coding-standards', 'verification-loop',
+    'search-first', 'security-review', 'strategic-compact',
+    'continuous-learning', 'gan-style-harness',
+    // code-review plugin
+    'code-review',
+    // ui-ux-pro-max plugin
+    'ui-ux-pro-max',
+    // GStack local deployment
+    'office-hours', 'design-consultation', 'design-html', 'design-shotgun',
+    'autoplan', 'plan-ceo-review', 'plan-design-review', 'plan-eng-review', 'plan-devex-review',
+  ]);
+
+  test('每个非 ce-* requiredSkill 有本地目录或由插件提供', () => {
     const skillDirs = listSkillDirs();
     const missing = [];
     for (const name of agentNames) {
       const skills = ssot.agents[name].requiredSkills || [];
       for (const skill of skills) {
         if (skill.startsWith('ce-')) continue;
+        if (PLUGIN_SKILLS.has(skill)) continue;
         if (!skillDirs.includes(skill)) {
           missing.push(`${name} → skills/${skill}`);
         }
       }
     }
-    assert.strictEqual(missing.length, 0, `缺少 skill 目录:\n${missing.join('\n')}`);
+    assert.strictEqual(missing.length, 0, `缺少 skill 目录（非插件提供）:\n${missing.join('\n')}`);
   });
 
   test('teams/dev 和 teams/full 每个 member 的 agentMd 文件存在', () => {

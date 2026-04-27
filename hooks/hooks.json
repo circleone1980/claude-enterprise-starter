@@ -1,7 +1,20 @@
 {
-  "version": "2.3.0",
-  "_comment": "Updated 2026-04-27 - v4.0.0 framework + gap-detector integration",
+  "version": "2.5.0",
+  "_comment": "Updated 2026-04-27 - v5.0.0 Plugin-first architecture + SessionStart entry management + PreToolUse phase gates",
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash hooks/scripts/session-start",
+            "description": "注入 using-ce-framework 元技能（入口管理）",
+            "async": false
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
@@ -33,6 +46,11 @@
           },
           {
             "type": "command",
+            "command": "node hooks/scripts/phase-gate-guard.js",
+            "description": "阶段门禁前置守卫 - 检查当前阶段是否允许文件操作"
+          },
+          {
+            "type": "command",
             "command": "node hooks/scripts/suggest-compact.js",
             "description": "建议压缩上下文（逻辑节点）"
           },
@@ -50,6 +68,11 @@
             "type": "command",
             "command": "node hooks/scripts/safety-guard.js",
             "description": "安全边界检查 - Write 操作"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/phase-gate-guard.js",
+            "description": "阶段门禁前置守卫 - 检查当前阶段是否允许文件操作"
           },
           {
             "type": "command",

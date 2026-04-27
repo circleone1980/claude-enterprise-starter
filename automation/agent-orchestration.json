@@ -1,6 +1,6 @@
 {
   "name": "agent-orchestration",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "enabled": true,
   "defaultBackend": "python",
   "agents": {
@@ -121,7 +121,7 @@
     },
     "Frontend": {
       "subagentType": "everything-claude-code:typescript-reviewer",
-      "requiredSkills": ["tdd", "antfu", "vitest", "ui-ux-pro-max", "code-review", "ce-work"],
+      "requiredSkills": ["test-driven-development", "antfu", "vitest", "ui-ux-pro-max", "code-review", "ce-work"],
       "parallelizable": true,
       "dependencies": ["PM", "Architect"],
       "count": 3,
@@ -172,7 +172,7 @@
     },
     "Backend-Python": {
       "subagentType": "everything-claude-code:python-reviewer",
-      "requiredSkills": ["tdd", "prisma-database-setup", "llm-integration", "vlm-integration", "code-review", "ce-work"],
+      "requiredSkills": ["test-driven-development", "prisma-database-setup", "llm-integration", "vlm-integration", "code-review", "ce-work"],
       "parallelizable": true,
       "dependencies": ["PM", "Architect"],
       "count": 1,
@@ -201,7 +201,7 @@
     },
     "QA": {
       "subagentType": "everything-claude-code:tdd-guide",
-      "requiredSkills": ["tdd", "verification-loop", "code-review", "security-review", "qa", "ce-review"],
+      "requiredSkills": ["test-driven-development", "verification-loop", "code-review", "security-review", "qa", "ce-review"],
       "parallelizable": false,
       "dependencies": ["Frontend", "Backend-Java", "Backend-Python"],
       "count": 1,
@@ -277,7 +277,7 @@
     },
     "GAN-Planner": {
       "subagentType": "everything-claude-code:planner",
-      "requiredSkills": ["gan-harness", "writing-plans", "product-requirements"],
+      "requiredSkills": ["gan-style-harness", "writing-plans", "product-requirements"],
       "parallelizable": false,
       "dependencies": [],
       "count": 1,
@@ -293,7 +293,7 @@
     },
     "GAN-Generator": {
       "subagentType": "general-purpose",
-      "requiredSkills": ["gan-harness", "tdd", "code-review", "springboot-patterns", "antfu", "ce-work"],
+      "requiredSkills": ["gan-style-harness", "test-driven-development", "code-review", "springboot-patterns", "antfu", "ce-work"],
       "parallelizable": false,
       "dependencies": ["GAN-Planner"],
       "count": 1,
@@ -309,7 +309,7 @@
     },
     "GAN-Evaluator": {
       "subagentType": "general-purpose",
-      "requiredSkills": ["gan-harness", "code-review", "verification-loop", "security-review"],
+      "requiredSkills": ["gan-style-harness", "code-review", "verification-loop", "security-review"],
       "parallelizable": false,
       "dependencies": ["GAN-Generator"],
       "count": 1,
@@ -390,6 +390,6 @@
     "restartDelay": 10000,
     "alertOnFailure": true
   },
-  "_comment": "SSOT v4.0.0 - Updated 2026-04-27 - Brainstormer Agent + Python default backend + full lifecycle enforcement",
+  "_comment": "SSOT v5.0.0 - Updated 2026-04-27 - Plugin-first architecture: superpowers/ecc/CE/ui-ux-pro-max plugins + GStack local deployment",
   "_ssot_note": "CLAUDE.md 第七节、rules/04、rules/07、agents/*.md 均引用此文件，不重复定义"
 }

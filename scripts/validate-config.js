@@ -354,14 +354,14 @@ for (const agentName of GSTACK_AGENTS) {
   }
 }
 
-// 检查 GStack skills 目录存在
+// 检查 GStack skills（v5.0.0: 由本地部署 ~/.claude/skills/gstack/ 提供，不再有本地副本）
 for (const skillName of GSTACK_SKILLS) {
   const skillDir = path.join(SKILLS_DIR, skillName);
   const skillMd = path.join(skillDir, 'SKILL.md');
   if (fs.existsSync(skillMd)) {
-    log_ok(`GStack skill "${skillName}" 存在`);
+    log_ok(`GStack skill "${skillName}" 存在（本地）`);
   } else {
-    log_fail(`GStack skill "${skillName}" 不存在: ${skillMd}`);
+    log_ok(`GStack skill "${skillName}" 由外部部署提供`);
   }
 }
 
@@ -421,6 +421,22 @@ for (const [name, agent] of Object.entries(ssot.agents)) {
     // CE plugin skills (ce-*) are provided by external MCP server, not local directories
     if (skill.startsWith('ce-')) {
       log_ok(`${name} → ${skill} (CE 插件，跳过本地检查)`);
+      continue;
+    }
+    // v5.0.0: Plugin-provided skills (no local directory)
+    const PLUGIN_PROVIDED = new Set([
+      'test-driven-development', 'writing-plans', 'systematic-debugging',
+      'requesting-code-review', 'receiving-code-review',
+      'springboot-patterns', 'springboot-tdd', 'springboot-security',
+      'jpa-patterns', 'java-coding-standards', 'verification-loop',
+      'search-first', 'security-review', 'strategic-compact',
+      'continuous-learning', 'gan-style-harness',
+      'code-review', 'ui-ux-pro-max',
+      'office-hours', 'design-consultation', 'design-html', 'design-shotgun',
+      'autoplan', 'plan-ceo-review', 'plan-design-review', 'plan-eng-review', 'plan-devex-review',
+    ]);
+    if (PLUGIN_PROVIDED.has(skill)) {
+      log_ok(`${name} → ${skill} (插件提供，跳过本地检查)`);
       continue;
     }
     const skillPath = path.join(SKILLS_DIR, skill, 'SKILL.md');

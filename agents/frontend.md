@@ -23,7 +23,7 @@ phase: 2
 | 🔴 必调 | design-context | 获取设计约束 |
 | 🔴 必调 | ui-ux-pro-max | UI/UX 设计最佳实践 |
 | 🔴 必调 | antfu | 前端工具链规范 |
-| 🔴 必调 | tdd | TDD 开发流程 |
+| 🔴 必调 | test-driven-development | TDD 开发流程 |
 | 🔴 必调 | ce-work | 核心执行引擎（含 TDD 循环 + 进度追踪） |
 | 🟡 辅助 | ce-brainstorm | 设计困惑/方案选型 |
 | 🟡 辅助 | code-review | 代码审查 |

@@ -22,6 +22,15 @@
 - 代码优先，能用代码表达的不用文字
 - 代码变更后简要说明改了什么
 
+## 入口规则（自动注入）
+
+**SessionStart 自动注入**: 框架元技能 `using-ce-framework` 在每次会话启动时通过 Hook 自动注入。
+如果你能看到 Iron Laws 和 Red Flags 表，说明注入成功。
+
+**如果注入失败**: 检查 `hooks/hooks.json` 的 SessionStart 段，确保 `hooks/scripts/session-start` 可执行。
+
+详细规则: [rules/18_entry_management.md](18_entry_management.md)
+
 ## 退出前文档同步 🔴
 
 退出 Claude Code 前（用户说 exit、结束对话），**必须**将本次会话的所有变更同步到以下文档的对应位置：

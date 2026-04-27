@@ -5,7 +5,7 @@ const { parseFrontmatter } = require('../helpers/frontmatter-parser');
 const path = require('path');
 const fs = require('fs');
 
-const EXPECTED_SKILL_COUNT = 38;
+const EXPECTED_SKILL_COUNT = 15;
 
 /**
  * CRLF 安全的 MD 解析 — normalize 换行后再调用 parseFrontmatter
@@ -15,7 +15,7 @@ function parseSkillMD(filePath) {
   return { frontmatter: parseFrontmatter(raw), content: raw };
 }
 
-describe('Skill Frontmatter - 38 个 skill 目录验证', () => {
+describe('Skill Frontmatter - 15 个 skill 目录验证', () => {
   const skillDirs = listSkillDirs();
 
   test(`skill 目录数量为 ${EXPECTED_SKILL_COUNT}`, () => {

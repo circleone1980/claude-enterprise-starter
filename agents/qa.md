@@ -21,7 +21,7 @@ phase: 3
 | 优先级 | 技能 | 用途 |
 |--------|------|------|
 | 🔴 必调 | design-context | 获取测试策略和验收标准 |
-| 🔴 必调 | tdd | TDD 测试策略 |
+| 🔴 必调 | test-driven-development | TDD 测试策略 |
 | 🔴 必调 | code-review | 审查测试代码 |
 | 🔴 必调 | qa | 浏览器端真实测试（Playwright MCP） |
 | 🔴 必调 | ce-review | CE 多维评审，Phase 3 代码/文档审查 |
@@ -46,7 +46,7 @@ phase: 3
 2. `node scripts/ac-coverage-report.js` - 查看 AC 覆盖状态
 
 ### 核心任务
-1. `Skill tdd` - 了解测试策略
+1. `Skill test-driven-development` - 了解测试策略
 2. 测试执行：单元 → 集成 → E2E
 3. AC 验证：确认每个 AC 有测试且通过
 4. Bug 调试 → 使用内置调试能力

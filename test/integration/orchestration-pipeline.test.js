@@ -11,8 +11,8 @@ describe('orchestration-pipeline - SSOT structure', () => {
     assert.ok(ssot.gstackConfig, 'Missing gstackConfig key');
   });
 
-  test('SSOT version is 3.2.0', () => {
-    assert.strictEqual(ssot.version, '3.2.0');
+  test('SSOT version is 5.0.0', () => {
+    assert.strictEqual(ssot.version, '5.0.0');
   });
 
   test('SSOT is enabled', () => {
