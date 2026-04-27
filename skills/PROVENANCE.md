@@ -63,6 +63,12 @@
 | `plan-devex-review` | 开发者体验审查 |
 | `gstack-bridge` | Phase 0.5→1 交接协议 |
 
+### claude-plugins-official 来源
+
+| Skill | 上游名称 | 说明 |
+|-------|---------|------|
+| `code-review` | code-review | GitHub PR 多 agent 审查（置信度过滤） |
+
 ### 全局 Skills (`~/.claude/skills/`)
 
 | Skill | 说明 |

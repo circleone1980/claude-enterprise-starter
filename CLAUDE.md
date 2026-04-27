@@ -37,9 +37,10 @@
 | 插件/部署 | 提供内容 | 安装方式 |
 |-----------|---------|---------|
 | superpowers | test-driven-development, systematic-debugging, requesting/receiving-code-review, writing-plans | `claude plugin install superpowers` |
-| ecc | springboot-*, jpa-patterns, java-coding-standards, verification-loop, search-first, security-review, strategic-compact, continuous-learning, gan-style-harness, **code-review** | `claude plugin install ecc` |
+| ecc | springboot-*, jpa-patterns, java-coding-standards, verification-loop, search-first, security-review, strategic-compact, continuous-learning, gan-style-harness, code-review（本地+PR 双模式） | `claude plugin install ecc` |
 | compound-engineering | ce-brainstorm, ce-plan, ce-work, ce-review, ce-compound | `claude plugin install compound-engineering` |
 | ui-ux-pro-max | UI/UX 设计智能 | `claude plugin install ui-ux-pro-max` |
+| code-review | GitHub PR 审查（多 agent 并行 + 置信度过滤） | `claude plugin install code-review` |
 | openai-codex | GPT-5.5 代码审查 (`/codex:review`/`rescue`/`adversarial-review`) | `claude plugin install codex` |
 | GStack (本地部署) | office-hours, design-*, autoplan, plan-*-review | 前置: [Bun](https://bun.sh)；`git clone` + `./setup` |
 

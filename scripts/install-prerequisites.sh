@@ -60,6 +60,7 @@ install_plugin "ui-ux-pro-max" "ui-ux-pro-max-skill"
 install_plugin "context7" "claude-plugins-official"
 install_plugin "playwright" "claude-plugins-official"
 install_plugin "codex" "openai-codex"
+install_plugin "code-review" "claude-plugins-official"
 
 echo ""
 
@@ -105,6 +106,7 @@ enable_plugin "ecc"
 enable_plugin "compound-engineering"
 enable_plugin "ui-ux-pro-max"
 enable_plugin "codex"
+enable_plugin "code-review"
 
 echo ""
 
@@ -144,5 +146,6 @@ echo "  claude plugin update ecc"
 echo "  claude plugin update compound-engineering"
 echo "  claude plugin update ui-ux-pro-max"
 echo "  claude plugin update codex"
+echo "  claude plugin update code-review"
 echo "  cd ~/.claude/skills/gstack && git pull && ./setup"
 echo ""
