@@ -114,6 +114,22 @@ if (Test-Path $TemplatesDir) {
     Copy-Item -Path $TemplatesDir -Destination $ClaudeDir -Recurse -Force
 }
 
+# ─── Hooks 部署到 settings.json ─────────────────────
+
+Write-Host "[6c/8] 部署 hooks 到 settings.json..." -ForegroundColor Blue
+$DeployHooks = Join-Path $ClaudeDir "scripts\deploy-hooks.js"
+if (Test-Path $DeployHooks) {
+    try {
+        & node $DeployHooks $TargetDir
+        Write-Host "  ✓ hooks 已注册到 .claude/settings.json" -ForegroundColor Green
+    } catch {
+        Write-Host "  ⚠ hooks 部署失败: $_" -ForegroundColor Yellow
+        Write-Host "  手动运行: node .claude/scripts/deploy-hooks.js" -ForegroundColor Yellow
+    }
+} else {
+    Write-Host "  ⚠ deploy-hooks.js 不存在，跳过 hooks 注册" -ForegroundColor Yellow
+}
+
 # ─── 文档目录创建 ──────────────────────────────────
 
 Write-Host "[7/8] 创建文档目录结构..." -ForegroundColor Blue
