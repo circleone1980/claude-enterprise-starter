@@ -1,6 +1,6 @@
 {
-  "version": "2.5.0",
-  "_comment": "Updated 2026-04-27 - v5.0.0 Plugin-first architecture + SessionStart entry management + PreToolUse phase gates",
+  "version": "3.0.0",
+  "_comment": "Updated 2026-04-28 - v5.0.3 Skill/Team/Audit enforcement + trace-audit.jsonl auto-recording",
   "hooks": {
     "SessionStart": [
       {
@@ -51,13 +51,23 @@
           },
           {
             "type": "command",
+            "command": "node hooks/scripts/skill-invocation-guard.js",
+            "description": "Skill 调用验证 - 冻结层文档写入前检查对应 Skill marker"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/team-mode-guard.js",
+            "description": "Team 模式验证 - Phase 1 冻结层文档写入前检查 Team marker"
+          },
+          {
+            "type": "command",
             "command": "node hooks/scripts/suggest-compact.js",
             "description": "建议压缩上下文（逻辑节点）"
           },
           {
             "type": "command",
             "command": "node hooks/scripts/config-protection.js",
-            "description": "阻止修改 linter/formatter/构建配置"
+            "description": "阻止修改 linter/formatter/构建配置 + trace-audit.jsonl"
           }
         ]
       },
@@ -76,13 +86,23 @@
           },
           {
             "type": "command",
+            "command": "node hooks/scripts/skill-invocation-guard.js",
+            "description": "Skill 调用验证 - 冻结层文档写入前检查对应 Skill marker"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/team-mode-guard.js",
+            "description": "Team 模式验证 - Phase 1 冻结层文档写入前检查 Team marker"
+          },
+          {
+            "type": "command",
             "command": "node hooks/scripts/suggest-compact.js",
             "description": "建议压缩上下文（逻辑节点）"
           },
           {
             "type": "command",
             "command": "node hooks/scripts/config-protection.js",
-            "description": "阻止修改 linter/formatter/构建配置"
+            "description": "阻止修改 linter/formatter/构建配置 + trace-audit.jsonl"
           }
         ]
       },
@@ -105,6 +125,11 @@
             "type": "command",
             "command": "echo '[Agent Check] Verify subagent-type is specified for development roles'",
             "description": "Agent 角色检查"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/auto-trace-recorder.js",
+            "description": "自动记录 Agent 调用到 trace-audit.jsonl"
           }
         ]
       },
@@ -140,6 +165,31 @@
             "type": "command",
             "command": "node hooks/scripts/auto-start-agents.js",
             "description": "自动启动 Agent Team（狂暴模式）"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/team-creation-recorder.js",
+            "description": "记录 Team 创建 marker"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/auto-trace-recorder.js",
+            "description": "自动记录 TeamCreate 到 trace-audit.jsonl"
+          }
+        ]
+      },
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/scripts/skill-invocation-recorder.js",
+            "description": "记录 Skill 调用 marker"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/auto-trace-recorder.js",
+            "description": "自动记录 Skill 调用到 trace-audit.jsonl"
           }
         ]
       },

@@ -235,7 +235,8 @@ claude --team full
 
 ---
 
-*模板版本: 5.0.0*
-*最后更新: 2026-04-27*
+*模板版本: 5.0.3*
+*最后更新: 2026-04-28*
 *重大变更: 插件优先架构 — 本地技能 42→15，superpowers/ecc/CE/ui-ux-pro-max 插件 + GStack 本地部署*
 *重大变更: 入口管理系统（SessionStart 注入 + PreToolUse 门禁 + using-ce-framework 元技能）*
+*重大变更: Skill/Team/Audit 技术强制 — PreToolUse 门禁 + trace-audit.jsonl 自动记录 + 防伪造交叉验证*

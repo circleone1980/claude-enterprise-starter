@@ -12,7 +12,33 @@
 
 ---
 
-## 二、强制规则
+## 二、双层追踪机制
+
+### 第 1 层：Hook 自动记录（v5.0.3 新增）
+
+Hook 在 Skill/Agent/TeamCreate 调用时**自动追加**记录到 `.claude/logs/trace-audit.jsonl`。
+
+**此文件为只追加，不可修改**（由 config-protection.js 保护）。
+
+每行格式：
+```json
+{"timestamp":"2026-04-28T12:00:00.000Z","tool":"Skill","skill":"writing-plans","args":""}
+{"timestamp":"2026-04-28T12:01:00.000Z","tool":"Agent","agentName":"architect","subagentType":"everything-claude-code:architect"}
+{"timestamp":"2026-04-28T12:02:00.000Z","tool":"TeamCreate","teamName":"design-team"}
+```
+
+### 第 2 层：LLM 补充记录
+
+LLM 在产出物完成后，手动创建 `docs/process-trace/phase{N}/{序号}-{产出物简称}.md`，记录：
+- 执行链路详情
+- 关键决策和原因
+- 审查记录
+
+**第 1 层是真实性验证的基础，第 2 层是补充。**
+
+---
+
+## 三、强制规则
 
 ### 规则 1：冻结层文档产出前必须创建过程追踪记录
 
@@ -50,7 +76,7 @@
 
 ---
 
-## 三、过程追踪文件命名规范
+## 四、过程追踪文件命名规范
 
 ```
 docs/process-trace/
@@ -71,7 +97,23 @@ docs/process-trace/
 
 ---
 
-## 四、质量指标
+## 五、防伪造机制（v5.0.3 新增）
+
+过程追踪检查（`process-trace-check.js`）执行 5 层验证：
+
+| 层级 | 检查内容 | 数据源 |
+|------|---------|--------|
+| 第 1 层 | 过程追踪文件是否存在 | `docs/process-trace/` |
+| 第 2 层 | 必填项是否完整 | 过程追踪 `.md` 内容 |
+| 第 3 层 | requiredAgent 是否匹配 | 过程追踪 `.md` 内容 |
+| 第 4 层 | requiredSkills 是否被记录 | 过程追踪 `.md` 内容 |
+| **第 5 层** | **trace-audit.jsonl 交叉验证** | `.claude/logs/trace-audit.jsonl` |
+
+**第 5 层杜绝伪造**：如果过程追踪声称调用了 Skill `writing-plans`，但 `trace-audit.jsonl` 中无对应 Hook 自动记录 → FAIL。
+
+---
+
+## 六、质量指标
 
 | 指标 | 计算方式 | 达标阈值 |
 |------|---------|---------|
@@ -79,10 +121,11 @@ docs/process-trace/
 | Agent 合规度 | 是否使用框架定义的 Agent | 100% |
 | Rule 遵循度 | 是否遵循强制规则 | 100% |
 | 审查覆盖率 | 已审查文档数 / 应审查文档数 | ≥ 80% |
+| Audit 一致性 | 过程追踪 vs trace-audit.jsonl | 100% |
 
 ---
 
-## 五、门禁集成
+## 七、门禁集成
 
 过程追踪检查已集成到 `hooks/scripts/process-trace-check.js`，在 `phase1_to_phase2` 门禁中自动执行。
 
@@ -91,9 +134,10 @@ docs/process-trace/
 2. 过程记录中是否包含必填项
 3. requiredSkills 是否被记录为已调用
 4. requiredAgent 是否匹配
+5. **trace-audit.jsonl 交叉验证（防伪造）**
 
 ---
 
 *加载顺序: 17*
-*版本: 1.0.0*
-*最后更新: 2026-04-26*
+*版本: 2.0.0*
+*最后更新: 2026-04-28*
