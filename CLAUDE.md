@@ -232,11 +232,13 @@ claude --team full
 - **阶段 prompt 生成**: `bash scripts/orchestrate.sh --phase=N` — 生成可执行的 Agent 启动指令
 - **缺口检测**: `node scripts/gap-detector.js --phase=N` — 检测产出物/过程追踪/门禁缺口
 - **workspace 清理**: `node scripts/workspace-cleanup.js` — 清理 workspace 以便重新执行
+- **事后对账**: `node scripts/post-phase-reconcile.js --phase=N [--workspace=.] [--dry-run]` — Phase 完成后逆向生成过程追踪 + Skill markers
 
 ---
 
-*模板版本: 5.0.3*
+*模板版本: 5.0.4*
 *最后更新: 2026-04-28*
 *重大变更: 插件优先架构 — 本地技能 42→15，superpowers/ecc/CE/ui-ux-pro-max 插件 + GStack 本地部署*
 *重大变更: 入口管理系统（SessionStart 注入 + PreToolUse 门禁 + using-ce-framework 元技能）*
 *重大变更: Skill/Team/Audit 技术强制 — PreToolUse 门禁 + trace-audit.jsonl 自动记录 + 防伪造交叉验证*
+*重大变更: 事后对账机制 — post-phase-reconcile.js 逆向生成过程追踪 + 主会话守门模式*

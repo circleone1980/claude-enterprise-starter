@@ -12,7 +12,7 @@
 
 ---
 
-## 二、双层追踪机制
+## 二、三层追踪机制
 
 ### 第 1 层：Hook 自动记录（v5.0.3 新增）
 
@@ -27,14 +27,29 @@ Hook 在 Skill/Agent/TeamCreate 调用时**自动追加**记录到 `.claude/logs
 {"timestamp":"2026-04-28T12:02:00.000Z","tool":"TeamCreate","teamName":"design-team"}
 ```
 
-### 第 2 层：LLM 补充记录
+### 第 2 层：事后对账（v5.0.4 新增）
 
-LLM 在产出物完成后，手动创建 `docs/process-trace/phase{N}/{序号}-{产出物简称}.md`，记录：
-- 执行链路详情
-- 关键决策和原因
-- 审查记录
+**根因**：Claude Code 子 agent 操作不触发主会话 hooks，导致子 agent 的 Skill/Agent 调用不会被 trace-audit.jsonl 记录。
 
-**第 1 层是真实性验证的基础，第 2 层是补充。**
+**解决方案**：`scripts/post-phase-reconcile.js` 在 Phase 完成后运行，扫描实际产出物 + trace-audit.jsonl，逆向生成：
+- `docs/process-trace/phase{N}/*.md` — 过程追踪文件
+- `.claude/logs/skill-invocations/*.json` — Skill marker 文件
+
+```bash
+node scripts/post-phase-reconcile.js --phase=1 [--workspace=.] [--dry-run]
+```
+
+### 第 3 层：主会话守门（v5.0.4 新增）
+
+**模式**：子 agent 只写临时文件（`.claude/temp/`），主会话负责写入冻结层路径。
+
+**流程**：
+1. 主会话调用 Skill（hooks 触发，markers 创建）
+2. 子 agent 生成内容到 `.claude/temp/`
+3. 主会话读取临时文件，写入冻结层路径（PreToolUse guards 验证 markers）
+4. 运行 `post-phase-reconcile.js` 事后对账
+
+**第 1 层是真实性基础，第 2 层是补偿机制，第 3 层是正确流程。**
 
 ---
 
@@ -138,6 +153,23 @@ docs/process-trace/
 
 ---
 
+## 八、事后对账脚本
+
+`scripts/post-phase-reconcile.js` 支持的 Phase 配置：
+
+| Phase | 产出物数 | 产出物路径 |
+|-------|---------|-----------|
+| phase1 | 7 | PRD, user-stories, acceptance-criteria, 4 份设计文档 |
+
+脚本行为：
+1. 扫描实际存在的产出物文件
+2. 读取 trace-audit.jsonl 查找 Skill/Agent 调用证据
+3. 生成过程追踪文件（含 audit 证据统计）
+4. 补建 skill-invocation markers
+5. 跳过已存在的追踪文件
+
+---
+
 *加载顺序: 17*
-*版本: 2.0.0*
+*版本: 3.0.0*
 *最后更新: 2026-04-28*

@@ -150,23 +150,34 @@ generate_phase1_prompt() {
   local agents
   agents=$(get_phase_agents "1")
 
-  cat > "$prompt_file" << PHASE1_EOF
-# Phase 1: 需求分析 — 执行指令
+  cat > "$prompt_file" << 'PHASE1_EOF'
+# Phase 1: 需求分析 — 主会话守门模式
 
-## 阶段 Agent: $agents
+> **设计原则**: Claude Code 子 agent 操作不触发主会话 hooks。
+> 因此采用"主会话守门"模式：主会话调 Skill + 写冻结层文档，子 agent 只出内容到临时文件。
 
 ## 执行步骤
 
 ### Step 1: 创建 Team
 
-\`\`\`
+```
 TeamCreate({
   team_name: "phase1-requirements",
-  description: "Phase 1 需求分析团队 — PM + PO + Architect"
+  description: "Phase 1 需求分析团队 — PM + PO + Architect + UI Designer"
 })
-\`\`\`
+```
 
-### Step 2: 创建任务
+### Step 2: 主会话调用必需 Skills（触发 PostToolUse hooks，创建 markers）
+
+```
+// Architect 需要的 Skill
+Skill writing-plans
+
+// UI Designer 需要的 Skill
+Skill ui-ux-pro-max --stack react
+```
+
+### Step 3: 创建任务
 
 为每个产出物创建 Task:
 - PRD 文档
@@ -177,127 +188,118 @@ TeamCreate({
 - API 接口设计
 - UI 设计规范
 
-### Step 3: 启动 PM Agent
+### Step 4: 并行 spawn 子 agent 生成内容（写到临时文件）
 
-\`\`\`
+子 agent 写到 `.claude/temp/` 目录，不直接写冻结层路径。
+
+```
+// Architect agent
 Agent({
-  description: "PM 生成 PRD",
-  name: "PM",
-  subagent_type: "everything-claude-code:planner",
-  team_name: "phase1-requirements",
-  prompt: \`你是 PM（项目经理）。遵循 agents/pm.md 定义的 SOP。
+  description: "Architect 准备 3 份设计文档草稿",
+  mode: "bypassPermissions",
+  run_in_background: true,
+  prompt: `你是 Architect。准备以下 3 份设计文档的内容。
 
-必须调用以下 Skill:
-1. 调用 Skill design-context 获取项目当前设计状态
-2. 调用 Skill product-requirements 生成 PRD
+## SUBAGENT-STOP
+跳过元技能，直接执行。
 
-输出: docs/requirements/PRD.md
-过程追踪: docs/process-trace/phase1/001-prd.md\`
+## 必读文档
+1. Read docs/requirements/PRD.md
+2. Read docs/requirements/user-stories.md
+3. Read docs/requirements/acceptance-criteria.md
+
+## 输出（写到临时文件，不要写到 docs/design/）
+1. .claude/temp/01_系统架构设计.md
+2. .claude/temp/02_数据库设计.md
+3. .claude/temp/03_API接口设计.md
+
+## 设计标准
+- Production-grade, 中文, 每份 400+ 行
+- 包含 C4 架构图 / ER 图 / API 定义`
 })
-\`\`\`
 
-### Step 4: 启动 PO Agent
-
-\`\`\`
+// UI Designer agent
 Agent({
-  description: "PO 生成用户故事和验收标准",
-  name: "PO",
-  subagent_type: "general-purpose",
-  team_name: "phase1-requirements",
-  prompt: \`你是 PO（产品负责人）。遵循 agents/po.md 定义的 SOP。
+  description: "UI Designer 准备 UI 设计规范草稿",
+  mode: "bypassPermissions",
+  run_in_background: true,
+  prompt: `你是 UI Designer。准备 UI 设计规范内容。
 
-必须调用以下 Skill:
-1. 调用 Skill product-requirements 分析需求
+## SUBAGENT-STOP
+跳过元技能，直接执行。
 
-输出:
-- docs/requirements/user-stories.md
-- docs/requirements/acceptance-criteria.md
-过程追踪: docs/process-trace/phase1/002-user-stories.md, 003-acceptance-criteria.md\`
+## 必读文档
+1. Read docs/requirements/PRD.md
+2. Read docs/requirements/user-stories.md
+
+## 输出（写到临时文件，不要写到 docs/design/）
+- .claude/temp/04_UI设计规范.md
+
+## 设计标准
+- 75 寸大屏 3840x2160, 深色主题, 中文, 500+ 行
+- 设计令牌 / 组件库 / 布局系统 / 动效规范`
 })
-\`\`\`
+```
 
-### Step 5: 启动 Architect Agent
+### Step 5: 子 agent 完成后，主会话写入冻结层文档
 
-\`\`\`
-Agent({
-  description: "Architect 生成设计文档",
-  name: "Architect",
-  subagent_type: "everything-claude-code:architect",
-  team_name: "phase1-requirements",
-  prompt: \`你是 Architect（架构师）。遵循 agents/architect.md 定义的 SOP。
+等待子 agent 完成（自动通知），然后主会话执行：
 
-必须调用以下 Skill:
-1. 调用 Skill writing-plans 生成系统架构设计
-2. 调用 Skill design-context 获取设计约束
+```
+// 读取临时文件内容
+const arch1 = Read('.claude/temp/01_系统架构设计.md')
+const arch2 = Read('.claude/temp/02_数据库设计.md')
+const arch3 = Read('.claude/temp/03_API接口设计.md')
+const ui4   = Read('.claude/temp/04_UI设计规范.md')
 
-输出:
-- docs/design/01_系统架构设计.md
-- docs/design/02_数据库设计.md
-- docs/design/03_API接口设计.md
-过程追踪: docs/process-trace/phase1/004-architecture.md, 005-database.md, 006-api.md\`
-})
-\`\`\`
+// 主会话写入冻结层路径 → PreToolUse hooks 验证 Skill markers → 放行
+Write('docs/design/01_系统架构设计.md', arch1)
+Write('docs/design/02_数据库设计.md', arch2)
+Write('docs/design/03_API接口设计.md', arch3)
+Write('docs/design/04_UI设计规范.md', ui4)
+```
 
-### Step 6: 启动 UI Designer Agent
+### Step 6: 事后对账（自动生成 process-trace）
 
-\`\`\`
-Agent({
-  description: "UI Designer 生成 UI 规范",
-  name: "UI-Designer",
-  subagent_type: "general-purpose",
-  team_name: "phase1-requirements",
-  prompt: \`你是 UI Designer。遵循 agents/ui-designer.md 定义的 SOP。
+```bash
+node scripts/post-phase-reconcile.js --phase=1
+```
 
-必须调用以下 Skill:
-1. 调用 Skill ui-ux-pro-max 获取 UI 最佳实践
-2. 调用 Skill ui-style-selector 选择 UI 风格
-
-输出: docs/design/04_UI设计规范.md
-过程追踪: docs/process-trace/phase1/007-ui-design.md\`
-})
-\`\`\`
+此脚本会：
+- 扫描所有冻结层文档
+- 读取 .claude/logs/trace-audit.jsonl 中的记录
+- 自动生成 docs/process-trace/phase1/ 下的过程追踪文件
+- 补建 .claude/logs/skill-invocations/ 中的 marker 文件
 
 ### Step 7: 对抗审查（4 个 Review Champion 并行）
 
-PM/PO/Architect 完成后，启动 4 个并行审查:
-
-\`\`\`
+```
 Agent({ name: "Review-PRD", subagent_type: "general-purpose",
-  prompt: "执行对抗审查。Read docs/requirements/PRD.md，从对立视角主动挑战每个假设和设计决策。输出到 docs/reviews/review-prd.md" })
+  prompt: "执行对抗审查。Read docs/requirements/PRD.md，挑战假设和决策。输出到 docs/reviews/review-prd.md" })
 
 Agent({ name: "Review-Arch", subagent_type: "general-purpose",
-  prompt: "执行对抗审查。Read docs/design/01_系统架构设计.md，从对立视角主动挑战架构决策。输出到 docs/reviews/review-architecture.md" })
+  prompt: "执行对抗审查。Read docs/design/01_系统架构设计.md，挑战架构决策。输出到 docs/reviews/review-architecture.md" })
 
 Agent({ name: "Review-API", subagent_type: "general-purpose",
-  prompt: "执行对抗审查。Read docs/design/03_API接口设计.md，从对立视角主动挑战 API 设计。输出到 docs/reviews/review-api.md" })
+  prompt: "执行对抗审查。Read docs/design/03_API接口设计.md，挑战 API 设计。输出到 docs/reviews/review-api.md" })
 
 Agent({ name: "Review-UI", subagent_type: "general-purpose",
-  prompt: "执行对抗审查。Read docs/design/04_UI设计规范.md，从对立视角主动挑战 UI 设计。输出到 docs/reviews/review-ui.md" })
-\`\`\`
+  prompt: "执行对抗审查。Read docs/design/04_UI设计规范.md，挑战 UI 设计。输出到 docs/reviews/review-ui.md" })
+```
 
-### Step 8: 综合审查报告
+### Step 8: 综合审查报告 + 修复
 
-生成 docs/reviews/phase1-review-report.md
+生成 docs/reviews/phase1-review-report.md，修复审查发现的问题
 
-### Step 9: 修复审查发现的问题
+### Step 9: 验证
 
-### Step 10: 过程追踪记录
+```bash
+node hooks/scripts/process-trace-check.js --phase=phase1
+```
 
-创建 docs/process-trace/phase1/008-review.md 记录审查过程
+### Step 10: 文档冻结 + 人工审批
 
-### Step 11: 运行缺口检测
-
-\`\`\`bash
-node scripts/gap-detector.js --phase=1
-\`\`\`
-
-### Step 12: 文档冻结
-
-创建 docs/requirements/.frozen 标记文件
-
-### Step 13: 人工审批
-
-请求用户确认文档冻结
+创建 docs/requirements/.frozen，请求用户确认
 PHASE1_EOF
 
   log_ok "Phase 1 prompt 已生成: $prompt_file"
