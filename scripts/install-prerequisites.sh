@@ -18,8 +18,34 @@ echo " claude-enterprise-starter v5.0 前置安装"
 echo "============================================"
 echo ""
 
+# ---- Step 0: 系统依赖检查 ----
+echo "=== 0/6 系统依赖检查 ==="
+
+check_cmd() {
+  if command -v "$1" &>/dev/null; then
+    ok "$1 已安装 ($($1 --version 2>/dev/null | head -1))"
+  else
+    fail "$1 未安装 — $2"
+    return 1
+  fi
+}
+
+DEPS_OK=true
+check_cmd node   "https://nodejs.org" || DEPS_OK=false
+check_cmd git    "https://git-scm.com" || DEPS_OK=false
+check_cmd jq     "https://jqlang.github.io/jq 或 winget install jqlang.jq" || DEPS_OK=false
+check_cmd gh     "https://cli.github.com 或 winget install GitHub.cli" || DEPS_OK=false
+
+if [ "$DEPS_OK" = false ]; then
+  echo ""
+  fail "缺少系统依赖，请先安装后再运行此脚本"
+  exit 1
+fi
+
+echo ""
+
 # ---- Step 1: 添加插件市场 ----
-echo "=== 1/5 添加插件市场 ==="
+echo "=== 1/6 添加插件市场 ==="
 
 add_marketplace() {
   local name="$1"
@@ -39,7 +65,7 @@ add_marketplace "ui-ux-pro-max-skill" "nextlevelbuilder/ui-ux-pro-max-skill"
 echo ""
 
 # ---- Step 2: 安装核心插件 ----
-echo "=== 2/5 安装核心插件 ==="
+echo "=== 2/6 安装核心插件 ==="
 
 install_plugin() {
   local name="$1"
@@ -65,7 +91,7 @@ install_plugin "code-review" "claude-plugins-official"
 echo ""
 
 # ---- Step 3: 部署 GStack ----
-echo "=== 3/5 部署 GStack 到本地 ==="
+echo "=== 3/6 部署 GStack 到本地 ==="
 
 # 前置检查: Bun（GStack setup 依赖）
 if command -v bun &>/dev/null; then
@@ -94,7 +120,7 @@ fi
 echo ""
 
 # ---- Step 4: 启用插件 ----
-echo "=== 4/5 启用插件 ==="
+echo "=== 4/6 启用插件 ==="
 
 enable_plugin() {
   local name="$1"
@@ -111,7 +137,7 @@ enable_plugin "code-review"
 echo ""
 
 # ---- Step 5: 验证安装 ----
-echo "=== 5/5 验证安装 ==="
+echo "=== 5/6 验证安装 ==="
 
 echo ""
 echo "--- 插件列表 ---"

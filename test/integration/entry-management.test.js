@@ -116,18 +116,18 @@ assert(claudeMd.includes('using-ce-framework'),
   'CLAUDE.md 引用 using-ce-framework');
 assert(claudeMd.includes('入口规则'),
   'CLAUDE.md 有入口规则段落');
-assert(claudeMd.includes('5.0.0') || claudeMd.includes('v5.0'),
-  'CLAUDE.md 版本号 5.0.0');
+assert(claudeMd.includes('5.0') || claudeMd.includes('v5.0'),
+  'CLAUDE.md 版本号 5.0.x');
 
 // 7. SSOT 版本
 console.log('\n--- 7. 版本号一致性 ---');
 const ssot = JSON.parse(readFile('automation/agent-orchestration.json'));
-assert(ssot.version === '5.0.0',
-  'agent-orchestration.json version = 5.0.0');
+assert(ssot.version.startsWith('5.0'),
+  'agent-orchestration.json version = 5.0.x');
 
 const pkg = JSON.parse(readFile('package.json'));
-assert(pkg.version === '5.0.0',
-  'package.json version = 5.0.0');
+assert(pkg.version === ssot.version,
+  'package.json version = agent-orchestration.json version');
 
 // 8. phase-gates.json 标记文件路径迁移
 console.log('\n--- 8. 标记文件路径迁移 ---');

@@ -31,9 +31,9 @@ if [ -f "$PHASE_FILE" ]; then
 fi
 
 # 3. 读取项目版本
-version_info="4.1.0"
+version_info="5.0.0"
 if [ -f "${PROJECT_ROOT}/package.json" ]; then
-  version_info=$(node -e "try{console.log(require('${PROJECT_ROOT}/package.json').version)}catch(e){console.log('4.1.0')}" 2>/dev/null || echo "4.1.0")
+  version_info=$(node -e "try{console.log(require('${PROJECT_ROOT}/package.json').version)}catch(e){console.log('5.0.0')}" 2>/dev/null || echo "5.0.0")
 fi
 
 # 4. JSON 转义函数

@@ -1,6 +1,6 @@
 {
   "name": "claude-enterprise-starter",
-  "version": "5.0.0",
+  "version": "5.0.2",
   "private": true,
   "description": "Enterprise-grade Claude Code configuration template",
   "scripts": {

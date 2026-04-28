@@ -8,8 +8,38 @@ Write-Host " claude-enterprise-starter v5.0 前置安装" -ForegroundColor Cyan
 Write-Host "============================================" -ForegroundColor Cyan
 Write-Host ""
 
+# ---- Step 0: 系统依赖检查 ----
+Write-Host "=== 0/6 系统依赖检查 ===" -ForegroundColor Yellow
+
+$depsOk = $true
+
+$deps = @(
+    @{ Name = "node"; Hint = "https://nodejs.org" },
+    @{ Name = "git"; Hint = "https://git-scm.com" },
+    @{ Name = "jq"; Hint = "winget install jqlang.jq" },
+    @{ Name = "gh"; Hint = "winget install GitHub.cli" }
+)
+
+foreach ($dep in $deps) {
+    $found = $null -ne (Get-Command $dep.Name -ErrorAction SilentlyContinue)
+    if ($found) {
+        Write-Host "[OK] $($dep.Name) 已安装" -ForegroundColor Green
+    } else {
+        Write-Host "[FAIL] $($dep.Name) 未安装 — $($dep.Hint)" -ForegroundColor Red
+        $depsOk = $false
+    }
+}
+
+if (-not $depsOk) {
+    Write-Host ""
+    Write-Host "[FAIL] 缺少系统依赖，请先安装后再运行此脚本" -ForegroundColor Red
+    exit 1
+}
+
+Write-Host ""
+
 # ---- Step 1: 添加插件市场 ----
-Write-Host "=== 1/5 添加插件市场 ===" -ForegroundColor Yellow
+Write-Host "=== 1/6 添加插件市场 ===" -ForegroundColor Yellow
 
 $marketplaces = @(
     @{ Name = "ecc"; Repo = "affaan-m/everything-claude-code" },
@@ -30,7 +60,7 @@ foreach ($mp in $marketplaces) {
 Write-Host ""
 
 # ---- Step 2: 安装核心插件 ----
-Write-Host "=== 2/5 安装核心插件 ===" -ForegroundColor Yellow
+Write-Host "=== 2/6 安装核心插件 ===" -ForegroundColor Yellow
 
 $plugins = @(
     "superpowers",
@@ -56,7 +86,7 @@ foreach ($plugin in $plugins) {
 Write-Host ""
 
 # ---- Step 3: 部署 GStack ----
-Write-Host "=== 3/5 部署 GStack ===" -ForegroundColor Yellow
+Write-Host "=== 3/6 部署 GStack ===" -ForegroundColor Yellow
 
 # 前置检查: Bun（GStack setup 依赖）
 $bunExists = $null -ne (Get-Command bun -ErrorAction SilentlyContinue)
@@ -90,7 +120,7 @@ if ($bunExists) {
 Write-Host ""
 
 # ---- Step 4: 启用插件 ----
-Write-Host "=== 4/5 启用插件 ===" -ForegroundColor Yellow
+Write-Host "=== 4/6 启用插件 ===" -ForegroundColor Yellow
 
 $enablePlugins = @("superpowers", "ecc", "compound-engineering", "ui-ux-pro-max", "codex", "code-review")
 foreach ($plugin in $enablePlugins) {
@@ -105,7 +135,7 @@ foreach ($plugin in $enablePlugins) {
 Write-Host ""
 
 # ---- Step 5: 验证 ----
-Write-Host "=== 5/5 验证安装 ===" -ForegroundColor Yellow
+Write-Host "=== 5/6 验证安装 ===" -ForegroundColor Yellow
 
 Write-Host ""
 Write-Host "--- 插件列表 ---"
