@@ -100,7 +100,8 @@
         "roleCount": 1,
         "writeConflictRisk": -1
       },
-      "agentMd": "agents/architect.md"
+      "agentMd": "agents/architect.md",
+      "allowedPaths": ["src/types/", "src/api/", "src/shared/", "docs/design/"]
     },
     "UI-Designer": {
       "subagentType": "general-purpose",
@@ -134,6 +135,7 @@
         "writeConflictRisk": -1
       },
       "agentMd": "agents/frontend.md",
+      "allowedPaths": ["src/components/", "src/styles/", "src/hooks/", "src/utils/", "src/types/"],
       "codexIntegration": {
         "reviewCommand": "/codex:review",
         "rescueCommand": "/codex:rescue",
@@ -156,6 +158,7 @@
         "writeConflictRisk": -1
       },
       "agentMd": "agents/backend-java.md",
+      "allowedPaths": ["src/main/java/", "src/test/java/", "src/main/resources/"],
       "codexIntegration": {
         "reviewCommand": "/codex:review",
         "rescueCommand": "/codex:rescue",
@@ -185,6 +188,7 @@
         "writeConflictRisk": 0
       },
       "agentMd": "agents/backend-python.md",
+      "allowedPaths": ["src/api/", "src/services/", "src/models/", "src/core/", "src/utils/", "migrations/"],
       "codexIntegration": {
         "reviewCommand": "/codex:review",
         "rescueCommand": "/codex:rescue",
@@ -215,6 +219,7 @@
         "writeConflictRisk": 0
       },
       "agentMd": "agents/qa.md",
+      "allowedPaths": ["test/", "tests/", "e2e/"],
       "codexIntegration": {
         "reviewCommand": "/codex:review",
         "rescueCommand": "/codex:rescue",
@@ -237,6 +242,7 @@
         "writeConflictRisk": 0
       },
       "agentMd": "agents/devops.md",
+      "allowedPaths": [".github/", "k8s/", "docker/", "Dockerfile", "docker-compose.yml", "terraform/", ".env.example"],
       "codexIntegration": {
         "reviewCommand": "/codex:adversarial-review",
         "triggerAfterPhase": true

@@ -304,12 +304,16 @@ function main() {
 
     const prompt = generatePrompt(agentName, agent);
 
+    // Use local agent .md file name for subagentType — triggers native loading
+    const localSubagentType = path.basename(agent.agentMd, '.md');
+
     if (decision.mode === 'team') {
       // Team 模式：生成 TeamCreate 所需的 agent 列表
       for (let i = 1; i <= count; i++) {
         teamAgents.push({
           name: count > 1 ? `${agentName}-${i}` : agentName,
-          subagentType: agent.subagentType,
+          subagentType: localSubagentType,
+          originalSubagentType: agent.subagentType,
           teamMode: true,
           prompt,
           skills: agent.requiredSkills || [],
@@ -322,7 +326,8 @@ function main() {
       for (let i = 1; i <= count; i++) {
         subagentTasks.push({
           name: count > 1 ? `${agentName}-${i}` : agentName,
-          subagentType: agent.subagentType,
+          subagentType: localSubagentType,
+          originalSubagentType: agent.subagentType,
           teamMode: false,
           prompt,
           skills: agent.requiredSkills || [],

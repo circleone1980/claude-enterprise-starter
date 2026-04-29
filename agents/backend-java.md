@@ -1,9 +1,23 @@
 ---
 name: backend-java
+description: Backend Java Developer — Spring Boot 3.x / Java 17+ / TDD
 role: Backend Java Developer
 team: Development
 subagentType: everything-claude-code:java-reviewer
 phase: 2
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # Backend Java Developer (Java 后端开发)

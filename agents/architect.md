@@ -1,9 +1,23 @@
 ---
 name: architect
+description: System Architect — design decisions / ADR / tech stack selection
 role: System Architect
 team: Leadership
 subagentType: everything-claude-code:architect
 phase: 1
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # System Architect (系统架构师)

@@ -571,6 +571,76 @@ if (ssot.workConfig) {
 
 console.log('');
 
+// === 检查 13: v5.1.0 角色门禁 + 里程碑 ===
+console.log('--- 检查 13: v5.1.0 Agent allowedPaths ---');
+
+const ROLE_GUARD_AGENTS = ['Frontend', 'Backend-Java', 'Backend-Python', 'QA', 'DevOps', 'Architect'];
+for (const agentName of ROLE_GUARD_AGENTS) {
+  if (ssot.agents[agentName]) {
+    if (ssot.agents[agentName].allowedPaths && ssot.agents[agentName].allowedPaths.length > 0) {
+      log_ok(`${agentName} allowedPaths: ${ssot.agents[agentName].allowedPaths.join(', ')}`);
+    } else {
+      log_fail(`${agentName} 缺少 allowedPaths（角色门禁需要）`);
+    }
+  }
+}
+
+console.log('');
+
+// === 检查 14: v5.1.0 milestones-template.json ===
+console.log('--- 检查 14: milestones-template.json 格式 ---');
+
+const msTemplatePath = path.join(PROJECT_ROOT, 'automation', 'milestones-template.json');
+if (fs.existsSync(msTemplatePath)) {
+  try {
+    const msTemplate = JSON.parse(fs.readFileSync(msTemplatePath, 'utf-8'));
+    if (Array.isArray(msTemplate.milestones)) {
+      log_ok(`milestones-template.json 有 ${msTemplate.milestones.length} 个里程碑`);
+      for (const ms of msTemplate.milestones) {
+        if (!ms.id) log_fail(`里程碑缺少 id: ${JSON.stringify(ms)}`);
+        if (!Array.isArray(ms.dependsOn)) log_fail(`里程碑 ${ms.id} 缺少 dependsOn`);
+        if (!ms.gate) log_warn(`里程碑 ${ms.id} 缺少 gate 定义`);
+      }
+    } else {
+      log_fail('milestones-template.json 格式错误（缺少 milestones 数组）');
+    }
+  } catch (e) {
+    log_fail(`milestones-template.json 解析失败: ${e.message}`);
+  }
+} else {
+  log_warn('milestones-template.json 不存在');
+}
+
+console.log('');
+
+// === 检查 15: v5.1.0 新建 hook 脚本语法 ===
+console.log('--- 检查 15: v5.1.0 新建 Hook 脚本语法 ---');
+
+const NEW_HOOK_SCRIPTS = [
+  'hooks/scripts/agent-role-guard.js',
+  'hooks/scripts/subagent-role-bind.js',
+  'hooks/scripts/subagent-stop-verify.js',
+  'hooks/scripts/milestone-guard.js',
+  'hooks/scripts/milestone-controller.js',
+  'hooks/scripts/teammate-milestone-watch.js',
+];
+
+for (const script of NEW_HOOK_SCRIPTS) {
+  const fullPath = path.join(PROJECT_ROOT, script);
+  if (fs.existsSync(fullPath)) {
+    try {
+      require('child_process').execSync(`node --check "${fullPath}"`, { encoding: 'utf-8', stdio: 'pipe' });
+      log_ok(`${script} 语法正确`);
+    } catch (e) {
+      log_fail(`${script} 语法错误: ${e.message.split('\n')[0]}`);
+    }
+  } else {
+    log_fail(`${script} 不存在`);
+  }
+}
+
+console.log('');
+
 // === 总结 ===
 console.log('========================================');
 console.log(`  结果: ${passed} PASS, ${failed} FAIL, ${warnings} WARN`);

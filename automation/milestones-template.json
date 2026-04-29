@@ -1,0 +1,49 @@
+{
+  "_comment": "里程碑模板 — 由 orchestrate.sh 或主会话根据 PRD/设计文档动态生成",
+  "milestones": [
+    {
+      "id": "M1",
+      "name": "接口定义与数据模型",
+      "dependsOn": [],
+      "agents": ["Architect"],
+      "deliverables": ["src/types/", "src/api/routes.ts"],
+      "gate": {
+        "check": "node -e \"console.log('gate M1 passed')\"",
+        "files": ["src/types/index.ts"]
+      }
+    },
+    {
+      "id": "M2",
+      "name": "前端组件开发",
+      "dependsOn": ["M1"],
+      "agents": ["Frontend-1", "Frontend-2"],
+      "deliverables": ["src/components/"],
+      "gate": {
+        "check": "node -e \"console.log('gate M2 passed')\"",
+        "files": []
+      }
+    },
+    {
+      "id": "M3",
+      "name": "后端实现",
+      "dependsOn": ["M1"],
+      "agents": ["Backend-Python", "Backend-Java"],
+      "deliverables": ["src/api/", "src/services/"],
+      "gate": {
+        "check": "node -e \"console.log('gate M3 passed')\"",
+        "files": []
+      }
+    },
+    {
+      "id": "M4",
+      "name": "集成测试",
+      "dependsOn": ["M2", "M3"],
+      "agents": ["QA"],
+      "deliverables": ["test/", "tests/"],
+      "gate": {
+        "check": "node -e \"console.log('gate M4 passed')\"",
+        "files": []
+      }
+    }
+  ]
+}

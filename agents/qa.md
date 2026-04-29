@@ -1,9 +1,23 @@
 ---
 name: qa
+description: Quality Assurance — TDD / E2E testing / AC coverage / security review
 role: Quality Assurance
 team: Testing
 subagentType: everything-claude-code:tdd-guide
 phase: 3
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # Quality Assurance (测试工程师)

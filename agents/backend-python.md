@@ -1,9 +1,23 @@
 ---
 name: backend-python
+description: Backend Python Developer — FastAPI / Python 3.12+ / TDD / AI integration
 role: Backend Python Developer
 team: Development
 subagentType: everything-claude-code:python-reviewer
 phase: 2
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # Backend Python Developer (Python 后端开发)

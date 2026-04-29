@@ -1,9 +1,23 @@
 ---
 name: frontend
+description: Frontend Developer — React 19+ / TypeScript / TDD / antfu toolchain
 role: Frontend Developer
 team: Development
 subagentType: everything-claude-code:typescript-reviewer
 phase: 2
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # Frontend Developer (前端开发)

@@ -1,9 +1,23 @@
 ---
 name: devops
+description: DevOps Engineer — CI/CD / Docker / K8s / security review
 role: DevOps Engineer
 team: Operations
 subagentType: general-purpose
 phase: 5
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # DevOps Engineer (DevOps 工程师)

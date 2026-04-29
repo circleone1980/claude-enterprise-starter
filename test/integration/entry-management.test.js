@@ -144,6 +144,64 @@ console.log('\n--- 9. Plugin-provided verification-loop ---');
 assert(!fileExists('skills/verification-loop/SKILL.md'),
   'verification-loop 应由 ECC 插件提供（无本地副本）');
 
+// 10. v5.1.0 新增 hooks
+console.log('\n--- 10. v5.1.0 新增 Hook 脚本 ---');
+assert(fileExists('hooks/scripts/agent-role-guard.js'),
+  'hooks/scripts/agent-role-guard.js 存在');
+assert(fileExists('hooks/scripts/subagent-role-bind.js'),
+  'hooks/scripts/subagent-role-bind.js 存在');
+assert(fileExists('hooks/scripts/subagent-stop-verify.js'),
+  'hooks/scripts/subagent-stop-verify.js 存在');
+assert(fileExists('hooks/scripts/milestone-guard.js'),
+  'hooks/scripts/milestone-guard.js 存在');
+assert(fileExists('hooks/scripts/milestone-controller.js'),
+  'hooks/scripts/milestone-controller.js 存在');
+assert(fileExists('hooks/scripts/teammate-milestone-watch.js'),
+  'hooks/scripts/teammate-milestone-watch.js 存在');
+
+// 11. v5.1.0 hooks.json 新增规则
+console.log('\n--- 11. v5.1.0 hooks.json 新增规则 ---');
+assert(hooks.hooks.SubagentStart !== undefined,
+  'hooks.json 有 SubagentStart 段');
+assert(hooks.hooks.SubagentStop !== undefined,
+  'hooks.json 有 SubagentStop 段');
+assert(hooks.hooks.TeammateIdle !== undefined,
+  'hooks.json 有 TeammateIdle 段');
+
+const editHooksV2 = hooks.hooks.PreToolUse.find(h => h.matcher === 'Edit');
+assert(editHooksV2 && editHooksV2.hooks.some(h => h.command.includes('agent-role-guard')),
+  'PreToolUse Edit 包含 agent-role-guard');
+assert(editHooksV2 && editHooksV2.hooks.some(h => h.command.includes('milestone-guard')),
+  'PreToolUse Edit 包含 milestone-guard');
+
+const taskUpdateHooks = hooks.hooks.PostToolUse.find(h => h.matcher === 'TaskUpdate');
+assert(taskUpdateHooks && taskUpdateHooks.hooks.some(h => h.command.includes('milestone-controller')),
+  'PostToolUse TaskUpdate 包含 milestone-controller');
+
+// 12. v5.1.0 agent .md frontmatter
+console.log('\n--- 12. v5.1.0 agent .md frontmatter ---');
+const frontendMd = readFile('agents/frontend.md');
+assert(frontendMd.includes('description:'),
+  'agents/frontend.md 有 description 字段');
+assert(frontendMd.includes('tools:'),
+  'agents/frontend.md 有 tools 字段');
+
+const backendPythonMd = readFile('agents/backend-python.md');
+assert(backendPythonMd.includes('description:'),
+  'agents/backend-python.md 有 description 字段');
+assert(backendPythonMd.includes('tools:'),
+  'agents/backend-python.md 有 tools 字段');
+
+// 13. v5.1.0 milestones-template.json
+console.log('\n--- 13. v5.1.0 milestones-template.json ---');
+assert(fileExists('automation/milestones-template.json'),
+  'automation/milestones-template.json 存在');
+const msTemplate = JSON.parse(readFile('automation/milestones-template.json'));
+assert(Array.isArray(msTemplate.milestones),
+  'milestones-template.json 有 milestones 数组');
+assert(msTemplate.milestones.length >= 2,
+  'milestones-template.json 至少有 2 个里程碑');
+
 // ============================================
 console.log('\n========================================');
 console.log(`  结果: ${passed} PASS, ${failed} FAIL`);

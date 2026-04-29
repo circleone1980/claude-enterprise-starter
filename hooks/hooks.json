@@ -61,6 +61,16 @@
           },
           {
             "type": "command",
+            "command": "node hooks/scripts/agent-role-guard.js",
+            "description": "角色门禁 - Phase 2+ 写 src/test 前检查是否已采用角色"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/milestone-guard.js",
+            "description": "里程碑门禁 - 检查写入路径所属里程碑的前置依赖"
+          },
+          {
+            "type": "command",
             "command": "node hooks/scripts/suggest-compact.js",
             "description": "建议压缩上下文（逻辑节点）"
           },
@@ -93,6 +103,16 @@
             "type": "command",
             "command": "node hooks/scripts/team-mode-guard.js",
             "description": "Team 模式验证 - Phase 1 冻结层文档写入前检查 Team marker"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/agent-role-guard.js",
+            "description": "角色门禁 - Phase 2+ 写 src/test 前检查是否已采用角色"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/milestone-guard.js",
+            "description": "里程碑门禁 - 检查写入路径所属里程碑的前置依赖"
           },
           {
             "type": "command",
@@ -155,6 +175,11 @@
             "type": "command",
             "command": "node hooks/scripts/process-trace-check.js --phase=phase1",
             "description": "过程追踪完整性检查（Rule 17）"
+          },
+          {
+            "type": "command",
+            "command": "node hooks/scripts/milestone-controller.js",
+            "description": "里程碑完成检查 — 任务完成时检查 gate 条件"
           }
         ]
       },
@@ -210,6 +235,42 @@
             "type": "command",
             "command": "node hooks/scripts/gstack-output-validator.js",
             "description": "验证 GStack 输出文档完整性"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/scripts/subagent-role-bind.js",
+            "description": "独立 Subagent 角色注入（Team teammate 已由 subagent_type 原生加载，此 hook 仅处理非 Team 场景）"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/scripts/subagent-stop-verify.js",
+            "description": "Subagent 产出物验证 + audit 记录"
+          }
+        ]
+      }
+    ],
+    "TeammateIdle": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node hooks/scripts/teammate-milestone-watch.js",
+            "description": "里程碑看门狗 — 有未完成任务时阻止 teammate 闲置"
           }
         ]
       }
