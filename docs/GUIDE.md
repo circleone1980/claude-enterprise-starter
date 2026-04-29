@@ -53,12 +53,25 @@ AI Agent Team（18 角色 + 角色绑定 + allowedPaths 路径门禁）
 npm install -g @anthropic-ai/claude-code
 ```
 
-安装 CE 插件（必需依赖）：
+安装前置插件（必需依赖）：
 ```bash
-# 全局安装 Compound Engineering 插件
-npm install -g @anthropic-ai/claude-code-ce-plugin
+# 一键安装所有前置插件（Unix）
+bash scripts/install-prerequisites.sh
 
-# 健康检查（确认 CE 插件安装成功）
+# 一键安装所有前置插件（Windows PowerShell）
+powershell -ExecutionPolicy Bypass -File scripts\install-prerequisites.ps1
+
+# 或手动逐个安装
+claude plugin install superpowers
+claude plugin install ecc
+claude plugin install compound-engineering
+claude plugin install ui-ux-pro-max
+claude plugin install context7
+claude plugin install playwright
+claude plugin install codex
+claude plugin install code-review
+
+# 健康检查（确认插件安装成功）
 node scripts/ce-health-check.js
 ```
 
