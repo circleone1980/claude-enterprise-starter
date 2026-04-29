@@ -75,8 +75,6 @@ claude plugin install code-review
 node scripts/ce-health-check.js
 ```
 
-> **CE 插件为必需依赖**，未安装将阻塞阶段推进。详见 `docs/CE-SETUP.md`。
-
 ### 2.2 复制模板到项目
 
 **方式一：使用安装脚本（推荐）**
