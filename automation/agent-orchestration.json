@@ -1,6 +1,6 @@
 {
   "name": "agent-orchestration",
-  "version": "5.0.2",
+  "version": "5.1.0",
   "enabled": true,
   "defaultBackend": "python",
   "agents": {

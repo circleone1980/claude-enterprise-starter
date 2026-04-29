@@ -1,6 +1,6 @@
 # Claude Enterprise Starter 使用手册
 
-> 版本: 3.2.0 | 最后更新: 2026-04-26
+> 版本: 5.1.0 | 最后更新: 2026-04-29
 
 本手册帮助团队成员快速上手 Claude Enterprise Starter 模板项目。
 
@@ -19,16 +19,18 @@ Claude Enterprise Starter 是一个**企业级 Claude Code 配置模板**，将 
 | AI 开发缺乏规范，代码质量不稳定 | 强制 TDD + 代码审查 + 质量门禁 |
 | 需求理解偏差导致返工 | PM/PO/Architect 分角色协作，冻结层文档 |
 | 前后端风格不统一 | 固化技术栈 + UI 风格选择机制 |
-| 大型项目难以管理 | 8+ 阶段开发流程（含 Phase 0.5a/0.5b/1-review/GAN） + Agent 并行开发 |
-| 重复造轮子 | 38 个技能（含 CE 插件）覆盖常见开发场景 |
+| 大型项目难以管理 | 8+ 阶段开发流程（含 Phase 0.5a/0.5b/1-review/GAN） + Agent 并行开发 + 里程碑节点式顺序执行 |
+| 重复造轮子 | 38+ 个技能（含 CE 插件）覆盖常见开发场景 |
+| Agent 角色混乱 | 主会话角色采用 + Team 角色绑定 + allowedPaths 路径门禁 |
 
 ### 核心理念
 
 ```
-AI Agent Team（16 角色（含对抗审查 Review Champion）并行）
+AI Agent Team（18 角色 + 角色绑定 + allowedPaths 路径门禁）
   + TDD（测试驱动开发）
-  + Quality Gates（质量门禁）
+  + Quality Gates（质量门禁 + 里程碑节点式顺序执行）
   + Document System（冻结/演化/ADR 三层文档）
+  + Role Adoption（主会话角色采用 + Team 角色自动绑定）
   = Production-grade Enterprise System
 ```
 
@@ -174,7 +176,7 @@ CLAUDE.local.md
 
 ### 3.3 技能系统 (`skills/`)
 
-38 个技能（来自 ECC/superpowers/gstack/official/custom/ce-plugin），详见[第五章](#五技能系统skills)。
+38+ 个技能（来自 ECC/superpowers/gstack/official/custom/ce-plugin），详见[第五章](#五技能系统skills)。
 
 ### 3.4 代理系统 (`agents/`)
 
@@ -214,6 +216,12 @@ CLAUDE.local.md
 | `format-typecheck.js` | Stop 时 | 批量格式化 + 类型检查所有编辑过的文件 |
 | `doc-sync-check.js` | Stop 时 | 提醒同步文档（README.md / GUIDE.md） |
 | `session-evaluate.js` | Stop 时 | 评估会话可提取模式 |
+| `agent-role-guard.js` | Edit/Write 前（Phase 2-5） | 角色采用门禁，检查 active-role.json + allowedPaths |
+| `milestone-guard.js` | Edit/Write 前（Phase 2-5） | 里程碑依赖检查，未完成前置里程碑阻止写入 |
+| `milestone-controller.js` | TaskUpdate 后 | 里程碑 gate 验证，通过则创建 done 标记 |
+| `teammate-milestone-watch.js` | TeammateIdle 时 | 阻止 teammate 在有未完成任务时闲置 |
+| `subagent-role-bind.js` | SubagentStart 时 | 独立 subagent 角色注入（非 Team 场景） |
+| `subagent-stop-verify.js` | SubagentStop 时 | 验证 subagent 输出完整性 |
 
 ### 3.7 文档体系 (`docs/`)
 
@@ -225,28 +233,26 @@ CLAUDE.local.md
 
 ### 4.1 CLAUDE.md — 核心指令
 
-CLAUDE.md 是 Claude Code 的主要配置文件，包含 17 个章节：
+CLAUDE.md 是 Claude Code 的主要配置文件，包含 18 个章节：
 
 | 章节 | 内容 |
 |------|------|
-| 零、GStack 产品设计层 | Phase 0.5 产品设计（可选，默认禁用） |
-| 一、基础规则 | 语言、启动约束、问题处理、开发约束、数据库变更 |
-| 一-B、技术栈约束 | React + TypeScript + Vite 固定 |
-| 二、系统设计标准 | 企业级生产系统要求 |
-| 三、上下文管理策略 | 上下文阈值策略（50%/70%/90%） |
-| 四、文档体系 | 冻结层/演化层/ADR 层 |
-| 五、需求分析方法 | Business Capability → Technical Implementation |
-| 六、系统设计粒度要求 | 功能树结构：Module → Feature → Capability → API |
-| 七、开发质量流程 | 功能完整性、代码评审、编译测试、文档更新、注释合规 |
-| 八、Agent Team Skills | 角色-技能映射（16 角色）、启动格式、禁止行为 |
-| 九、狂暴模式 | 自动化能力、阶段推进（含 Phase 0.5）、安全边界 |
-| 十、模组化规则加载 | 17 个模块化规则文件 |
-| 十一、代理定义 | 16 个角色定义文件路径 |
-| 十二、技能文件 | 38 个技能文件路径 |
-| 十三、验证与信任 | 验证策略、信任校准 |
-| 十四、Agent Team 清理机制 | TeamDelete Bug 修复、强制清理流程 |
-| 十五、智能模式选择引擎 | 评分因子、决策规则、各阶段自动决策 |
-| 十六、双模型协作策略 | GLM-5.1 + GPT-5.5 Codex、4 层触发架构 |
+| 一、入口规则 | SessionStart 注入、1% 规则、Iron Laws、Hard Gates |
+| 二、GStack 产品设计层 | Phase 0.5 产品设计（可选，默认禁用） |
+| 三、前置插件 | superpowers/ecc/CE/ui-ux-pro-max/code-review/codex/GStack |
+| 四、基础规则 | 语言、启动约束、问题处理、开发约束、数据库变更 |
+| 五、技术栈约束 | React + TypeScript + Vite 固定，Python/Java 后端 |
+| 六、系统设计标准 | 企业级生产系统要求 |
+| 七、上下文管理策略 | 上下文阈值策略（50%/70%/90%） |
+| 八、文档体系 | 冻结层/演化层/ADR 层 |
+| 九、质量门禁 | 5 项检查：完整性、评审、编译测试、文档、注释 |
+| 十、Agent Team 配置 | 18 角色、subagentType 映射、角色绑定 |
+| 十一、CE 插件集成 | brainstorm/plan/work/review/compound 全覆盖 |
+| 十二、对抗审查机制 | 左右互搏文档审查 |
+| 十三、团队启动 | `claude --team dev` / `claude --team full` |
+| 十四、规则加载 | 18 个模块化规则文件 |
+| 十五、角色采用机制 | 主会话角色采用 + active-role.json + allowedPaths |
+| 十六、里程碑执行 | 节点式顺序执行 + gate 验证 + teammate 防闲置 |
 ### 4.2 settings.json — 权限与钩子
 
 **权限控制**：
@@ -264,9 +270,12 @@ CLAUDE.md 是 Claude Code 的主要配置文件，包含 17 个章节：
 ```json
 {
   "hooks": {
-    "PreToolUse": [...],   // 工具调用前
-    "PostToolUse": [...],  // 工具调用后
-    "Scheduled": [...]     // 定时任务
+    "PreToolUse": [...],      // 工具调用前（含角色门禁、里程碑门禁）
+    "PostToolUse": [...],     // 工具调用后（含里程碑推进）
+    "SubagentStart": [...],   // 子 Agent 启动时（角色注入）
+    "SubagentStop": [...],    // 子 Agent 停止时（输出验证）
+    "TeammateIdle": [...],    // Teammate 闲置时（防闲置）
+    "Scheduled": [...]        // 定时任务
   }
 }
 ```
@@ -280,10 +289,12 @@ CLAUDE.md 是 Claude Code 的主要配置文件，包含 17 个章节：
   "agents": {
     "Frontend": {
       "subagentType": "everything-claude-code:typescript-reviewer",
-      "requiredSkills": ["tdd", "antfu", "ui-ux-pro-max", "code-review"],
+      "agentMd": "agents/frontend.md",
+      "requiredSkills": ["tdd", "antfu", "ui-ux-pro-max", "code-review", "ce-work"],
       "parallelizable": true,
       "dependencies": ["PM", "Architect"],
-      "count": 3
+      "count": 3,
+      "allowedPaths": ["src/components/", "src/styles/", "src/hooks/", "src/utils/", "src/types/"]
     }
   }
 }
@@ -291,11 +302,16 @@ CLAUDE.md 是 Claude Code 的主要配置文件，包含 17 个章节：
 
 | 字段 | 含义 |
 |------|------|
-| `subagentType` | Agent 类型（决定可用工具） |
+| `subagentType` | 原始 Agent 类型（外部插件引用，保留兼容） |
+| `agentMd` | 本地角色定义文件路径 |
 | `requiredSkills` | 该角色必须的技能列表 |
 | `parallelizable` | 是否可并行启动多个 |
 | `dependencies` | 前置依赖角色 |
 | `count` | 并行实例数量 |
+| `allowedPaths` | 角色允许写入的路径白名单（门禁用） |
+
+> **v5.1.0 Team 角色绑定**: `auto-start-agents.js` 使用 `agentMd` 文件名（如 `frontend`）作为 `subagent_type`，
+> 触发 Claude Code 原生机制自动加载 `.claude/agents/frontend.md` 的 body 内容到 teammate 的 system prompt。
 
 ---
 
@@ -416,31 +432,35 @@ Skill product-requirements --effort high
 
 ## 六、Agent Team 系统
 
-### 6.1 十六个角色
+### 6.1 十八个角色
 
-| 角色 | 职责 | Agent 类型 | 可并行 | 模式 | 评分 |
-|------|------|------------|--------|------|------|
-| **PM** | 需求拆解、任务分配、Sprint 规划 | planner | 否 | Team | 6-7 |
-| **PO** | 需求分析、用户故事、用户引导 | general-purpose | 是 | Team | 6-7 |
-| **Architect** | 系统设计、技术选型、架构规划 | architect | 是 | Team | 6-7 |
-| **UI Designer** | 界面设计、交互规范、风格选择 | general-purpose | 是 | Subagent | 0-2 |
-| **Frontend** | 前端开发（React + TS + Vite） | typescript-reviewer | 是 x3 | Subagent | 0-2 |
-| **Backend-Java** | Java 后端开发（SpringBoot + JPA） | java-reviewer | 是 x2 | Subagent | 0-2 |
-| **Backend-Python** | Python 后端开发（Prisma + LLM） | python-reviewer | 是 x1 | Subagent | 0-2 |
-| **QA** | 测试验证、Bug 追踪 | tdd-guide | 否 | Subagent | 1 |
-| **DevOps** | 部署、CI/CD、GitHub 管理 | general-purpose | 否 | Subagent | 1 |
-| **产品体验师** | 用户视角测试、体验评估 | planner | 否 | Subagent | 0 |
-| **GAN Planner** | 产品规格设计、功能拆解 | general-purpose | 否 | Subagent | 1 |
-| **GAN Generator** | 代码实现、开发服务器维护 | general-purpose | 是 | Subagent | 1 |
-| **GAN Evaluator** | 质量评估、评分反馈 | general-purpose | 否 | Subagent | 1 |
-| **Product Designer** | GStack 产品构思与 UI 探索 | general-purpose | 是 | Subagent | 1 |
-| **Design Reviewer** | GStack 计划审查与交接 | general-purpose | 否 | Subagent | 1 |
-| **Knowledge Compounder** | 知识沉淀与经验复用 | general-purpose | 否 | Subagent | 1 |
+| 角色 | 职责 | Agent 类型 | 可并行 | 模式 | 评分 | allowedPaths |
+|------|------|------------|--------|------|------|-------------|
+| **Brainstormer** | Phase 0 产品构思、需求梳理 | planner | 否 | Team | 6-7 | — |
+| **PM** | 需求拆解、任务分配、Sprint 规划 | planner | 否 | Team | 6-7 | — |
+| **PO** | 需求分析、用户故事、用户引导 | general-purpose | 是 | Team | 6-7 | — |
+| **Architect** | 系统设计、技术选型、架构规划 | architect | 是 | Team | 6-7 | src/types/, src/api/, docs/design/ |
+| **Review Champion** | 对抗审查、多维评审 | general-purpose | 否 | Team | 6-7 | — |
+| **Product Designer** | GStack 产品构思与 UI 探索 | general-purpose | 是 | Subagent | 1 | — |
+| **Design Reviewer** | GStack 计划审查与交接 | general-purpose | 否 | Subagent | 1 | — |
+| **UI Designer** | 界面设计、交互规范、风格选择 | general-purpose | 是 | Subagent | 0-2 | — |
+| **Frontend** | 前端开发（React + TS + Vite） | typescript-reviewer | 是 x3 | Subagent | 0-2 | src/components/, src/styles/, src/hooks/ |
+| **Backend-Java** | Java 后端开发（SpringBoot + JPA） | java-reviewer | 是 x2 | Subagent | 0-2 | src/main/java/, src/test/java/ |
+| **Backend-Python** | Python 后端开发（Prisma + LLM） | python-reviewer | 是 x1 | Subagent | 0-2 | src/api/, src/services/, src/models/ |
+| **QA** | 测试验证、Bug 追踪 | tdd-guide | 否 | Subagent | 1 | test/, tests/, e2e/ |
+| **DevOps** | 部署、CI/CD、GitHub 管理 | general-purpose | 否 | Subagent | 1 | .github/, k8s/, docker/ |
+| **产品体验师** | 用户视角测试、体验评估 | planner | 否 | Subagent | 0 | — |
+| **GAN Planner** | 产品规格设计、功能拆解 | general-purpose | 否 | Subagent | 1 | — |
+| **GAN Generator** | 代码实现、开发服务器维护 | general-purpose | 是 | Subagent | 1 | — |
+| **GAN Evaluator** | 质量评估、评分反馈 | general-purpose | 否 | Subagent | 1 | — |
+| **Knowledge Compounder** | 知识沉淀与经验复用 | general-purpose | 否 | Subagent | 1 | — |
 
 > **模式说明**：
 > - **Team**: 通过 `TeamCreate` 创建协作团队，Agent 之间可互相通信、共享任务列表
 > - **Subagent**: 通过 `Agent` 启动为子代理，适合独立执行明确任务
 > - **评分**: Agent 类型的复杂度评分，越高表示需要更强的协调能力
+> - **allowedPaths**: 角色允许写入的路径白名单，由 `agent-role-guard.js` 门禁强制执行
+> - **角色绑定**: Team teammate 通过 `subagent_type` 使用本地 agent .md 文件名，自动加载角色定义到 system prompt
 
 ### 6.2 Agent 类型说明
 
@@ -456,11 +476,21 @@ Skill product-requirements --effort high
 
 ### 6.3 启动 Agent 的标准格式
 
+> **v5.1.0 变更**: Team 模式下 `subagent_type` 使用本地 agent .md 文件名（如 `frontend`），
+> 触发 Claude Code 原生机制自动加载 `.claude/agents/frontend.md` 的角色定义到 teammate 的 system prompt。
+
 ```bash
-# Java 后端开发
+# Team 模式（推荐 — 协作场景）
+TeamCreate --team_name "phase2-team"
+Agent --name "Frontend-1" \
+  --subagent_type "frontend" \
+  --team_name "phase2-team" \
+  --prompt "你是前端开发。遵循 agents/frontend.md 中的 SOP。任务：实现用户注册表单组件"
+
+# Java 后端开发（Subagent 模式）
 Agent --name "Backend-Java-1" \
-  --subagent-type "everything-claude-code:java-reviewer" \
-  --prompt "你是 Java 后端开发。必须遵循以下流程：
+  --subagent-type "backend-java" \
+  --prompt "你是 Java 后端开发。遵循 agents/backend-java.md 中的 SOP：
     1. 调用 Skill springboot-patterns 获取 SpringBoot 架构模式
     2. 调用 Skill springboot-tdd 启动 TDD 流程
     3. 编写测试用例（Red 阶段）
@@ -469,10 +499,10 @@ Agent --name "Backend-Java-1" \
     6. 调用 Skill code-review 审查代码
     任务：实现用户注册 REST API"
 
-# Python 后端开发
+# Python 后端开发（Subagent 模式）
 Agent --name "Backend-Python-1" \
-  --subagent-type "everything-claude-code:python-reviewer" \
-  --prompt "你是 Python 后端开发。必须遵循以下流程：
+  --subagent-type "backend-python" \
+  --prompt "你是 Python 后端开发。遵循 agents/backend-python.md 中的 SOP：
     1. 调用 Skill design-context --role backend 获取设计约束
     2. 调用 Skill tdd 启动 TDD 流程
     3. 调用 Skill prisma-database-setup 获取数据库配置
@@ -482,10 +512,10 @@ Agent --name "Backend-Python-1" \
     7. 调用 Skill code-review 审查代码
     任务：实现用户注册 API"
 
-# 前端开发
+# 前端开发（Subagent 模式）
 Agent --name "Frontend-1" \
-  --subagent-type "everything-claude-code:typescript-reviewer" \
-  --prompt "你是前端开发。必须遵循以下流程：
+  --subagent-type "frontend" \
+  --prompt "你是前端开发。遵循 agents/frontend.md 中的 SOP：
     1. 调用 Skill design-context --role frontend 获取设计约束
     2. 调用 Skill ui-ux-pro-max --stack react 获取 UI 最佳实践
     3. 调用 Skill tdd 启动 TDD 流程
@@ -1210,6 +1240,57 @@ Skill content and instructions here...
 }
 ```
 
+### 11.5 角色采用机制（v5.1.0）
+
+主会话在 Phase 2-5 执行写操作前，必须先采用 Agent 角色：
+
+```bash
+# 采用角色（创建 .claude/logs/active-role.json）
+# 方式一：通过 /assume-role 命令
+/assume-role Frontend
+
+# 方式二：手动创建标记文件
+echo '{"role":"Frontend","adoptedAt":"2026-04-29T12:00:00Z"}' > .claude/logs/active-role.json
+```
+
+**门禁机制**（`agent-role-guard.js`）：
+- 无 `active-role.json` → 阻止写 `src/` 和 `test/`
+- 角色的 `allowedPaths` 不匹配目标路径 → 阻止
+- `docs/`, `.claude/`, `CLAUDE.md` 等豁免路径 → 任何角色可写
+- 角色过期（>30min）→ 需重新采用
+
+### 11.6 里程碑节点式执行（v5.1.0）
+
+Team 按里程碑节点顺序工作，当前节点未完成不进入下一节点。
+
+**配置**: `automation/milestones.json`（从 `milestones-template.json` 复制修改）
+
+```json
+{
+  "milestones": [
+    {
+      "id": "M1", "name": "接口定义与数据模型",
+      "dependsOn": [],
+      "agents": ["Architect"],
+      "deliverables": ["src/types/"],
+      "gate": { "check": "npm run typecheck", "files": ["src/types/index.ts"] }
+    },
+    {
+      "id": "M2", "name": "前端组件开发",
+      "dependsOn": ["M1"],
+      "agents": ["Frontend-1", "Frontend-2"],
+      "deliverables": ["src/components/"],
+      "gate": { "check": "npm test -- --run", "files": [] }
+    }
+  ]
+}
+```
+
+**三个 Hook 协作**：
+1. **`milestone-guard.js`**（PreToolUse）: 检查写入路径的里程碑前置依赖是否完成
+2. **`milestone-controller.js`**（TaskUpdate）: 验证 gate 条件，通过则创建 `milestone-{id}-done.marker`
+3. **`teammate-milestone-watch.js`**（TeammateIdle）: 有未完成任务时阻止 teammate 闲置
+
 ---
 
 ## 十二、操作手册：最佳实践与命令速查
@@ -1491,7 +1572,7 @@ node scripts/release.js
 # 标准开发团队（6 角色：PM, Architect, Frontend, Backend, QA, Review Champion）
 claude --team dev
 
-# 全功能团队（16 角色：含产品设计师、产品体验师、DevOps、GAN 全套）
+# 全功能团队（18 角色：含 Brainstormer、产品设计师、产品体验师、DevOps、GAN 全套、Knowledge Compounder）
 claude --team full
 ```
 
@@ -1751,4 +1832,4 @@ Phase 3           → /qa --diff-aware → /security-review
 
 ---
 
-*使用手册版本: 3.2.0 | 项目模板: [GitHub](https://github.com/circleone1980/claude-enterprise-starter)*
+*使用手册版本: 5.1.0 | 项目模板: [GitHub](https://github.com/circleone1980/claude-enterprise-starter)*

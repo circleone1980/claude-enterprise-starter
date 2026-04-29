@@ -1,4 +1,4 @@
-# Claude Code 项目模板 v5.0
+# Claude Code 项目模板 v5.1
 
 > 📋 **使用说明**: 复制此目录到新项目的 `.claude/` 目录，根据项目需求修改配置
 
@@ -192,7 +192,50 @@
 
 ---
 
-## 十三、团队启动
+## 十三、角色采用机制（v5.1）
+
+> **状态**: PreToolUse Hook 强制执行，不可绕过
+> **适用阶段**: Phase 2-5 写 `src/` 或 `test/` 路径时
+
+**规则**: 写代码前必须先采用 Agent 角色，否则操作被阻止
+
+**角色路径映射**（从 `agent-orchestration.json` `allowedPaths` 读取）:
+
+| 角色 | 允许路径 |
+|------|---------|
+| Frontend | `src/components/`, `src/styles/`, `src/hooks/`, `src/utils/`, `src/types/` |
+| Backend-Python | `src/api/`, `src/services/`, `src/models/`, `src/core/`, `src/utils/` |
+| Backend-Java | `src/main/java/`, `src/test/java/`, `src/main/resources/` |
+| QA | `test/`, `tests/`, `e2e/` |
+| DevOps | `.github/`, `k8s/`, `docker/`, `Dockerfile`, `docker-compose.yml` |
+| Architect | `src/types/`, `src/api/`, `src/shared/`, `docs/design/` |
+
+**豁免路径**: `docs/`, `.claude/`, `rules/`, CLAUDE.md — 任何角色可写
+
+**Team 角色绑定**: `auto-start-agents.js` 输出本地 agent .md 文件名（如 `frontend`），触发 Claude Code 原生加载 `agents/frontend.md` 的 SOP + Skill 列表到 teammate system prompt
+
+---
+
+## 十四、里程碑顺序执行（v5.1）
+
+> **状态**: 通过 `automation/milestones.json` 配置（模板: `milestones-template.json`）
+> **触发**: PreToolUse `milestone-guard.js` + PostToolUse `milestone-controller.js` + TeammateIdle `teammate-milestone-watch.js`
+
+**规则**: Team 按里程碑节点顺序工作，前置未完成则阻止写入
+
+**三件套**:
+
+| Hook | 触发时机 | 作用 |
+|------|---------|------|
+| `milestone-guard.js` | PreToolUse Edit/Write | 检查写入路径所属里程碑的前置依赖 |
+| `milestone-controller.js` | PostToolUse TaskUpdate | 任务完成时检查 gate 条件，通过则创建 done 标记 |
+| `teammate-milestone-watch.js` | TeammateIdle | 有未完成任务时阻止 teammate 闲置 |
+
+**环境变量跳过**: `CE_SKIP_MILESTONE_GUARD=1`, `CE_SKIP_MILESTONE_CHECK=1`, `CE_SKIP_MILESTONE_WATCH=1`
+
+---
+
+## 十五、团队启动
 
 ```bash
 # 标准开发团队
@@ -204,7 +247,7 @@ claude --team full
 
 ---
 
-## 十四、规则加载
+## 十六、规则加载
 
 - [全局规则](rules/00_global.md) - 语言、启动约束
 - [开发约束](rules/01_development.md) - 禁止项、编码规范
@@ -236,10 +279,15 @@ claude --team full
 
 ---
 
-*模板版本: 5.0.5*
+*模板版本: 5.1.0*
 *最后更新: 2026-04-29*
+*重大变更: v5.1.0 — Agent 角色绑定 + Team 角色绑定 + 里程碑顺序执行 + TDD 测试覆盖*
+*重大变更: 角色门禁 — agent-role-guard.js PreToolUse 强制角色采用 + allowedPaths 路径限制*
+*重大变更: Team 角色绑定 — auto-start-agents.js subagentType 改为本地 agent .md 名，触发原生加载*
+*重大变更: 独立 Subagent 角色注入 — SubagentStart additionalContext + SubagentStop 产出物验证*
+*重大变更: 里程碑执行 — milestone-guard/controller/watch 三件套 + milestones-template.json*
+*重大变更: Hook 测试覆盖 — 168 单元测试 + 50 集成测试 + 445+ 断言全部通过*
 *重大变更: 插件优先架构 — 本地技能 42→15，superpowers/ecc/CE/ui-ux-pro-max 插件 + GStack 本地部署*
 *重大变更: 入口管理系统（SessionStart 注入 + PreToolUse 门禁 + using-ce-framework 元技能）*
 *重大变更: Skill/Team/Audit 技术强制 — PreToolUse 门禁 + trace-audit.jsonl 自动记录 + 防伪造交叉验证*
 *重大变更: 事后对账机制 — post-phase-reconcile.js 逆向生成过程追踪 + 主会话守门模式*
-*重大变更: 去掉 SUBAGENT-STOP + 4 层验证 + Agent 自报机制 + FAIL 重试上报人工*

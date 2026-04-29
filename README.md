@@ -9,7 +9,7 @@
 > 🚀 Enterprise-grade Claude Code configuration template with Agent Team orchestration, Rage Mode automation, TDD workflow, and production-ready configurations.
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-blue)](https://code.claude.com)
-[![Version](https://img.shields.io/badge/Version-3.2.0-green)](./CLAUDE.md)
+[![Version](https://img.shields.io/badge/Version-5.1.0-green)](./CLAUDE.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 ### Core Architecture
@@ -18,7 +18,7 @@
 
 **How It Works**: Projects go through a 5-phase pipeline (Phase 0: Init → Phase 0.5: Product Design [optional, GStack] → Phase 1: Requirements → Phase 2: Development → Phase 3: Testing → Phase 4: UX Review → Phase 5: Deployment), with each phase requiring quality gate passage. A separate GAN Harness loop (Planner → Generator → Evaluator) handles quality-driven feature development.
 
-**Key Metrics**: 18 Agent roles | 15 Skills (+ plugins) | 18 Hook scripts | 19 Rule files | 7 Automation configs
+**Key Metrics**: 18 Agent roles | 15 Skills (+ plugins) | 25 Hook scripts | 19 Rule files | 8 Automation configs
 
 **Quick Start**: Copy `.claude/` to your project → run `claude` → type `/doctor` to validate. See [Operation Manual (Chinese)](docs/GUIDE.md#十二操作手册最佳实践与命令速查) for detailed workflows and command reference.
 
@@ -300,7 +300,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   └── github-integration.json      # GitHub auto-push config
 ├── hooks/                           # Hook system
 │   ├── hooks.json                   # Hook definitions
-│   └── scripts/                     # Hook scripts (18 scripts)
+│   └── scripts/                     # Hook scripts (25 scripts)
 │       ├── lib/workspace-resolver.js # Workspace path resolver 🆕
 │       ├── safety-guard.js          # Pre-tool safety check
 │       ├── phase-controller.js      # Phase gate validator
@@ -634,7 +634,7 @@ Agent --name "Backend-Python-1" \
 | `/memory` | View loaded files |
 | `/skills` | List available skills |
 | `/agents` | View configured agents |
-| `npm test` | Run 154 automated tests |
+| `npm test` | Run 168 hook + 50 integration tests |
 | `npm run validate` | Validate all config files |
 | `npm run check-all` | Full validation + test suite |
 
@@ -650,7 +650,7 @@ Agent --name "Backend-Python-1" \
 
 **工作原理**: 项目经历 5 阶段流水线（Phase 0: 初始化 → Phase 0.5: 产品设计 [可选, GStack] → Phase 1: 需求分析 → Phase 2: 开发实现 → Phase 3: 测试验证 → Phase 4: 产品体验 → Phase 5: 部署发布），每个阶段必须通过质量门禁才能推进。独立的 GAN Harness 循环（Planner → Generator → Evaluator）负责质量驱动的功能开发。
 
-**关键指标**: 18 个 Agent 角色 | 15 个技能（+ 插件） | 18 个 Hook 脚本 | 19 个规则文件 | 7 个自动化配置
+**关键指标**: 18 个 Agent 角色 | 15 个技能（+ 插件） | 25 个 Hook 脚本 | 19 个规则文件 | 8 个自动化配置
 
 **操作手册**: 复制 `.claude/` 到你的项目 → 运行 `claude` → 输入 `/doctor` 验证配置。详细操作指南见 [使用手册第十二章](docs/GUIDE.md#十二操作手册最佳实践与命令速查)。
 
@@ -755,7 +755,7 @@ graph TB
 | **技能系统** | 42 个集成技能（ECC/superpowers/gstack/official/custom），全部配置高级 Frontmatter |
 | **后端双栈** 🆕 | Java + Python 后端（SpringBoot + Prisma + LLM + VLM + Workflow） |
 | **GAN Harness** 🆕 | Planner→Generator→Evaluator 循环，质量驱动开发 |
-| **Hook 强化** 🆕 | 18 个 Hooks 覆盖全生命周期（提交质量、配置保护、编辑累积器、GStack 守卫） |
+| **Hook 强化** 🆕 | 25 个 Hooks 覆盖全生命周期（提交质量、配置保护、编辑累积器、GStack 守卫） |
 | **持续学习** 🆕 | 基于本能的学习系统，置信度评分 |
 | **Frontmatter 配置** | `effort`、`paths`、`allowed-tools`、`user-invocable` 精准控制技能调用 |
 | **UI 风格选择** | 60 个品牌设计模板，基于场景自动匹配 |
@@ -776,6 +776,10 @@ graph TB
 | **多维审查架构** 🆕 | CE + Codex + 内置三重审查覆盖每个阶段边界 |
 | **知识自动沉淀** 🆕 | 阶段转换时通过专属 Agent 自动提取经验并结构化存储 |
 | **结构化开发进度** 🆕 | ce-work 强制单任务迭代，自动追踪开发进度 |
+| **角色门禁** 🆕 | PreToolUse 强制角色采用 + allowedPaths 路径限制（Phase 2-5） |
+| **Team 角色绑定** 🆕 | subagentType 改为本地 agent .md 名，原生加载 SOP + Skill 到 teammate |
+| **里程碑执行** 🆕 | milestone-guard/controller/watch 三件套 + milestones-template.json |
+| **Hook 测试覆盖** 🆕 | 168 单元 + 50 集成测试 + 445+ 断言，全部通过 |
 | **版本交付自动化** 🆕 | scripts/release.js 自动生成 CHANGELOG、同步版本号、创建 git tag |
 
 ### 技术栈全景（从配置文件推断）
@@ -931,7 +935,7 @@ cp claude-enterprise-starter/CLAUDE.local.md.example your-project/CLAUDE.local.m
 │   └── github-integration.json      # GitHub 自动推送配置
 ├── hooks/                           # 钩子系统
 │   ├── hooks.json                   # 钩子定义
-│   └── scripts/                     # 钩子脚本（18 个）
+│   └── scripts/                     # 钩子脚本（25 个）
 │       ├── lib/workspace-resolver.js # 工作区路径解析模块 🆕
 │       ├── safety-guard.js          # 工具调用前安全检查
 │       ├── phase-controller.js      # 阶段门禁验证
@@ -1297,5 +1301,5 @@ MIT License
 
 ---
 
-*Template Version: 3.2.0*
-*Last Updated: 2026-04-26*
+*Template Version: 5.1.0*
+*Last Updated: 2026-04-29*
