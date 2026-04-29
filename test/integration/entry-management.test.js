@@ -202,6 +202,20 @@ assert(Array.isArray(msTemplate.milestones),
 assert(msTemplate.milestones.length >= 2,
   'milestones-template.json 至少有 2 个里程碑');
 
+// 14. v5.1.0 post-phase-reconcile v3 — 不自动补建
+console.log('\n--- 14. v5.1.0 post-phase-reconcile v3 ---');
+const reconcile = readFile('scripts/post-phase-reconcile.js');
+assert(!reconcile.includes('generateSkillMarker(') || reconcile.includes('// 已删除'),
+  'post-phase-reconcile v3 不包含 generateSkillMarker 函数（已删除）');
+assert(reconcile.includes('Layer 4: Audit 交叉验证 (WARN)'),
+  'post-phase-reconcile Layer 4 为 WARN');
+assert(reconcile.includes("r.skill === skillName"),
+  'post-phase-reconcile findSkillInAudit 使用精确匹配');
+assert(reconcile.includes('console.warn') && reconcile.includes('trace-audit.jsonl 不存在'),
+  'post-phase-reconcile readAuditLog 缺失时显式 warn');
+assert(fileExists('hooks/scripts/process-trace-check.js'),
+  'hooks/scripts/process-trace-check.js 存在');
+
 // ============================================
 console.log('\n========================================');
 console.log(`  结果: ${passed} PASS, ${failed} FAIL`);

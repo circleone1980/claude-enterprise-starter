@@ -27,16 +27,21 @@ Hook 在 Skill/Agent/TeamCreate 调用时**自动追加**记录到 `.claude/logs
 {"timestamp":"2026-04-28T12:02:00.000Z","tool":"TeamCreate","teamName":"design-team"}
 ```
 
-### 第 2 层：事后对账（v5.0.4 新增）
+### 第 2 层：事后对账（v5.0.4 新增，v5.1.0 重构）
 
 **根因**：Claude Code 子 agent 操作不触发主会话 hooks，导致子 agent 的 Skill/Agent 调用不会被 trace-audit.jsonl 记录。
 
-**解决方案**：`scripts/post-phase-reconcile.js` 在 Phase 完成后运行，扫描实际产出物 + trace-audit.jsonl，逆向生成：
-- `docs/process-trace/phase{N}/*.md` — 过程追踪文件
-- `.claude/logs/skill-invocations/*.json` — Skill marker 文件
+**解决方案**：`scripts/post-phase-reconcile.js v3` 在 Phase 完成后运行，**只报告缺失项，不自动创建**：
+- 扫描产出物 → 报告缺失的 `docs/process-trace/phase{N}/*.md`
+- 扫描 markers → 报告缺失的 `.claude/logs/skill-invocations/*.json`
+- 执行 4 层验证 → 输出验证结果
+
+> **v5.1.0 变更**: 旧版会自动补建 traces 和 markers（循环验证），v3 已删除此行为。
+> trace 和 marker 必须由实际 Hook 调用产生，事后对账只负责检测缺口。
 
 ```bash
-node scripts/post-phase-reconcile.js --phase=1 [--workspace=.] [--dry-run]
+node scripts/post-phase-reconcile.js --phase=1 [--workspace=.]
+node scripts/post-phase-reconcile.js --phase=1 --dry-run
 ```
 
 ### 第 3 层：主会话守门（v5.0.4 新增）
@@ -155,18 +160,17 @@ docs/process-trace/
 
 ## 八、事后对账脚本
 
-`scripts/post-phase-reconcile.js` 支持的 Phase 配置：
+`scripts/post-phase-reconcile.js v3` 支持的 Phase 配置：
 
 | Phase | 产出物数 | 产出物路径 |
 |-------|---------|-----------|
 | phase1 | 7 | PRD, user-stories, acceptance-criteria, 4 份设计文档 |
 
-脚本行为：
+脚本行为（v3 重构）：
 1. 扫描实际存在的产出物文件
-2. 读取 trace-audit.jsonl 查找 Skill/Agent 调用证据
-3. 生成过程追踪文件（含 audit 证据统计）
-4. 补建 skill-invocation markers
-5. 跳过已存在的追踪文件
+2. 报告缺失的过程追踪文件（**不自动创建**）
+3. 报告缺失的 skill-invocation markers（**不自动补建**）
+4. 执行 4 层验证（Layer 1-3 计入通过/失败，Layer 4 为 WARN）
 
 ---
 
@@ -176,10 +180,10 @@ docs/process-trace/
 
 | 层级 | 验证内容 | 数据源 | 通过条件 |
 |------|---------|--------|---------|
-| Layer 1 | Agent 自报文件存在 + skills_called 非空 | `.claude/logs/agent-self-report/` | 自报文件存在且包含 skills_called |
-| Layer 2 | Skill marker 文件完整 | `.claude/logs/skill-invocations/` | 每个 requiredSkill 有对应 marker |
+| Layer 1 | Agent 自报文件存在 + skills_called 非空 | `.claude/logs/agent-self-report/` | 自报文件存在且包含 skills_called（大小写不敏感） |
+| Layer 2 | Skill marker 文件完整（排除 retroactive） | `.claude/logs/skill-invocations/` | 每个 requiredSkill 有对应 marker（排除 source=post-phase-reconcile） |
 | Layer 3 | 产出物结构符合 Skill 预期 | `docs/design/*`, `docs/requirements/*` | 行数>100 + 结构化标题 + 特定内容 |
-| Layer 4 | trace-audit.jsonl 交叉验证 | `.claude/logs/trace-audit.jsonl` | 有对应 Skill 调用记录 |
+| Layer 4 | trace-audit.jsonl 交叉验证 | `.claude/logs/trace-audit.jsonl` | 每个 requiredSkill 有对应记录（精确匹配） (**WARN** — 子 agent 不触发主会话 hooks) |
 
 **全部通过 = SUCCESS（退出码 0），任一层失败 = FAIL（退出码 1）**
 
@@ -223,5 +227,5 @@ rules_followed:
 ---
 
 *加载顺序: 17*
-*版本: 4.0.0*
+*版本: 5.0.0*
 *最后更新: 2026-04-29*

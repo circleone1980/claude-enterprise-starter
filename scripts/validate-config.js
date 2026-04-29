@@ -623,6 +623,8 @@ const NEW_HOOK_SCRIPTS = [
   'hooks/scripts/milestone-guard.js',
   'hooks/scripts/milestone-controller.js',
   'hooks/scripts/teammate-milestone-watch.js',
+  'hooks/scripts/process-trace-check.js',
+  'scripts/post-phase-reconcile.js',
 ];
 
 for (const script of NEW_HOOK_SCRIPTS) {

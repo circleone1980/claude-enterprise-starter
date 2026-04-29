@@ -2,22 +2,23 @@
 
 /**
  * @module scripts/post-phase-reconcile
- * @version 2.0.0
+ * @version 3.0.0
  * @since 2026-04-28
  * @description Phase 完成后的对账 + 4 层验证脚本。
- *              v1: 事后对账（逆向生成追踪 + markers）
- *              v2: 新增 4 层验证（Agent 自报 + Skill markers + 产出物结构 + Audit 交叉验证）
- *                  FAIL 时退出码 1，主会话重新执行子 agent
+ *              v3: 删除自动补建，只报告缺失；Layer 4 降级为 WARN；精确匹配
+ *              v2: 4 层验证 + Agent 自报读取 + 验证流程
+ *              v1: 事后对账（逆向生成追踪 + markers）— 已废弃
  *
  * 用法:
  *   node scripts/post-phase-reconcile.js --phase=1 [--workspace=.]
  *   node scripts/post-phase-reconcile.js --phase=1 --dry-run
  *
  * 退出码:
- *   0 = SUCCESS（4 层验证全部通过）
+ *   0 = SUCCESS（Layer 1-3 验证通过）
  *   1 = FAIL（验证失败，需重试或人工介入）
  *
  * Changelog:
+ * - 3.0.0 (2026-04-29): 删除自动补建；Layer 4 WARN；精确匹配；每技能独立检查
  * - 2.0.0 (2026-04-29): 4 层验证 + Agent 自报读取 + 验证流程
  * - 1.0.0 (2026-04-28): 初始实现
  */
@@ -55,7 +56,10 @@ if (!config) {
 // --- 读取 trace-audit.jsonl ---
 function readAuditLog(ws) {
   const auditPath = path.join(ws, '.claude', 'logs', 'trace-audit.jsonl');
-  if (!fs.existsSync(auditPath)) return [];
+  if (!fs.existsSync(auditPath)) {
+    console.warn('[reconcile] trace-audit.jsonl 不存在');
+    return [];
+  }
   try {
     return fs.readFileSync(auditPath, 'utf-8')
       .split('\n').filter(l => l.trim())
@@ -64,11 +68,9 @@ function readAuditLog(ws) {
   } catch { return []; }
 }
 
-// --- 查找 audit log 中的 Skill 调用 ---
+// --- 查找 audit log 中的 Skill 调用（精确匹配） ---
 function findSkillInAudit(auditLog, skillName) {
-  return auditLog.filter(r =>
-    r.skill && (r.skill === skillName || r.skill.includes(skillName) || skillName.includes(r.skill))
-  );
+  return auditLog.filter(r => r.skill === skillName);
 }
 
 // --- 查找 audit log 中的 Agent 调用 ---
@@ -118,19 +120,29 @@ function verifyLayer(doc, ws) {
   const results = { layers: [], pass: true };
   const auditLog = readAuditLog(ws);
 
-  // Layer 1: Agent 自报文件存在 + skills_called 非空
+  // Layer 1: Agent 自报文件存在 + skills_called 非空（大小写不敏感）
   const selfReport = findSelfReport(doc.agent, ws);
   results.layers.push({
     name: 'Layer 1: Agent 自报',
-    pass: !!selfReport && selfReport.includes('skills_called'),
+    pass: !!selfReport && /skills[\s_-]?called/i.test(selfReport),
     detail: selfReport ? '找到自报文件' : '未找到自报文件'
   });
 
-  // Layer 2: Skill marker 文件完整
+  // Layer 2: Skill marker 文件完整（只计实时 markers）
   const invDir = path.join(ws, '.claude', 'logs', 'skill-invocations');
-  const markers = fs.existsSync(invDir)
-    ? fs.readdirSync(invDir).filter(f => doc.skills.some(s => f.includes(s)))
-    : [];
+  const markers = [];
+  if (fs.existsSync(invDir)) {
+    for (const f of fs.readdirSync(invDir)) {
+      if (f.endsWith('.json')) {
+        try {
+          const data = JSON.parse(fs.readFileSync(path.join(invDir, f), 'utf-8'));
+          if (data.source !== 'post-phase-reconcile' && doc.skills.includes(data.skill)) {
+            markers.push(f);
+          }
+        } catch { /* skip malformed */ }
+      }
+    }
+  }
   results.layers.push({
     name: 'Layer 2: Skill markers',
     pass: markers.length >= doc.skills.length,
@@ -145,123 +157,27 @@ function verifyLayer(doc, ws) {
     detail: structResult.checks.map(c => `${c.name}: ${c.pass ? '✓' : '✗'}`).join(', ')
   });
 
-  // Layer 4: trace-audit.jsonl 交叉验证
-  const skillRecords = doc.skills.flatMap(s => findSkillInAudit(auditLog, s));
+  // Layer 4: trace-audit.jsonl 交叉验证 (WARN)
+  const skillDetails = doc.skills.map(s => `${s}: ${findSkillInAudit(auditLog, s).length}条`);
+  const allSkillsFound = doc.skills.every(s => findSkillInAudit(auditLog, s).length > 0);
   results.layers.push({
-    name: 'Layer 4: Audit 交叉验证',
-    pass: skillRecords.length > 0,
-    detail: `Audit 记录 ${skillRecords.length} 条`
+    name: 'Layer 4: Audit 交叉验证 (WARN)',
+    pass: allSkillsFound,
+    warn: true,
+    detail: `Audit: ${skillDetails.join(', ')}${!allSkillsFound ? ' (子 agent 不触发主会话 hooks，属已知限制)' : ''}`
   });
 
-  results.pass = results.layers.every(l => l.pass);
+  // Layer 4 为 WARN 不计入 pass/fail 判定
+  results.pass = results.layers.filter(l => !l.warn).every(l => l.pass);
   return results;
 }
 
-// --- 生成过程追踪文件内容 ---
-function generateTraceContent(doc, auditLog, ws) {
-  const artifactPath = path.join(ws, doc.artifact);
-  const stat = fs.existsSync(artifactPath) ? fs.statSync(artifactPath) : null;
-  const mtime = stat ? stat.mtime.toISOString() : new Date().toISOString();
-  const size = stat ? Math.round(stat.size / 40) : 0;
-
-  const skillRecords = doc.skills.flatMap(s => findSkillInAudit(auditLog, s));
-  const agentRecords = findAgentInAudit(auditLog, doc.agent);
-  const skillCalled = skillRecords.length > 0;
-  const agentSpawned = agentRecords.length > 0;
-
-  // 优先读取自报内容
-  const selfReport = findSelfReport(doc.agent, ws);
-  let selfReportSection = '';
-  if (selfReport) {
-    selfReportSection = `\n## 自报来源\n> 数据来自 agent 自报文件\n\n${selfReport.substring(0, 1000)}\n`;
-  }
-
-  const timestamp = mtime.replace(/\.\d+Z$/, '').replace('T', ' ');
-
-  return `---
-type: process-trace
-phase: ${phase.replace('phase', '')}
-artifact: ${doc.artifact}
-agent: ${doc.agent}
-agentFile: agents/${doc.agent}.md
-timestamp: ${timestamp}
-status: completed
----
-
-# 过程追踪：${path.basename(doc.artifact, '.md')}
-
-## 执行链路
-
-### Step 1: Agent 启动与 Skill 调用
-- **Agent**: ${doc.agent} (\`agents/${doc.agent}.md\`)
-- **subagent_type**: ${doc.agentType}
-- **调用的 Skill**: ${doc.skills.map(s => `${s}${skillCalled ? ' ✓' : ' (未在 audit log 中找到)'}`).join(', ')}
-- **遵循的 Rule**: Rule 04 (Agent Team), Rule 07 (Skill 触发), Rule 17 (过程追踪)
-- **工作流**: ${doc.agent} agent 被主会话 spawn，调用 ${doc.skills.join(', ')} Skill 后生成文档
-- **输入**: PRD.md, user-stories.md, acceptance-criteria.md (如适用)
-- **输出**: ${doc.artifact}
-
-### Step 2: 文档生成
-- **Agent**: ${doc.agent}
-- **工作流**: 基于 Skill 指导和需求文档，生成${path.basename(doc.artifact)}
-- **输出**: ${doc.artifact} (${size} 行)
-
-### Step 3: 事后对账（本脚本）
-- **工具**: scripts/post-phase-reconcile.js v2.0.0
-- **工作流**: 扫描产出物 + 自报文件 + trace-audit.jsonl，生成过程追踪记录
-- **Audit 证据**: Skill 调用 ${skillRecords.length} 条, Agent 调用 ${agentRecords.length} 条
-- **自报状态**: ${selfReport ? '已找到' : '未找到'}
-
-## 关键决策
-| 决策 | 选择 | 原因 | 决策者 |
-|------|------|------|--------|
-| 文档生成方式 | 子 agent 异步生成 | 并行加速产出 | 主会话 |
-| Skill 调用确认 | 4 层验证 | Agent 自报 + markers + 结构 + audit | post-phase-reconcile v2 |
-${selfReport ? '| 自报内容 | 已注入追踪文件 | 确保真实记录 | Agent 自报 |\n' : ''}
-## 产出物
-- 最终文件: \`${doc.artifact}\`
-- Audit 记录: \`.claude/logs/trace-audit.jsonl\`
-- 自报文件: \`.claude/logs/agent-self-report/${doc.agent}-*.md\`
-
-## 审查记录
-- **审查方式**: 待执行（对抗审查 / ce-review）
-- **审查者**: 待指定
-- **审查意见数**: 待定
-- **审查报告**: 待生成
-
-## 质量指标
-- Skill 调用完整度: ${skillCalled ? '1/1 (100%)' : '0/1 (0%) — 未在 audit log 中找到记录'}
-- Agent 合规度: ${agentSpawned ? '是' : '未确认'}
-- Rule 遵循度: 事后对账已补偿
-- 4 层验证: 见 verifyLayer() 结果
-${selfReportSection}
-`;
-}
-
-// --- 生成 skill-invocation marker ---
-function generateSkillMarker(skillName, ws) {
-  const invDir = path.join(ws, '.claude', 'logs', 'skill-invocations');
-  if (!fs.existsSync(invDir)) {
-    fs.mkdirSync(invDir, { recursive: true });
-  }
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const markerFile = path.join(invDir, `${timestamp}-${skillName}.json`);
-  const markerData = {
-    skill: skillName,
-    timestamp: new Date().toISOString(),
-    source: 'post-phase-reconcile',
-    note: 'Retroactive marker — subagent hooks do not fire in main session',
-  };
-  fs.writeFileSync(markerFile, JSON.stringify(markerData, null, 2));
-  return markerFile;
-}
-
-// --- Dry-run 主流程（保持向后兼容） ---
+// --- Dry-run: 报告缺失项（不写入任何文件） ---
 function dryRunMain() {
   const auditLog = readAuditLog(workspace);
   console.log(`[reconcile] Audit log: ${auditLog.length} 条记录`);
 
-  let generated = 0, skipped = 0, markers = 0;
+  let missingTraces = 0, missingMarkers = 0, skipped = 0;
 
   for (const doc of config.docs) {
     const artifactPath = path.join(workspace, doc.artifact);
@@ -275,24 +191,24 @@ function dryRunMain() {
 
     if (fs.existsSync(tracePath)) {
       console.log(`  EXISTS  ${doc.traceFile}`);
-      continue;
+    } else {
+      console.log(`  MISSING  ${doc.traceFile}`);
+      console.log(`    → 需要: ${doc.agent} agent 的 ${doc.skills.join(', ')} Skill 调用`);
+      missingTraces++;
     }
-
-    const content = generateTraceContent(doc, auditLog, workspace);
-    console.log(`  DRY-RUN  ${doc.traceFile} (${content.split('\n').length} 行)`);
-    generated++;
 
     for (const skill of doc.skills) {
       const invDir = path.join(workspace, '.claude', 'logs', 'skill-invocations');
       const existing = fs.existsSync(invDir)
         ? fs.readdirSync(invDir).filter(f => f.includes(skill)) : [];
       if (existing.length === 0) {
-        markers++;
+        console.log(`    → MISSING skill marker: ${skill}`);
+        missingMarkers++;
       }
     }
   }
 
-  console.log(`\n[reconcile] 结果: ${generated} 生成, ${skipped} 跳过, ${markers} skill markers`);
+  console.log(`\n[reconcile] 结果: ${missingTraces} 缺失追踪, ${missingMarkers} 缺失 markers, ${skipped} 跳过`);
   console.log('[reconcile] (dry-run 模式，未实际写入)');
   console.log('[reconcile] 完成\n');
 }
@@ -310,31 +226,27 @@ function main() {
   const auditLog = readAuditLog(workspace);
   console.log(`[reconcile] Audit log: ${auditLog.length} 条记录`);
 
-  // Phase 1: 生成缺失的追踪文件和 markers
-  let generated = 0, skipped = 0, markers = 0;
+  // Phase 1: 扫描缺失（不自动补建）
+  let missingTraces = 0, missingMarkers = 0, skipped = 0;
   for (const doc of config.docs) {
     const artifactPath = path.join(workspace, doc.artifact);
     const tracePath = path.join(workspace, doc.traceFile);
     if (!fs.existsSync(artifactPath)) { skipped++; continue; }
     if (!fs.existsSync(tracePath)) {
-      const content = generateTraceContent(doc, auditLog, workspace);
-      const traceDir = path.dirname(tracePath);
-      if (!fs.existsSync(traceDir)) fs.mkdirSync(traceDir, { recursive: true });
-      fs.writeFileSync(tracePath, content, 'utf-8');
-      console.log(`  CREATED  ${doc.traceFile}`);
-      generated++;
+      console.log(`  MISSING  ${doc.traceFile}`);
+      missingTraces++;
     }
     for (const skill of doc.skills) {
       const invDir = path.join(workspace, '.claude', 'logs', 'skill-invocations');
       const existing = fs.existsSync(invDir)
         ? fs.readdirSync(invDir).filter(f => f.includes(skill)) : [];
       if (existing.length === 0) {
-        generateSkillMarker(skill, workspace);
-        markers++;
+        console.log(`  MISSING  skill marker: ${skill}`);
+        missingMarkers++;
       }
     }
   }
-  console.log(`[reconcile] 追踪: ${generated} 生成, ${skipped} 跳过, ${markers} markers 补建`);
+  console.log(`[reconcile] 追踪: 缺失 ${missingTraces} 个, markers 缺失 ${missingMarkers} 个, 跳过 ${skipped} 个`);
 
   // Phase 2: 4 层验证
   console.log(`\n[reconcile] === 4 层验证 ===`);
@@ -349,7 +261,8 @@ function main() {
     const status = result.pass ? 'PASS' : 'FAIL';
     console.log(`  ${status}  ${doc.artifact}`);
     result.layers.forEach(l => {
-      console.log(`    ${l.pass ? '✓' : '✗'} ${l.name}: ${l.detail}`);
+      const marker = l.warn ? '⚠' : (l.pass ? '✓' : '✗');
+      console.log(`    ${marker} ${l.name}: ${l.detail}`);
     });
 
     if (!result.pass) {
