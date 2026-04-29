@@ -7,14 +7,11 @@
     "_comment": "个人权限覆盖，会覆盖 settings.json 中的设置",
 
     "allow": [
-      "_comment": "示例：添加个人特定的权限",
       "Bash(code:*)",
       "Bash(claude:*)"
     ],
 
-    "deny": [
-      "_comment": "示例：添加个人特定的限制"
-    ]
+    "deny": []
   },
 
   "outputStyle": "default",

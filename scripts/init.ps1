@@ -1,4 +1,4 @@
-# Claude Code 模板初始化脚本 (Windows PowerShell)
+﻿# Claude Code 模板初始化脚本 (Windows PowerShell)
 # 使用方法:
 #   .\init.ps1                                          # 传统模式
 #   .\init.ps1 -Workspace -ProjectType java              # workspace 模式

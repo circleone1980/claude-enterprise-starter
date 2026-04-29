@@ -2,31 +2,20 @@
 /**
  * entry-management.test.js — 入口管理机制测试
  *
- * 验证 v5.0.0 插件优先架构 + v4.1.0 入口管理改造的完整性:
+ * 验证 v5.1.0 插件优先架构 + 入口管理改造的完整性:
  * - SessionStart 注入配置
  * - using-ce-framework 元技能
  * - PreToolUse 门禁守卫
- * - 3 个新 Skills
  * - 规则文件
  */
 
+const { test, describe } = require('node:test');
+const assert = require('node:assert');
 const fs = require('fs');
 const path = require('path');
 const { listSkillDirs } = require('../helpers/config-loader');
 
 const PROJECT_ROOT = path.resolve(__dirname, '../..');
-let passed = 0;
-let failed = 0;
-
-function assert(condition, message) {
-  if (condition) {
-    passed++;
-    console.log(`  ✅ ${message}`);
-  } else {
-    failed++;
-    console.log(`  ❌ ${message}`);
-  }
-}
 
 function fileExists(relPath) {
   return fs.existsSync(path.join(PROJECT_ROOT, relPath));
@@ -38,189 +27,282 @@ function readFile(relPath) {
   return fs.readFileSync(fullPath, 'utf-8');
 }
 
-// ============================================
-console.log('\n=== 入口管理机制测试 ===\n');
-// ============================================
+describe('entry-management — using-ce-framework meta skill', () => {
+  test('SKILL.md exists', () => {
+    assert.ok(fileExists('skills/using-ce-framework/SKILL.md'));
+  });
 
-// 1. using-ce-framework 元技能
-console.log('--- 1. using-ce-framework 元技能 ---');
-assert(fileExists('skills/using-ce-framework/SKILL.md'),
-  'skills/using-ce-framework/SKILL.md 存在');
+  test('contains Iron Laws', () => {
+    const content = readFile('skills/using-ce-framework/SKILL.md');
+    assert.ok(content.includes('Iron Laws') || content.includes('Iron Law'));
+  });
 
-const metaSkill = readFile('skills/using-ce-framework/SKILL.md');
-assert(metaSkill.includes('Iron Laws') || metaSkill.includes('Iron Law'),
-  '元技能包含 Iron Laws');
-assert(metaSkill.includes('Red Flags') || metaSkill.includes('红旗'),
-  '元技能包含 Red Flags');
-assert(metaSkill.includes('SUBAGENT-STOP'),
-  '元技能包含 SUBAGENT-STOP');
-assert(metaSkill.includes('1%') || metaSkill.includes('1%'),
-  '元技能包含 1% 规则');
-assert(metaSkill.includes('Hard Gate'),
-  '元技能包含 Hard Gates');
+  test('contains Red Flags', () => {
+    const content = readFile('skills/using-ce-framework/SKILL.md');
+    assert.ok(content.includes('Red Flags') || content.includes('红旗'));
+  });
 
-// 2. SessionStart Hook 配置
-console.log('\n--- 2. SessionStart Hook ---');
-assert(fileExists('hooks/scripts/session-start'),
-  'hooks/scripts/session-start 存在');
-assert(fileExists('hooks/scripts/run-hook.cmd'),
-  'hooks/scripts/run-hook.cmd 存在');
+  test('contains SUBAGENT-STOP', () => {
+    const content = readFile('skills/using-ce-framework/SKILL.md');
+    assert.ok(content.includes('SUBAGENT-STOP'));
+  });
 
-const hooksJson = readFile('hooks/hooks.json');
-const hooks = JSON.parse(hooksJson);
-assert(hooks.hooks.SessionStart !== undefined,
-  'hooks.json 有 SessionStart 段');
-assert(hooks.hooks.SessionStart[0].matcher === 'startup|clear|compact',
-  'SessionStart matcher 正确');
+  test('contains 1% rule', () => {
+    const content = readFile('skills/using-ce-framework/SKILL.md');
+    assert.ok(content.includes('1%'));
+  });
 
-// 3. PreToolUse 门禁守卫
-console.log('\n--- 3. PreToolUse 门禁守卫 ---');
-assert(fileExists('hooks/scripts/phase-gate-guard.js'),
-  'hooks/scripts/phase-gate-guard.js 存在');
+  test('contains Hard Gates', () => {
+    const content = readFile('skills/using-ce-framework/SKILL.md');
+    assert.ok(content.includes('Hard Gate'));
+  });
+});
 
-const editHooks = hooks.hooks.PreToolUse.find(h => h.matcher === 'Edit');
-const writeHooks = hooks.hooks.PreToolUse.find(h => h.matcher === 'Write');
+describe('entry-management — SessionStart hook', () => {
+  test('session-start directory exists', () => {
+    assert.ok(fileExists('hooks/scripts/session-start'));
+  });
 
-assert(editHooks && editHooks.hooks.some(h => h.command.includes('phase-gate-guard')),
-  'PreToolUse Edit 包含 phase-gate-guard');
-assert(writeHooks && writeHooks.hooks.some(h => h.command.includes('phase-gate-guard')),
-  'PreToolUse Write 包含 phase-gate-guard');
+  test('run-hook.cmd exists', () => {
+    assert.ok(fileExists('hooks/scripts/run-hook.cmd'));
+  });
 
-// 4. 插件提供的 Skills（v5.0.0: 由 superpowers 插件提供，无本地副本）
-console.log('\n--- 4. Plugin-provided Skills ---');
-const localSkills = listSkillDirs();
-assert(!localSkills.includes('systematic-debugging'),
-  'systematic-debugging 应由 superpowers 插件提供（无本地副本）');
-assert(!localSkills.includes('requesting-code-review'),
-  'requesting-code-review 应由 superpowers 插件提供（无本地副本）');
-assert(!localSkills.includes('receiving-code-review'),
-  'receiving-code-review 应由 superpowers 插件提供（无本地副本）');
-assert(!localSkills.includes('tdd'),
-  'tdd 应由 superpowers 插件提供（无本地副本，插件名 test-driven-development）');
+  test('hooks.json has SessionStart section', () => {
+    const hooks = JSON.parse(readFile('hooks/hooks.json'));
+    assert.ok(hooks.hooks.SessionStart !== undefined);
+  });
 
-// 5. 规则文件
-console.log('\n--- 5. 规则文件 ---');
-assert(fileExists('rules/18_entry_management.md'),
-  'rules/18_entry_management.md 存在');
+  test('SessionStart matcher is correct', () => {
+    const hooks = JSON.parse(readFile('hooks/hooks.json'));
+    assert.strictEqual(hooks.hooks.SessionStart[0].matcher, 'startup|clear|compact');
+  });
+});
 
-const rule18 = readFile('rules/18_entry_management.md');
-assert(rule18.includes('SessionStart') || rule18.includes('session-start'),
-  'Rule 18 包含 SessionStart 说明');
-assert(rule18.includes('PreToolUse') || rule18.includes('phase-gate-guard'),
-  'Rule 18 包含 PreToolUse 说明');
+describe('entry-management — PreToolUse gate guards', () => {
+  test('phase-gate-guard.js exists', () => {
+    assert.ok(fileExists('hooks/scripts/phase-gate-guard.js'));
+  });
 
-// 6. CLAUDE.md 更新
-console.log('\n--- 6. CLAUDE.md 更新 ---');
-const claudeMd = readFile('CLAUDE.md');
-assert(claudeMd.includes('using-ce-framework'),
-  'CLAUDE.md 引用 using-ce-framework');
-assert(claudeMd.includes('入口规则'),
-  'CLAUDE.md 有入口规则段落');
-assert(claudeMd.includes('5.0') || claudeMd.includes('v5.0'),
-  'CLAUDE.md 版本号 5.0.x');
+  test('PreToolUse Edit includes phase-gate-guard', () => {
+    const hooks = JSON.parse(readFile('hooks/hooks.json'));
+    const editHooks = hooks.hooks.PreToolUse.find(h => h.matcher === 'Edit');
+    assert.ok(editHooks && editHooks.hooks.some(h => h.command.includes('phase-gate-guard')));
+  });
 
-// 7. SSOT 版本
-console.log('\n--- 7. 版本号一致性 ---');
-const ssot = JSON.parse(readFile('automation/agent-orchestration.json'));
-assert(ssot.version.startsWith('5.0'),
-  'agent-orchestration.json version = 5.0.x');
+  test('PreToolUse Write includes phase-gate-guard', () => {
+    const hooks = JSON.parse(readFile('hooks/hooks.json'));
+    const writeHooks = hooks.hooks.PreToolUse.find(h => h.matcher === 'Write');
+    assert.ok(writeHooks && writeHooks.hooks.some(h => h.command.includes('phase-gate-guard')));
+  });
+});
 
-const pkg = JSON.parse(readFile('package.json'));
-assert(pkg.version === ssot.version,
-  'package.json version = agent-orchestration.json version');
+describe('entry-management — plugin-provided skills', () => {
+  const localSkills = listSkillDirs();
 
-// 8. phase-gates.json 标记文件路径迁移
-console.log('\n--- 8. 标记文件路径迁移 ---');
-const gates = JSON.parse(readFile('automation/phase-gates.json'));
-const gatesJson2 = JSON.stringify(gates);
-assert(gatesJson2.includes('.claude/logs/.phase'),
-  'phase-gates.json 包含 .claude/logs/ 路径');
-// 双路径兼容
-assert(gatesJson2.includes('.phase2-code-complete'),
-  'phase-gates.json 保留旧路径兼容');
+  test('systematic-debugging is plugin-provided (no local copy)', () => {
+    assert.ok(!localSkills.includes('systematic-debugging'));
+  });
 
-// 9. verification-loop 由 ECC 插件提供（v5.0.0 移除本地副本）
-console.log('\n--- 9. Plugin-provided verification-loop ---');
-assert(!fileExists('skills/verification-loop/SKILL.md'),
-  'verification-loop 应由 ECC 插件提供（无本地副本）');
+  test('requesting-code-review is plugin-provided', () => {
+    assert.ok(!localSkills.includes('requesting-code-review'));
+  });
 
-// 10. v5.1.0 新增 hooks
-console.log('\n--- 10. v5.1.0 新增 Hook 脚本 ---');
-assert(fileExists('hooks/scripts/agent-role-guard.js'),
-  'hooks/scripts/agent-role-guard.js 存在');
-assert(fileExists('hooks/scripts/subagent-role-bind.js'),
-  'hooks/scripts/subagent-role-bind.js 存在');
-assert(fileExists('hooks/scripts/subagent-stop-verify.js'),
-  'hooks/scripts/subagent-stop-verify.js 存在');
-assert(fileExists('hooks/scripts/milestone-guard.js'),
-  'hooks/scripts/milestone-guard.js 存在');
-assert(fileExists('hooks/scripts/milestone-controller.js'),
-  'hooks/scripts/milestone-controller.js 存在');
-assert(fileExists('hooks/scripts/teammate-milestone-watch.js'),
-  'hooks/scripts/teammate-milestone-watch.js 存在');
+  test('receiving-code-review is plugin-provided', () => {
+    assert.ok(!localSkills.includes('receiving-code-review'));
+  });
 
-// 11. v5.1.0 hooks.json 新增规则
-console.log('\n--- 11. v5.1.0 hooks.json 新增规则 ---');
-assert(hooks.hooks.SubagentStart !== undefined,
-  'hooks.json 有 SubagentStart 段');
-assert(hooks.hooks.SubagentStop !== undefined,
-  'hooks.json 有 SubagentStop 段');
-assert(hooks.hooks.TeammateIdle !== undefined,
-  'hooks.json 有 TeammateIdle 段');
+  test('tdd is plugin-provided', () => {
+    assert.ok(!localSkills.includes('tdd'));
+  });
+});
 
-const editHooksV2 = hooks.hooks.PreToolUse.find(h => h.matcher === 'Edit');
-assert(editHooksV2 && editHooksV2.hooks.some(h => h.command.includes('agent-role-guard')),
-  'PreToolUse Edit 包含 agent-role-guard');
-assert(editHooksV2 && editHooksV2.hooks.some(h => h.command.includes('milestone-guard')),
-  'PreToolUse Edit 包含 milestone-guard');
+describe('entry-management — rule files', () => {
+  test('rules/18_entry_management.md exists', () => {
+    assert.ok(fileExists('rules/18_entry_management.md'));
+  });
 
-const taskUpdateHooks = hooks.hooks.PostToolUse.find(h => h.matcher === 'TaskUpdate');
-assert(taskUpdateHooks && taskUpdateHooks.hooks.some(h => h.command.includes('milestone-controller')),
-  'PostToolUse TaskUpdate 包含 milestone-controller');
+  test('Rule 18 contains SessionStart', () => {
+    const content = readFile('rules/18_entry_management.md');
+    assert.ok(content.includes('SessionStart') || content.includes('session-start'));
+  });
 
-// 12. v5.1.0 agent .md frontmatter
-console.log('\n--- 12. v5.1.0 agent .md frontmatter ---');
-const frontendMd = readFile('agents/frontend.md');
-assert(frontendMd.includes('description:'),
-  'agents/frontend.md 有 description 字段');
-assert(frontendMd.includes('tools:'),
-  'agents/frontend.md 有 tools 字段');
+  test('Rule 18 contains PreToolUse', () => {
+    const content = readFile('rules/18_entry_management.md');
+    assert.ok(content.includes('PreToolUse') || content.includes('phase-gate-guard'));
+  });
+});
 
-const backendPythonMd = readFile('agents/backend-python.md');
-assert(backendPythonMd.includes('description:'),
-  'agents/backend-python.md 有 description 字段');
-assert(backendPythonMd.includes('tools:'),
-  'agents/backend-python.md 有 tools 字段');
+describe('entry-management — CLAUDE.md references', () => {
+  test('references using-ce-framework', () => {
+    const claudeMd = readFile('CLAUDE.md');
+    assert.ok(claudeMd.includes('using-ce-framework'));
+  });
 
-// 13. v5.1.0 milestones-template.json
-console.log('\n--- 13. v5.1.0 milestones-template.json ---');
-assert(fileExists('automation/milestones-template.json'),
-  'automation/milestones-template.json 存在');
-const msTemplate = JSON.parse(readFile('automation/milestones-template.json'));
-assert(Array.isArray(msTemplate.milestones),
-  'milestones-template.json 有 milestones 数组');
-assert(msTemplate.milestones.length >= 2,
-  'milestones-template.json 至少有 2 个里程碑');
+  test('has entry rules section', () => {
+    const claudeMd = readFile('CLAUDE.md');
+    assert.ok(claudeMd.includes('入口规则'));
+  });
 
-// 14. v5.1.0 post-phase-reconcile v3 — 不自动补建
-console.log('\n--- 14. v5.1.0 post-phase-reconcile v3 ---');
-const reconcile = readFile('scripts/post-phase-reconcile.js');
-assert(!reconcile.includes('generateSkillMarker(') || reconcile.includes('// 已删除'),
-  'post-phase-reconcile v3 不包含 generateSkillMarker 函数（已删除）');
-assert(reconcile.includes('Layer 4: Audit 交叉验证 (WARN)'),
-  'post-phase-reconcile Layer 4 为 WARN');
-assert(reconcile.includes("r.skill === skillName"),
-  'post-phase-reconcile findSkillInAudit 使用精确匹配');
-assert(reconcile.includes('console.warn') && reconcile.includes('trace-audit.jsonl 不存在'),
-  'post-phase-reconcile readAuditLog 缺失时显式 warn');
-assert(fileExists('hooks/scripts/process-trace-check.js'),
-  'hooks/scripts/process-trace-check.js 存在');
+  test('version is 5.x', () => {
+    const claudeMd = readFile('CLAUDE.md');
+    assert.ok(/v?5\.\d/.test(claudeMd));
+  });
+});
 
-// ============================================
-console.log('\n========================================');
-console.log(`  结果: ${passed} PASS, ${failed} FAIL`);
-console.log('========================================\n');
+describe('entry-management — version consistency', () => {
+  test('agent-orchestration.json version is 5.x', () => {
+    const ssot = JSON.parse(readFile('automation/agent-orchestration.json'));
+    assert.ok(/^5\.\d/.test(ssot.version), `Expected 5.x, got ${ssot.version}`);
+  });
 
-if (failed > 0) {
-  process.exit(1);
-}
+  test('package.json version matches SSOT', () => {
+    const ssot = JSON.parse(readFile('automation/agent-orchestration.json'));
+    const pkg = JSON.parse(readFile('package.json'));
+    assert.strictEqual(pkg.version, ssot.version);
+  });
+});
+
+describe('entry-management — phase-gates.json paths', () => {
+  test('contains .claude/logs/ path', () => {
+    const gates = JSON.parse(readFile('automation/phase-gates.json'));
+    const json = JSON.stringify(gates);
+    assert.ok(json.includes('.claude/logs/.phase'));
+  });
+
+  test('retains legacy path compatibility', () => {
+    const gates = JSON.parse(readFile('automation/phase-gates.json'));
+    const json = JSON.stringify(gates);
+    assert.ok(json.includes('.phase2-code-complete'));
+  });
+});
+
+describe('entry-management — plugin-provided verification-loop', () => {
+  test('verification-loop has no local copy (provided by ECC plugin)', () => {
+    assert.ok(!fileExists('skills/verification-loop/SKILL.md'));
+  });
+});
+
+describe('entry-management — v5.1.0 new hooks', () => {
+  test('agent-role-guard.js exists', () => {
+    assert.ok(fileExists('hooks/scripts/agent-role-guard.js'));
+  });
+
+  test('subagent-role-bind.js exists', () => {
+    assert.ok(fileExists('hooks/scripts/subagent-role-bind.js'));
+  });
+
+  test('subagent-stop-verify.js exists', () => {
+    assert.ok(fileExists('hooks/scripts/subagent-stop-verify.js'));
+  });
+
+  test('milestone-guard.js exists', () => {
+    assert.ok(fileExists('hooks/scripts/milestone-guard.js'));
+  });
+
+  test('milestone-controller.js exists', () => {
+    assert.ok(fileExists('hooks/scripts/milestone-controller.js'));
+  });
+
+  test('teammate-milestone-watch.js exists', () => {
+    assert.ok(fileExists('hooks/scripts/teammate-milestone-watch.js'));
+  });
+});
+
+describe('entry-management — v5.1.0 hooks.json new rules', () => {
+  test('hooks.json has SubagentStart', () => {
+    const hooks = JSON.parse(readFile('hooks/hooks.json'));
+    assert.ok(hooks.hooks.SubagentStart !== undefined);
+  });
+
+  test('hooks.json has SubagentStop', () => {
+    const hooks = JSON.parse(readFile('hooks/hooks.json'));
+    assert.ok(hooks.hooks.SubagentStop !== undefined);
+  });
+
+  test('hooks.json has TeammateIdle', () => {
+    const hooks = JSON.parse(readFile('hooks/hooks.json'));
+    assert.ok(hooks.hooks.TeammateIdle !== undefined);
+  });
+
+  test('PreToolUse Edit includes agent-role-guard', () => {
+    const hooks = JSON.parse(readFile('hooks/hooks.json'));
+    const editHooks = hooks.hooks.PreToolUse.find(h => h.matcher === 'Edit');
+    assert.ok(editHooks && editHooks.hooks.some(h => h.command.includes('agent-role-guard')));
+  });
+
+  test('PreToolUse Edit includes milestone-guard', () => {
+    const hooks = JSON.parse(readFile('hooks/hooks.json'));
+    const editHooks = hooks.hooks.PreToolUse.find(h => h.matcher === 'Edit');
+    assert.ok(editHooks && editHooks.hooks.some(h => h.command.includes('milestone-guard')));
+  });
+
+  test('PostToolUse TaskUpdate includes milestone-controller', () => {
+    const hooks = JSON.parse(readFile('hooks/hooks.json'));
+    const taskUpdateHooks = hooks.hooks.PostToolUse.find(h => h.matcher === 'TaskUpdate');
+    assert.ok(taskUpdateHooks && taskUpdateHooks.hooks.some(h => h.command.includes('milestone-controller')));
+  });
+});
+
+describe('entry-management — v5.1.0 agent .md frontmatter', () => {
+  test('agents/frontend.md has description field', () => {
+    const content = readFile('agents/frontend.md');
+    assert.ok(content.includes('description:'));
+  });
+
+  test('agents/frontend.md has tools field', () => {
+    const content = readFile('agents/frontend.md');
+    assert.ok(content.includes('tools:'));
+  });
+
+  test('agents/backend-python.md has description field', () => {
+    const content = readFile('agents/backend-python.md');
+    assert.ok(content.includes('description:'));
+  });
+
+  test('agents/backend-python.md has tools field', () => {
+    const content = readFile('agents/backend-python.md');
+    assert.ok(content.includes('tools:'));
+  });
+});
+
+describe('entry-management — v5.1.0 milestones-template.json', () => {
+  test('file exists', () => {
+    assert.ok(fileExists('automation/milestones-template.json'));
+  });
+
+  test('has milestones array', () => {
+    const ms = JSON.parse(readFile('automation/milestones-template.json'));
+    assert.ok(Array.isArray(ms.milestones));
+  });
+
+  test('has at least 2 milestones', () => {
+    const ms = JSON.parse(readFile('automation/milestones-template.json'));
+    assert.ok(ms.milestones.length >= 2);
+  });
+});
+
+describe('entry-management — post-phase-reconcile v3', () => {
+  test('no generateSkillMarker function (removed in v3)', () => {
+    const content = readFile('scripts/post-phase-reconcile.js');
+    assert.ok(!content.includes('generateSkillMarker(') || content.includes('// 已删除'));
+  });
+
+  test('Layer 4 is WARN level', () => {
+    const content = readFile('scripts/post-phase-reconcile.js');
+    assert.ok(content.includes('Layer 4: Audit 交叉验证 (WARN)'));
+  });
+
+  test('findSkillInAudit uses exact match', () => {
+    const content = readFile('scripts/post-phase-reconcile.js');
+    assert.ok(content.includes("r.skill === skillName"));
+  });
+
+  test('warns when trace-audit.jsonl missing', () => {
+    const content = readFile('scripts/post-phase-reconcile.js');
+    assert.ok(content.includes('console.warn') && content.includes('trace-audit.jsonl 不存在'));
+  });
+
+  test('process-trace-check.js exists', () => {
+    assert.ok(fileExists('hooks/scripts/process-trace-check.js'));
+  });
+});

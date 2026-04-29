@@ -1,4 +1,4 @@
-# install-prerequisites.ps1 — claude-enterprise-starter v5.0 前置依赖一键安装
+﻿# install-prerequisites.ps1 — claude-enterprise-starter v5.0 前置依赖一键安装
 # 用法: powershell -ExecutionPolicy Bypass -File scripts\install-prerequisites.ps1
 
 $ErrorActionPreference = "Continue"
