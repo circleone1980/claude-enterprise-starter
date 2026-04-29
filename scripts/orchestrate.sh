@@ -22,7 +22,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && { pwd -W 2>/dev/null || pwd; })"
 
 # 配置文件路径
 SSOT="$PROJECT_ROOT/automation/agent-orchestration.json"
@@ -200,8 +200,51 @@ Agent({
   run_in_background: true,
   prompt: `你是 Architect。准备以下 3 份设计文档的内容。
 
-## SUBAGENT-STOP
-跳过元技能，直接执行。
+## 框架绑定（强制）
+
+你必须在执行任务前完成以下步骤：
+
+### 1. 读取角色定义
+- Read agents/architect.md（你的角色定义和 SOP）
+
+### 2. 调用必需 Skills
+按照 agents/architect.md 的技能表，依次调用：
+- Skill writing-plans（架构设计指导）
+
+### 3. 遵循 Rules
+- Rule 04 (Agent Team): 使用框架定义的 Agent 类型
+- Rule 07 (Skill 触发): 按触发规则调用 Skills
+- Rule 17 (过程追踪): 完成后创建追踪记录
+
+### 4. 自报（强制）
+完成后将执行摘要写入: .claude/logs/agent-self-report/architect-{时间戳}.md
+
+格式:
+```
+agent: architect
+phase: 1
+timestamp: {ISO时间}
+outputs:
+  - {输出文件路径}
+skills_called:
+  - {skill名}: {调用时间}
+rules_followed:
+  - {rule编号和名称}
+---
+
+# 执行摘要
+
+## 读取的文档
+- {列出的每个 Read 操作}
+
+## 调用的 Skills
+- {每个 Skill 调用及结果摘要}
+
+## 关键决策
+| 决策点 | 选择 | 原因 |
+|--------|------|------|
+| {决策} | {选择} | {原因} |
+```
 
 ## 必读文档
 1. Read docs/requirements/PRD.md
@@ -225,8 +268,51 @@ Agent({
   run_in_background: true,
   prompt: `你是 UI Designer。准备 UI 设计规范内容。
 
-## SUBAGENT-STOP
-跳过元技能，直接执行。
+## 框架绑定（强制）
+
+你必须在执行任务前完成以下步骤：
+
+### 1. 读取角色定义
+- Read agents/ui-designer.md（你的角色定义和 SOP）
+
+### 2. 调用必需 Skills
+按照 agents/ui-designer.md 的技能表，依次调用：
+- Skill ui-ux-pro-max（UI/UX 设计指导）
+
+### 3. 遵循 Rules
+- Rule 04 (Agent Team): 使用框架定义的 Agent 类型
+- Rule 07 (Skill 触发): 按触发规则调用 Skills
+- Rule 17 (过程追踪): 完成后创建追踪记录
+
+### 4. 自报（强制）
+完成后将执行摘要写入: .claude/logs/agent-self-report/ui-designer-{时间戳}.md
+
+格式:
+```
+agent: ui-designer
+phase: 1
+timestamp: {ISO时间}
+outputs:
+  - {输出文件路径}
+skills_called:
+  - {skill名}: {调用时间}
+rules_followed:
+  - {rule编号和名称}
+---
+
+# 执行摘要
+
+## 读取的文档
+- {列出的每个 Read 操作}
+
+## 调用的 Skills
+- {每个 Skill 调用及结果摘要}
+
+## 关键决策
+| 决策点 | 选择 | 原因 |
+|--------|------|------|
+| {决策} | {选择} | {原因} |
+```
 
 ## 必读文档
 1. Read docs/requirements/PRD.md
@@ -275,16 +361,16 @@ node scripts/post-phase-reconcile.js --phase=1
 
 ```
 Agent({ name: "Review-PRD", subagent_type: "general-purpose",
-  prompt: "执行对抗审查。Read docs/requirements/PRD.md，挑战假设和决策。输出到 docs/reviews/review-prd.md" })
+  prompt: "执行对抗审查。Read docs/requirements/PRD.md，挑战假设和决策。输出到 docs/reviews/review-prd.md\n\n## 自报（强制）\n完成后写入 .claude/logs/agent-self-report/review-prd-{时间戳}.md，记录：读取的文档、发现的挑战点数、Critical/High/Medium 分布。" })
 
 Agent({ name: "Review-Arch", subagent_type: "general-purpose",
-  prompt: "执行对抗审查。Read docs/design/01_系统架构设计.md，挑战架构决策。输出到 docs/reviews/review-architecture.md" })
+  prompt: "执行对抗审查。Read docs/design/01_系统架构设计.md，挑战架构决策。输出到 docs/reviews/review-architecture.md\n\n## 自报（强制）\n完成后写入 .claude/logs/agent-self-report/review-arch-{时间戳}.md，记录：读取的文档、发现的挑战点数、Critical/High/Medium 分布。" })
 
 Agent({ name: "Review-API", subagent_type: "general-purpose",
-  prompt: "执行对抗审查。Read docs/design/03_API接口设计.md，挑战 API 设计。输出到 docs/reviews/review-api.md" })
+  prompt: "执行对抗审查。Read docs/design/03_API接口设计.md，挑战 API 设计。输出到 docs/reviews/review-api.md\n\n## 自报（强制）\n完成后写入 .claude/logs/agent-self-report/review-api-{时间戳}.md，记录：读取的文档、发现的挑战点数、Critical/High/Medium 分布。" })
 
 Agent({ name: "Review-UI", subagent_type: "general-purpose",
-  prompt: "执行对抗审查。Read docs/design/04_UI设计规范.md，挑战 UI 设计。输出到 docs/reviews/review-ui.md" })
+  prompt: "执行对抗审查。Read docs/design/04_UI设计规范.md，挑战 UI 设计。输出到 docs/reviews/review-ui.md\n\n## 自报（强制）\n完成后写入 .claude/logs/agent-self-report/review-ui-{时间戳}.md，记录：读取的文档、发现的挑战点数、Critical/High/Medium 分布。" })
 ```
 
 ### Step 8: 综合审查报告 + 修复

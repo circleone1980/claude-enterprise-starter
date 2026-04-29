@@ -14,7 +14,7 @@
 1. **1% 规则** — 只要有 1% 可能性某个 Skill 适用，必须先调用
 2. **Iron Laws** — 6 条铁律不可违反（TDD / 验证 / 调试 / Review / 阶段 / 追踪）
 3. **Hard Gates** — 门禁由 PreToolUse Hook 强制执行，不可绕过
-4. **SUBAGENT-STOP** — 子 agent 跳过元技能，直接执行任务
+4. **框架绑定** — 子 agent 必须读取 Agent 定义、调用必需 Skills、遵循 Rules、完成自报
 
 详细规则: [rules/18_entry_management.md](rules/18_entry_management.md)
 
@@ -236,9 +236,10 @@ claude --team full
 
 ---
 
-*模板版本: 5.0.4*
-*最后更新: 2026-04-28*
+*模板版本: 5.0.5*
+*最后更新: 2026-04-29*
 *重大变更: 插件优先架构 — 本地技能 42→15，superpowers/ecc/CE/ui-ux-pro-max 插件 + GStack 本地部署*
 *重大变更: 入口管理系统（SessionStart 注入 + PreToolUse 门禁 + using-ce-framework 元技能）*
 *重大变更: Skill/Team/Audit 技术强制 — PreToolUse 门禁 + trace-audit.jsonl 自动记录 + 防伪造交叉验证*
 *重大变更: 事后对账机制 — post-phase-reconcile.js 逆向生成过程追踪 + 主会话守门模式*
+*重大变更: 去掉 SUBAGENT-STOP + 4 层验证 + Agent 自报机制 + FAIL 重试上报人工*

@@ -170,6 +170,58 @@ docs/process-trace/
 
 ---
 
+## 九、4 层验证机制（v5.0.5 新增）
+
+`post-phase-reconcile.js v2.0.0` 在事后对账后自动执行 4 层验证：
+
+| 层级 | 验证内容 | 数据源 | 通过条件 |
+|------|---------|--------|---------|
+| Layer 1 | Agent 自报文件存在 + skills_called 非空 | `.claude/logs/agent-self-report/` | 自报文件存在且包含 skills_called |
+| Layer 2 | Skill marker 文件完整 | `.claude/logs/skill-invocations/` | 每个 requiredSkill 有对应 marker |
+| Layer 3 | 产出物结构符合 Skill 预期 | `docs/design/*`, `docs/requirements/*` | 行数>100 + 结构化标题 + 特定内容 |
+| Layer 4 | trace-audit.jsonl 交叉验证 | `.claude/logs/trace-audit.jsonl` | 有对应 Skill 调用记录 |
+
+**全部通过 = SUCCESS（退出码 0），任一层失败 = FAIL（退出码 1）**
+
+### 重试机制
+
+1. `post-phase-reconcile.js` 运行 4 层验证
+2. FAIL → 退出码 1，主会话重新执行子 agent
+3. 最多重试 3 次
+4. 3 次全部 FAIL → 上报用户人工介入
+
+### Agent 自报格式
+
+子 agent 完成任务后写入 `.claude/logs/agent-self-report/{agent名}-{时间戳}.md`：
+
+```
+agent: {agent名}
+phase: {阶段}
+timestamp: {ISO时间}
+outputs:
+  - {输出文件路径}
+skills_called:
+  - {skill名}: {调用时间}
+rules_followed:
+  - {rule编号和名称}
+---
+
+# 执行摘要
+
+## 读取的文档
+- {列出的每个 Read 操作}
+
+## 调用的 Skills
+- {每个 Skill 调用及结果摘要}
+
+## 关键决策
+| 决策点 | 选择 | 原因 |
+|--------|------|------|
+| {决策} | {选择} | {原因} |
+```
+
+---
+
 *加载顺序: 17*
-*版本: 3.0.0*
-*最后更新: 2026-04-28*
+*版本: 4.0.0*
+*最后更新: 2026-04-29*
