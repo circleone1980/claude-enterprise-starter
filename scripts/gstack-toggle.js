@@ -76,8 +76,8 @@ function setEnabled(value) {
       description: 'GStack 产品设计层 (Phase 0.5)',
       toggleScript: 'scripts/gstack-toggle.js',
       requiredOutputs: {
-        phase0.5a: ['workspace/docs/design/DESIGN.md', 'workspace/docs/design/OFFICE_HOURS.md'],
-        phase0.5b: ['workspace/docs/design/IMPLEMENTATION_PLAN.md']
+        'phase0.5a': ['workspace/docs/design/DESIGN.md', 'workspace/docs/design/OFFICE_HOURS.md'],
+        'phase0.5b': ['workspace/docs/design/IMPLEMENTATION_PLAN.md']
       }
     };
   }
