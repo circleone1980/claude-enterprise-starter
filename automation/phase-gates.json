@@ -1,6 +1,6 @@
 {
   "name": "phase-gates",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "enabled": true,
   "gates": {
     "phase0_brainstorm_complete": {
@@ -209,6 +209,16 @@
           "description": "测试报告已输出",
           "check": "node -e \"require('fs').existsSync('docs/test/test-report.md')||process.exit(1)\"",
           "checkType": "file_exists"
+        },
+        {
+          "description": "所有 Bug 已修复并验证",
+          "check": "node -e \"require('fs').existsSync('.claude/logs/.phase3-bugs-fixed')||process.exit(1)\"",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "ADR 审查已完成（如有架构变更）",
+          "check": "node -e \"const f=require('fs');const hasArchChanges=f.existsSync('.claude/logs/.phase3-arch-changes');if(!hasArchChanges){process.exit(0)}process.exit(f.existsSync('.claude/logs/.phase3-adr-reviewed')?0:1)\"",
+          "checkType": "command_succeeds"
         }
       ],
       "autoAdvance": true,
@@ -230,6 +240,16 @@
           "description": "关键体验问题已修复",
           "check": "node -e \"require('fs').existsSync('.claude/logs/.phase4-ux-fixes-complete')||require('fs').existsSync('.phase4-ux-fixes-complete')||process.exit(1)\"",
           "checkType": "file_exists"
+        },
+        {
+          "description": "UX 修复闭环完成（所有 UX 问题已解决并验证）",
+          "check": "node -e \"require('fs').existsSync('.claude/logs/.phase4-ux-loop-pass')||process.exit(1)\"",
+          "checkType": "file_exists"
+        },
+        {
+          "description": "ADR 审查已完成（如有架构变更）",
+          "check": "node -e \"const f=require('fs');const hasArchChanges=f.existsSync('.claude/logs/.phase4-arch-changes');if(!hasArchChanges){process.exit(0)}process.exit(f.existsSync('.claude/logs/.phase4-adr-reviewed')?0:1)\"",
+          "checkType": "command_succeeds"
         }
       ],
       "autoAdvance": true,
@@ -270,5 +290,5 @@
     "escalateOnFailure": true,
     "notificationChannel": "console"
   },
-  "_comment": "v3.0.0 - Phase 0 brainstorm gate + process trace checks for all phases"
+  "_comment": "v3.1.0 - Phase 3/4 expanded gates: bug-fix loop + UX-fix loop + ADR conditional checks"
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Auto Start Agents v4.0 — SSOT + 智能模式评分引擎 + Prompt 生成
+ * Auto Start Agents v5.2.0 — SSOT + 智能模式评分引擎 + Prompt 生成
  *
  * 核心变更（vs v1 硬编码版）:
  *   1. 从 automation/agent-orchestration.json（SSOT）读取所有配置
@@ -67,7 +67,7 @@ function getCurrentPhase() {
  * @param {string} subPhase - 子阶段标识（如 "2A" 接口对齐 / "2B" 独立开发）
  * @returns {{ mode: string, score: number, reason: string }}
  */
-function decideMode(agent, thresholds, subPhase) {
+function decideMode(agent, thresholds, subPhase, targetPhase) {
   const scores = agent.modeSelection || {
     communicationNeed: 0,
     crossLayerDependency: 0,
@@ -82,6 +82,12 @@ function decideMode(agent, thresholds, subPhase) {
   if (subPhase === '2A') {
     // Phase 2A（接口对齐）：所有开发角色强制提升通信和跨层分数
     total = Math.max(total, 6); // 保证 >= team 阈值
+  }
+
+  // Phase 3/4 特殊处理：测试和体验阶段需要多角色 Team 协作
+  const phaseStr = String(targetPhase || '');
+  if (phaseStr === '3' || phaseStr === '4') {
+    total = Math.max(total, 6); // 保证 Team 模式
   }
 
   let mode;
@@ -292,7 +298,7 @@ function main() {
     const agent = ssot.agents[agentName];
     if (!agent) continue;
 
-    const decision = decideMode(agent, thresholds, subPhase);
+    const decision = decideMode(agent, thresholds, subPhase, targetPhase);
     const count = agent.count || 1;
 
     modeDecisions.push({
@@ -439,7 +445,11 @@ function outputAsPrompt(output, phaseId) {
  */
 function getPhaseDescription(phase, rageMode) {
   if (!rageMode || !rageMode.phases) return '';
-  const p = rageMode.phases.find(p => p.id === Number(phase));
+  const phaseNum = Number(phase);
+  const p = rageMode.phases.find(p => {
+    if (isNaN(phaseNum)) return String(p.id) === String(phase);
+    return p.id === phaseNum || String(p.id) === String(phase);
+  });
   return p ? p.name : '';
 }
 

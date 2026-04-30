@@ -1,6 +1,6 @@
 # Claude Enterprise Starter 使用手册
 
-> 版本: 5.1.0 | 最后更新: 2026-04-29
+> 版本: 5.2.0 | 最后更新: 2026-04-30
 
 本手册帮助团队成员快速上手 Claude Enterprise Starter 模板项目。
 
@@ -573,25 +573,36 @@ Backend-Python-1 ─── ← 1 个 Python 后端 Agent
 
 系统根据 **5 个评分因子** 自动决定每个角色使用 Team 还是 Subagent 模式：
 
-| 评分因子 | 说明 | 权重 |
+| 评分因子 | 说明 | 范围 |
 |----------|------|------|
-| **任务复杂度** | 是否涉及多步骤、多文件变更 | 高 |
-| **协作需求** | 是否需要与其他角色实时通信 | 高 |
-| **决策自主性** | 是否需要独立决策能力 | 中 |
-| **上下文依赖** | 是否需要共享项目状态 | 高 |
-| **并行安全性** | 并行执行是否会引发冲突 | 中 |
+| `communicationNeed` | 角色间实时通信需求（讨论/协商） | 0-3 |
+| `crossLayerDependency` | 跨层依赖（前后端接口对齐） | 0-3 |
+| `contextPressure` | 上下文压力（长时间运行） | 0-2 |
+| `roleCount` | 同类角色数量 | 0-1 |
+| `writeConflictRisk` | 写冲突风险惩罚 | -2-0 |
 
 **3 个决策阈值**：
 
 | 总分范围 | 推荐模式 | 适用阶段 |
 |----------|----------|----------|
-| **0-2** | Subagent | Phase 2/3/4/5 — 独立执行明确任务 |
-| **3-5** | Subagent + 受控通信 | 需要轻量协调的任务 |
-| **6-7** | Team | Phase 1 — 需求分析、架构设计等需要深度协作的场景 |
+| **≥ 6** | Team (TeamCreate + SendMessage) | Phase 1/2A/3/4 — 需要多角色深度协作 |
+| **3-5** | Subagent 并行 | Phase 2B — 可并行独立开发 |
+| **< 3** | Subagent 顺序 | Phase 0.5/5/GAN — 独立执行 |
 
-> **为什么 Phase 1 用 Team**：需求分析阶段 PM/PO/Architect 需要频繁讨论、交换意见、迭代文档，Team 模式的共享任务列表和消息机制是必不可少的。
+**各阶段决策表**：
+
+| 阶段 | 角色 | 总分 | 模式 | 原因 |
+|------|------|------|------|------|
+| Phase 1 | PM+PO+Architect | 7 | **Team** | 需求讨论需要频繁迭代 |
+| Phase 2A | Frontend+Backend | 7 | **Team**（覆盖） | 接口对齐需要实时协商 |
+| Phase 2B | 各角色独立开发 | 3-4 | **Subagent 并行** | 合约驱动，按文档独立开发 |
+| Phase 3 | QA+Frontend+Backend+Architect+PM | 6 | **Team**（覆盖） | 测试-修复-回归闭环 |
+| Phase 4 | 体验师+UI+Frontend+Backend+Architect+PM | 6 | **Team**（覆盖） | UX 修复闭环 |
+| Phase 5 | DevOps | 1 | Subagent 顺序 | 独立部署 |
+
+> **Phase 3/4 为什么用 Team**：测试和体验阶段的核心是**发现问题→修复问题→回归验证**的闭环。QA/体验师发现问题后，需要 Frontend/Backend 立即修复；修复涉及架构变更时，需要 Architect 做 ADR 审查；PM 协调优先级。只有 Team 模式的 SendMessage 和共享任务列表能支持这种多角色实时协作。
 >
-> **为什么 Phase 2+ 用 Subagent**：开发阶段每个角色有明确的任务边界，Subagent 模式更轻量、启动更快、资源消耗更少。
+> **Phase 2B 为什么用并行**：Phase 1 产出的冻结层文档（PRD、架构、API、UI 规范）设计得足够细致，各角色可以按合约独立开发，并行执行效率最高。
 
 ### 6.7 双模型协作策略
 
@@ -841,13 +852,22 @@ Phase 2: 开发实现（Frontend x3 / Backend-Java x2 / Backend-Python x1 并行
 |  内置: 大型重构(5+文件) -> /batch
 |  门禁: 代码实现完成 + 单元测试通过 + 代码审查通过
 |
-Phase 3: 测试验证（QA）
-|  QA -> /tdd -> 测试执行 -> /code-review
-|  门禁: 覆盖率 >80% + 所有测试通过 + 无 P0/P1 Bug
+Phase 3: 测试验证（QA + Frontend + Backend + Architect + PM）
+|  Team 模式: 测试-修复-回归闭环
+|  QA -> /tdd -> 测试执行 -> 发现 Bug -> SendMessage 通知 Dev
+|  Frontend/Backend -> 修复 -> QA 回归 -> 循环至 Bug 清零
+|  Architect -> ADR 审查（涉及架构的 Bug）
+|  PM -> 协调优先级
+|  门禁: 覆盖率 >80% + 所有测试通过 + Bug 修复闭环 + ADR 审查
 |
-Phase 4: 产品体验（产品体验师）
-|  产品体验师 -> /user-onboarding -> /ui-ux-pro-max
-|  门禁: 体验测试完成 + 体验报告输出
+Phase 4: 产品体验（体验师 + UI + Frontend + Backend + Architect + PM）
+|  Team 模式: UX 发现-修复-验证闭环
+|  体验师 -> /user-onboarding -> /ui-ux-pro-max -> 发现 UX 问题 -> 通知相关角色
+|  UI Designer + Frontend -> 视觉/交互修复
+|  Frontend + Backend -> 操作流程修复
+|  Architect -> ADR 审查（涉及架构的修改）
+|  PM -> 确认优先级
+|  门禁: 体验测试完成 + UX 修复闭环 + 体验报告输出
 |
 Phase 5: 部署发布（DevOps）
 |  DevOps -> /code-review -> /simplify（合并前最终检查）
@@ -1497,25 +1517,34 @@ Skill design-context --role architect
 
 ### 12.5 Phase 3 — 测试验证
 
-> 适用角色：QA
+> 适用角色：QA（Lead） + Frontend + Backend-Python + Architect + PM
+> 协作模式：Team — 测试-修复-回归闭环
 
 ```bash
-# 1. TDD 验证
+# QA: 1. TDD 验证
 /tdd
 
-# 2. 验证循环（持续到通过）
+# QA: 2. 验证循环（持续到通过）
 /verification-loop
 
-# 3. [关键] 浏览器端到端测试
+# QA: 3. [关键] 浏览器端到端测试
 /qa                      # 完整测试（~10 分钟）
 /qa --quick              # 快速冒烟测试（~30 秒）
 /qa --diff-aware         # 仅测试变更相关功能
 
-# 4. 安全审查
+# QA: 4. 发现 Bug 后通过 SendMessage 通知 Dev 修复
+# Frontend/Backend: 修复 Bug（简单 Bug 直接修，涉及架构通知 Architect ADR）
+# QA: 5. 回归测试，循环至所有 Bug 清零
+
+# QA: 6. 安全审查
 /security-review
 
-# 5. 完成后调用 /ce-review 进行多维度审查
+# QA: 7. 完成后调用 /ce-review 进行多维度审查
 /ce-review
+
+# Dev: Bug 修复后触发代码审查
+/codex:review
+/code-review
 ```
 
 **/qa 测试报告输出**：
@@ -1526,14 +1555,22 @@ Skill design-context --role architect
 
 ### 12.6 Phase 4 — 用户体验
 
-> 适用角色：产品体验师
+> 适用角色：产品体验师（Lead） + UI-Designer + Frontend + Backend-Python + Architect + PM
+> 协作模式：Team — UX 发现-修复-验证闭环
 
 ```bash
-# 1. 用户引导优化
+# 体验师: 1. 用户引导优化
 /user-onboarding
 
-# 2. UI/UX 优化
+# 体验师: 2. UI/UX 优化评估
 /ui-ux-pro-max
+
+# 体验师: 3. 发现 UX 问题后通过 SendMessage 通知相关角色
+# UI Designer + Frontend: 视觉/交互修复
+# Frontend + Backend: 操作流程修复
+# Architect: ADR 审查（涉及架构的修改）
+# PM: 确认优先级
+# 体验师: 回归验证，循环至所有 UX 问题解决
 ```
 
 ### 12.7 Phase 5 — 部署
@@ -1843,4 +1880,4 @@ Phase 3           → /qa --diff-aware → /security-review
 
 ---
 
-*使用手册版本: 5.1.0 | 项目模板: [GitHub](https://github.com/circleone1980/claude-enterprise-starter)*
+*使用手册版本: 5.2.0 | 项目模板: [GitHub](https://github.com/circleone1980/claude-enterprise-starter)*

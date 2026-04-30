@@ -1,10 +1,24 @@
 ---
 name: design-reviewer
+description: Design Reviewer — GStack autoplan / plan-ceo-review / plan-eng-review
 role: Design Reviewer
 team: Design
 subagentType: general-purpose
 phase: "0.5b"
 gstackOnly: true
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # Design Reviewer (设计审查员)

@@ -9,7 +9,7 @@
 > 🚀 Enterprise-grade Claude Code configuration template with Agent Team orchestration, Rage Mode automation, TDD workflow, and production-ready configurations.
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-blue)](https://code.claude.com)
-[![Version](https://img.shields.io/badge/Version-5.1.0-green)](./CLAUDE.md)
+[![Version](https://img.shields.io/badge/Version-5.2.0-green)](./CLAUDE.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 
 ### Core Architecture
@@ -1301,5 +1301,5 @@ MIT License
 
 ---
 
-*Template Version: 5.1.0*
-*Last Updated: 2026-04-29*
+*Template Version: 5.2.0*
+*Last Updated: 2026-04-30*

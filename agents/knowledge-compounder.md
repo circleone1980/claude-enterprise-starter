@@ -1,8 +1,23 @@
 ---
+name: knowledge-compounder
+description: Knowledge Compounder — ce-compound / experience extraction / docs indexing
 subagentType: general-purpose
 phase: compound
 requiredSkills:
   - ce-compound
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # Knowledge Compounder

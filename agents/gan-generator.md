@@ -1,9 +1,23 @@
 ---
 name: gan-generator
+description: GAN Generator — feature implementation / TDD / ce-work
 role: GAN Generator
 team: GAN Harness
 subagentType: general-purpose
 phase: gan
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # GAN Generator (GAN 实现器)

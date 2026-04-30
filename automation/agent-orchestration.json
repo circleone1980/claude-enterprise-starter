@@ -1,6 +1,6 @@
 {
   "name": "agent-orchestration",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "enabled": true,
   "defaultBackend": "python",
   "agents": {
@@ -114,7 +114,7 @@
       "modeSelection": {
         "communicationNeed": 1,
         "crossLayerDependency": 1,
-        "contextPressure": 0,
+        "contextPressure": 1,
         "roleCount": 0,
         "writeConflictRisk": 0
       },
@@ -129,10 +129,10 @@
       "phase": 2,
       "modeSelection": {
         "communicationNeed": 1,
-        "crossLayerDependency": 0,
+        "crossLayerDependency": 1,
         "contextPressure": 1,
         "roleCount": 1,
-        "writeConflictRisk": -1
+        "writeConflictRisk": 0
       },
       "agentMd": "agents/frontend.md",
       "allowedPaths": ["src/components/", "src/styles/", "src/hooks/", "src/utils/", "src/types/"],
@@ -152,10 +152,10 @@
       "phase": 2,
       "modeSelection": {
         "communicationNeed": 1,
-        "crossLayerDependency": 0,
+        "crossLayerDependency": 1,
         "contextPressure": 1,
         "roleCount": 1,
-        "writeConflictRisk": -1
+        "writeConflictRisk": 0
       },
       "agentMd": "agents/backend-java.md",
       "allowedPaths": ["src/main/java/", "src/test/java/", "src/main/resources/"],
@@ -181,9 +181,9 @@
       "count": 1,
       "phase": 2,
       "modeSelection": {
-        "communicationNeed": 0,
-        "crossLayerDependency": 0,
-        "contextPressure": 0,
+        "communicationNeed": 1,
+        "crossLayerDependency": 1,
+        "contextPressure": 1,
         "roleCount": 0,
         "writeConflictRisk": 0
       },
@@ -212,11 +212,11 @@
       "phase": 3,
       "mcpServers": ["playwright"],
       "modeSelection": {
-        "communicationNeed": 0,
-        "crossLayerDependency": 0,
+        "communicationNeed": 3,
+        "crossLayerDependency": 2,
         "contextPressure": 1,
-        "roleCount": 0,
-        "writeConflictRisk": 0
+        "roleCount": 1,
+        "writeConflictRisk": -1
       },
       "agentMd": "agents/qa.md",
       "allowedPaths": ["test/", "tests/", "e2e/"],
@@ -257,11 +257,11 @@
       "phase": 4,
       "mcpServers": ["playwright"],
       "modeSelection": {
-        "communicationNeed": 0,
-        "crossLayerDependency": 0,
-        "contextPressure": 0,
-        "roleCount": 0,
-        "writeConflictRisk": 0
+        "communicationNeed": 3,
+        "crossLayerDependency": 2,
+        "contextPressure": 1,
+        "roleCount": 1,
+        "writeConflictRisk": -1
       },
       "agentMd": "agents/product-experience.md"
     },
@@ -396,6 +396,6 @@
     "restartDelay": 10000,
     "alertOnFailure": true
   },
-  "_comment": "SSOT v5.0.0 - Updated 2026-04-27 - Plugin-first architecture: superpowers/ecc/CE/ui-ux-pro-max plugins + GStack local deployment",
+  "_comment": "SSOT v5.2.0 - Updated 2026-04-30 - Phase 2 parallel scores + Phase 3/4 Team expansion + loop mechanism",
   "_ssot_note": "CLAUDE.md 第七节、rules/04、rules/07、agents/*.md 均引用此文件，不重复定义"
 }

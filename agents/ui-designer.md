@@ -1,9 +1,23 @@
 ---
 name: ui-designer
+description: UI Designer — ui-ux-pro-max / ui-style-selector / Figma
 role: UI Designer
 team: Design
 subagentType: general-purpose
 phase: 2
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # UI Designer (UI 设计师)

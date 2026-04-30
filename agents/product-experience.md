@@ -1,9 +1,23 @@
 ---
 name: product-experience
+description: Product Experience Specialist — user onboarding / UX evaluation / FTUE
 role: Product Experience Specialist
 team: User Experience
 subagentType: everything-claude-code:planner
 phase: 4
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # Product Experience Specialist (产品体验师)

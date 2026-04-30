@@ -1,9 +1,23 @@
 ---
 name: brainstormer
+description: Brainstormer — Product ideation / ce-brainstorm / design-context
 role: Brainstormer
 team: Leadership
 subagentType: everything-claude-code:planner
 phase: 0
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # Brainstormer (头脑风暴师)

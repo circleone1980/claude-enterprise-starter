@@ -1,6 +1,6 @@
 {
   "name": "rage-mode",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "enabled": true,
   "description": "狂暴模式 - Claude Code 全权接管开发任务",
   "features": {
@@ -77,15 +77,15 @@
       "id": 3,
       "name": "测试验证",
       "autoAdvance": true,
-      "requiredAgents": ["QA"],
-      "qualityGates": ["测试覆盖率 >80%", "所有测试通过"]
+      "requiredAgents": ["QA", "Frontend", "Backend-Python", "Architect", "PM"],
+      "qualityGates": ["测试覆盖率 >80%", "所有测试通过", "Bug 修复闭环完成", "ADR 审查完成（如有架构变更）"]
     },
     {
       "id": 4,
       "name": "产品体验",
       "autoAdvance": true,
-      "requiredAgents": ["产品体验师"],
-      "qualityGates": ["体验测试完成", "体验报告输出"]
+      "requiredAgents": ["产品体验师", "UI-Designer", "Frontend", "Backend-Python", "Architect", "PM"],
+      "qualityGates": ["体验测试完成", "体验报告输出", "UX 问题修复闭环完成", "ADR 审查完成（如有架构变更）"]
     },
     {
       "id": 5,
@@ -112,5 +112,5 @@
     "onAgentFailure": true,
     "onAllComplete": true
   },
-  "_comment": "v3.0.0 - Phase 0 = brainstorming + Python default backend"
+  "_comment": "v3.1.0 - Phase 3/4 expanded to multi-role Teams for test-fix and UX-fix loops"
 }

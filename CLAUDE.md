@@ -1,4 +1,4 @@
-# Claude Code 项目模板 v5.1
+# Claude Code 项目模板 v5.2
 
 > 📋 **使用说明**: 复制此目录到新项目的 `.claude/` 目录，根据项目需求修改配置
 
@@ -192,12 +192,16 @@
 
 ---
 
-## 十三、角色采用机制（v5.1）
+## 十三、角色采用机制（v5.2）
 
 > **状态**: PreToolUse Hook 强制执行，不可绕过
 > **适用阶段**: Phase 2-5 写 `src/` 或 `test/` 路径时
 
 **规则**: 写代码前必须先采用 Agent 角色，否则操作被阻止
+
+**协作模式**: Phase 3（测试）和 Phase 4（体验）使用 **Team 模式**，支持测试-修复-回归闭环:
+- Phase 3: QA + Frontend + Backend + Architect + PM → Bug 发现→修复→回归循环
+- Phase 4: 体验师 + UI Designer + Frontend + Backend + Architect + PM → UX 发现→修复→验证循环
 
 **角色路径映射**（从 `agent-orchestration.json` `allowedPaths` 读取）:
 
@@ -279,8 +283,14 @@ claude --team full
 
 ---
 
-*模板版本: 5.1.0*
-*最后更新: 2026-04-29*
+*模板版本: 5.2.0*
+*最后更新: 2026-04-30*
+*重大变更: v5.2.0 — Phase 2 并行化 + Phase 3/4 Team 扩展 + 测试-修复-回归闭环*
+*重大变更: Phase 2B — 评分从顺序(0-2)提升为并行(3-5)，合约驱动独立开发*
+*重大变更: Phase 3 — QA+Frontend+Backend+Architect+PM Team，Bug 发现-修复-回归循环*
+*重大变更: Phase 4 — 体验师+UI+Frontend+Backend+Architect+PM Team，UX 发现-修复-验证循环*
+*重大变更: phase-gates.json — Bug 修复闭环 gate + ADR 条件审查 gate*
+*重大变更: auto-start-agents.js — Phase 3/4 覆盖逻辑强制 Team 模式*
 *重大变更: v5.1.0 — Agent 角色绑定 + Team 角色绑定 + 里程碑顺序执行 + TDD 测试覆盖*
 *重大变更: 角色门禁 — agent-role-guard.js PreToolUse 强制角色采用 + allowedPaths 路径限制*
 *重大变更: Team 角色绑定 — auto-start-agents.js subagentType 改为本地 agent .md 名，触发原生加载*

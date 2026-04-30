@@ -1,9 +1,23 @@
 ---
 name: pm
+description: Project Manager — PRD / user stories / acceptance criteria / ce-brainstorm
 role: Project Manager
 team: Leadership
 subagentType: everything-claude-code:planner
 phase: 1
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # Project Manager (项目经理)

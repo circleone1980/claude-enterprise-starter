@@ -1,10 +1,24 @@
 ---
 name: product-designer
+description: Product Designer — GStack office-hours / design-consultation / design-shotgun / design-html
 role: Product Designer
 team: Design
 subagentType: general-purpose
 phase: "0.5a"
 gstackOnly: true
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # Product Designer (产品设计师)

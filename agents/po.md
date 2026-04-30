@@ -1,9 +1,23 @@
 ---
 name: po
+description: Product Owner — Product requirements / user onboarding / autoplan
 role: Product Owner
 team: Leadership
 subagentType: general-purpose
 phase: 1
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # Product Owner (产品负责人)

@@ -1,9 +1,23 @@
 ---
 name: review-champion
+description: Review Champion — adversarial-review / plan-ceo-review / plan-eng-review
 role: Review Champion (Devil's Advocate)
 team: Quality
 subagentType: general-purpose
 phase: "1-review"
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # Review Champion（对抗审查 · 质疑者）

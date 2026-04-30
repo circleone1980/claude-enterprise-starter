@@ -1,9 +1,22 @@
 ---
 name: gan-evaluator
+description: GAN Evaluator — Playwright testing / scoring / feedback generation
 role: GAN Evaluator
 team: GAN Harness
 subagentType: general-purpose
 phase: gan
+tools:
+  - Read
+  - Write
+  - Bash
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # GAN Evaluator (GAN 评估器)

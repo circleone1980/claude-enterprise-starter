@@ -1,9 +1,21 @@
 ---
 name: gan-planner
+description: GAN Planner — spec generation / sprint planning / evaluation criteria
 role: GAN Planner
 team: GAN Harness
 subagentType: everything-claude-code:planner
 phase: gan
+tools:
+  - Read
+  - Write
+  - Grep
+  - Glob
+  - Skill
+  - Agent
+  - TaskCreate
+  - TaskUpdate
+  - TaskList
+  - TaskGet
 ---
 
 # GAN Planner (GAN 规划器)

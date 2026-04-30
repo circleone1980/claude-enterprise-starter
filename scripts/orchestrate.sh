@@ -16,7 +16,7 @@
 #   bash scripts/orchestrate.sh --interactive   # 交互模式
 #   bash scripts/orchestrate.sh --status        # 查看状态
 #
-# Updated: 2026-04-27 v4.0.0
+# Updated: 2026-04-30 v5.2.0
 # =============================================================================
 
 set -euo pipefail
@@ -391,6 +391,172 @@ PHASE1_EOF
   log_ok "Phase 1 prompt 已生成: $prompt_file"
 }
 
+# --- 生成 Phase 3 prompt ---
+generate_phase3_prompt() {
+  local prompt_file="$PHASE_LOG_DIR/phase-3-prompt.md"
+  cat > "$prompt_file" << 'PHASE3_EOF'
+# Phase 3: 测试验证 — 测试-修复-回归闭环
+
+> **模式**: Team（QA + Frontend + Backend-Python + Architect + PM）
+> **核心**: 测试-修复-回归闭环，直到所有 Bug 清零
+
+## 执行步骤
+
+### Step 1: 创建 Team
+
+```
+TeamCreate({
+  team_name: "phase3-test-fix-loop",
+  description: "Phase 3 测试验证团队 — 测试-修复-回归闭环"
+})
+```
+
+### Step 2: 分配角色
+
+| 角色 | 职责 | Agent 类型 |
+|------|------|-----------|
+| QA (Lead) | 执行测试、报告 Bug、回归验证 | tdd-guide |
+| Frontend | 修复前端 Bug | typescript-reviewer |
+| Backend-Python | 修复后端 Bug | python-reviewer |
+| Architect | 审查涉及架构的修改（ADR） | architect |
+| PM | 协调优先级、确认需求 | planner |
+
+### Step 3: 测试-修复-回归闭环
+
+```
+## Loop 流程
+
+1. QA 执行全面测试:
+   - 单元测试覆盖率验证
+   - 集成测试
+   - E2E 测试（Playwright）
+   - 输出 test-report.md
+
+2. 如果 test-report.md 中有未解决 Bug:
+   a. QA 通过 SendMessage 通知相关 Dev:
+      - 前端 Bug → Frontend
+      - 后端 Bug → Backend-Python
+      - 跨层 Bug → Frontend + Backend-Python
+   b. Dev 评估 Bug 严重程度:
+      - 简单 Bug: 直接修复 → QA 回归
+      - 涉及架构变更: 通知 Architect 做 ADR 审查 → 修复 → QA 回归
+      - 需求理解偏差: 通知 PM 澄清 → 修复 → QA 回归
+   c. Architect 审查重大修改:
+      - 评估修改影响范围
+      - 如需 ADR: 写 docs/superpowers/decisions/ADR-xxx.md
+      - 创建 .claude/logs/.phase3-adr-reviewed 标记
+      - 如有架构变更: 创建 .claude/logs/.phase3-arch-changes 标记
+   d. 修复后 → QA 回归测试 → 更新 test-report.md
+   e. 循环直到 test-report.md 中 Bug 数量为 0
+
+3. 所有测试通过后:
+   - 创建 .claude/logs/.phase3-tests-pass
+   - 创建 .claude/logs/.phase3-integration-pass
+   - 创建 .claude/logs/.phase3-e2e-pass
+   - 创建 .claude/logs/.phase3-bugs-fixed
+```
+
+### Step 4: 代码审查集成
+
+在 Bug 修复过程中，触发以下审查:
+- `/codex:review` — 双模型审查每个 Bug Fix
+- `code-review` — Skill 审查代码质量
+- `security-review` — 安全相关 Bug 必须触发
+
+### Step 5: 验证
+
+```bash
+node scripts/gap-detector.js --phase=3
+```
+
+### Step 6: 关闭 Team
+
+确认所有 gate 条件满足后，关闭 Team。
+PHASE3_EOF
+
+  log_ok "Phase 3 prompt 已生成: $prompt_file"
+}
+
+# --- 生成 Phase 4 prompt ---
+generate_phase4_prompt() {
+  local prompt_file="$PHASE_LOG_DIR/phase-4-prompt.md"
+  cat > "$prompt_file" << 'PHASE4_EOF'
+# Phase 4: 产品体验 — UX 问题修复闭环
+
+> **模式**: Team（产品体验师 + UI-Designer + Frontend + Backend-Python + Architect + PM）
+> **核心**: UX 发现-修复-验证闭环，直到所有体验问题解决
+
+## 执行步骤
+
+### Step 1: 创建 Team
+
+```
+TeamCreate({
+  team_name: "phase4-ux-fix-loop",
+  description: "Phase 4 产品体验团队 — UX 发现-修复-验证闭环"
+})
+```
+
+### Step 2: 分配角色
+
+| 角色 | 职责 | Agent 类型 |
+|------|------|-----------|
+| 产品体验师 (Lead) | 执行体验测试、报告 UX 问题、回归验证 | planner |
+| UI-Designer | 评估和修复视觉/交互问题 | general-purpose |
+| Frontend | 实现前端 UX 修复 | typescript-reviewer |
+| Backend-Python | 修复后端业务逻辑问题 | python-reviewer |
+| Architect | 审查涉及架构的修改（ADR） | architect |
+| PM | 确认优先级、协调需求 | planner |
+
+### Step 3: UX 发现-修复-验证闭环
+
+```
+## Loop 流程
+
+1. 产品体验师执行体验测试:
+   - 视觉一致性检查（对照 UI 设计规范）
+   - 交互流畅性测试
+   - 业务流程完整性验证
+   - 输出 ux-report.md（含问题清单和优先级）
+
+2. 如果 ux-report.md 中有未解决 UX 问题:
+   a. 体验师通过 SendMessage 通知相关角色:
+      - 视觉/交互问题 → UI-Designer + Frontend
+      - 操作流程问题 → Frontend + Backend-Python
+      - 业务逻辑问题 → Backend-Python + PM
+      - 影响架构 → Architect（ADR）
+   b. 修复分类:
+      - 视觉/交互 → UI Designer 评估 + Frontend 修复 → 体验师验证
+      - 操作流程 → Frontend + Backend 协作 → 体验师验证
+      - 业务逻辑 → Backend 修复 + PM 确认 → 体验师验证
+      - 影响架构 → Architect 做 ADR → 修复 → 体验师验证
+   c. Architect 审查重大修改:
+      - 写 docs/superpowers/decisions/ADR-xxx.md
+      - 创建 .claude/logs/.phase4-adr-reviewed 标记
+      - 如有架构变更: 创建 .claude/logs/.phase4-arch-changes 标记
+   d. 修复后 → 体验师回归验证 → 更新 ux-report.md
+   e. 循环直到 ux-report.md 中问题数量为 0
+
+3. 所有 UX 问题解决后:
+   - 创建 .claude/logs/.phase4-ux-complete
+   - 创建 .claude/logs/.phase4-ux-fixes-complete
+   - 创建 .claude/logs/.phase4-ux-loop-pass
+```
+
+### Step 4: 验证
+
+```bash
+node scripts/gap-detector.js --phase=4
+```
+
+### Step 5: 关闭 Team
+
+确认所有 gate 条件满足后，关闭 Team。
+PHASE4_EOF
+
+  log_ok "Phase 4 prompt 已生成: $prompt_file"
+}
+
 # --- 生成通用 Phase prompt ---
 generate_phase_prompt() {
   local phase_id="$1"
@@ -443,6 +609,8 @@ generate_prompt() {
   case "$phase_id" in
     0)  generate_phase0_prompt ;;
     1)  generate_phase1_prompt ;;
+    3)  generate_phase3_prompt ;;
+    4)  generate_phase4_prompt ;;
     *)  generate_phase_prompt "$phase_id" ;;
   esac
 }
@@ -467,7 +635,7 @@ cmd_status() {
   check_config
   echo ""
   log_info "========================================"
-  log_info "  当前项目状态 (v4.0.0)"
+  log_info "  当前项目状态 (v5.2.0)"
   log_info "========================================"
 
   if [ -f "$PHASE_LOG" ]; then

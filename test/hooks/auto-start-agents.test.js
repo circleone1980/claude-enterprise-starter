@@ -10,13 +10,15 @@ const thresholds = ssot.modeThresholds || { team: 6, subagentParallel: 3, subage
 /**
  * ModeSelection scoring engine (mirrors auto-start-agents.js logic)
  */
-function decideMode(agent, thresholds, subPhase) {
+function decideMode(agent, thresholds, subPhase, targetPhase) {
   const scores = agent.modeSelection || {
     communicationNeed: 0, crossLayerDependency: 0,
     contextPressure: 0, roleCount: 0, writeConflictRisk: 0,
   };
   let total = Object.values(scores).reduce((a, b) => a + b, 0);
   if (subPhase === '2A') total = Math.max(total, 6);
+  const phaseStr = String(targetPhase || '');
+  if (phaseStr === '3' || phaseStr === '4') total = Math.max(total, 6);
 
   if (total >= (thresholds.team || 6)) return { mode: 'team', score: total };
   if (total >= (thresholds.subagentParallel || 3)) return { mode: 'subagent-parallel', score: total };
@@ -36,9 +38,10 @@ describe('auto-start-agents - modeSelection scoring', () => {
     assert.strictEqual(mode, 'team');
   });
 
-  test('Phase 2 Backend-Python in 2B mode scores < team threshold', () => {
+  test('Phase 2 Backend-Python in 2B mode scores >= parallel threshold', () => {
     const { mode, score } = decideMode(ssot.agents['Backend-Python'], thresholds, '2B');
-    assert.strictEqual(mode, 'subagent-sequential');
+    assert.ok(score >= thresholds.subagentParallel, `Backend-Python score ${score} < parallel threshold ${thresholds.subagentParallel}`);
+    assert.strictEqual(mode, 'subagent-parallel');
   });
 
   test('Phase 2 Frontend in 2A mode is forced to team', () => {
@@ -47,9 +50,10 @@ describe('auto-start-agents - modeSelection scoring', () => {
     assert.ok(score >= thresholds.team);
   });
 
-  test('QA has low communication score', () => {
-    const ms = ssot.agents.QA.modeSelection;
-    assert.strictEqual(ms.communicationNeed, 0);
+  test('QA Phase 3 scores >= team threshold (forced by override)', () => {
+    const { mode, score } = decideMode(ssot.agents.QA, thresholds, null, '3');
+    assert.strictEqual(mode, 'team');
+    assert.ok(score >= thresholds.team);
   });
 });
 
